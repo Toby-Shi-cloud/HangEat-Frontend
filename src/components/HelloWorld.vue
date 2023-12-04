@@ -14,7 +14,9 @@ defineProps<{
       <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
     </h3>
+    <h2><var-link type="info" to="/login">前往登录页面</var-link></h2>
   </div>
+  <var-divider />
   <var-button block @click="toggleTheme">
     <var-icon name="white-balance-sunny" v-if="isLight"/>
     切换主题
