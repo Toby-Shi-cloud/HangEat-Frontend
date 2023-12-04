@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {isDark, isLight, toggleTheme} from "@/components/themes";
+
 defineProps<{
   msg: string
 }>()
@@ -13,6 +15,11 @@ defineProps<{
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
     </h3>
   </div>
+  <var-button block @click="toggleTheme">
+    <var-icon name="white-balance-sunny" v-if="isLight"/>
+    切换主题
+    <var-icon name="weather-night" v-if="isDark"/>
+  </var-button>
 </template>
 
 <style scoped>
