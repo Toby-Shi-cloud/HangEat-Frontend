@@ -3,9 +3,9 @@ import LoginForm from "../components/LoginForm.vue";
 </script>
 
 <template>
-  <div class="login">
+  <main class="login" style="grid-column-start: span 2">
     <LoginForm />
-  </div>
+  </main>
 </template>
 
 <style scoped>
