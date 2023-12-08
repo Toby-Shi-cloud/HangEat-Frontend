@@ -1,0 +1,72 @@
+import axios from "axios";
+import {Snackbar} from "@varlet/ui";
+
+export interface ErrorData {
+    code: number;
+    detailed_error_code: number;
+    error_msg: string;
+}
+
+// @ts-ignore
+if (process.env.NODE_ENV === "production") {
+    axios.defaults.baseURL = "api/";
+} else {
+    const domain = window.location.host.split(':').slice(0, -1).join(':');
+    axios.defaults.baseURL = "http://" + domain + ":8000";
+}
+
+// timeout: 60s
+axios.defaults.timeout = 60000;
+
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+// before request
+axios.interceptors.request.use(function (config){
+    // 在发送请求前做些什么
+    //config.headers['X-Requested-With'] = 'XMLHttpRequest'
+    if (localStorage._token) {
+        config.headers.Authorization = "Bearer " + localStorage._token;
+    } else if (localStorage._refresh_token) {
+        config.headers.Authorization = "Bearer " + localStorage._refresh_token;
+    }
+    Snackbar.loading("加载中...");
+    return config;
+},function (error) {
+    // 对请求错误做些什么
+    Snackbar.error('网络连接异常，请稍后再试！')
+    return Promise.reject(error);
+});
+
+// after response
+axios.interceptors.response.use(function (response) {
+    // 2xx 范围内的状态码都会触发该函数。
+    // 对响应数据做点什么
+    if (response.data.hasOwnProperty('token')) {
+        localStorage.setItem('_token', response.data.token);
+        delete response.data.token;
+    }
+    if (response.data.hasOwnProperty('refresh_token')) {
+        localStorage.setItem('_refresh_token', response.data.refresh_token);
+        delete response.data.refresh_token;
+    }
+    return response
+}, async function (error) {
+    // 超出 2xx 范围的状态码都会触发该函数。
+    // 对响应错误做点什么
+    if (error?.response) {
+        if (error.response.status === 500) {
+            Snackbar.error('系统错误，请稍后再试！');
+        } else try {
+            const data = error.response.data as ErrorData;
+            const msg = data.error_msg.split(': ');
+            Snackbar.error(msg[msg.length - 1]);
+        } catch (e) {
+            Snackbar.error('未知错误，请稍后再试！');
+        }
+    } else {
+        Snackbar.error('请求超时，请稍后再试！');
+    }
+    return Promise.reject(error);
+});
+
+export default axios;

@@ -1,0 +1,44 @@
+/* For LoginForm & RegisterForm */
+
+.login-paper {
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    background: var(--color-background-opacity);
+    backdrop-filter: blur(2px);
+    color: var(--vt-c-text-dark-1);
+    align-items: center;
+
+    --field-decorator-text-color: var(--vt-c-text-dark-1);
+    --field-decorator-placeholder-color: var(--vt-c-text-dark-2);
+    --field-decorator-focus-color: var(--color-success);
+}
+
+.login-form {
+    min-width: 60vw;
+    padding: 10px 10px 40px;
+}
+
+.left-button {
+    position: absolute;
+    bottom: 10px;
+    left: 25px;
+
+    --button-default-text-color: var(--vt-c-text-dark-1);
+    --button-default-color: rgba(255, 255, 255, 0.1);
+}
+
+.switch-button {
+    position: absolute;
+    bottom: 10px;
+    right: 25px;
+
+    --button-default-text-color: var(--vt-c-text-dark-1);
+    --button-default-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 1024px) {
+    .login-form {
+        min-width: 614px;
+    }
+}
