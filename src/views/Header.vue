@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed} from 'vue'
+import {computed, watch, onMounted} from 'vue'
 import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
 
@@ -8,12 +8,19 @@ const title = computed(() => headerStore.getTitle);
 
 const authStore = useAuthStore();
 
-if (authStore.isAuthenticated) {
-  if (authStore.needRefreshInfo) {
-    authStore.refreshUserInfo().catch(authStore.logout);
-  }
-}
+watch(
+    () => [authStore.isAuthenticated, authStore.needRefreshInfo],
+    ([isAuthenticated, needRefreshInfo]) => {
+      if (isAuthenticated && needRefreshInfo) {
+        authStore.refreshUserInfo().catch(authStore.logout);
+      }
+    },
+    {immediate: true}
+);
 
+onMounted(() => {
+  authStore.setup();
+});
 </script>
 
 <template>
@@ -39,13 +46,13 @@ if (authStore.isAuthenticated) {
       <template #right>
         <var-link v-if="headerStore.showUser" class="bar-link" underline="none"
                   :to="authStore.isAuthenticated ? '/user' : '/login'">
-          <var-avatar v-if="authStore.isAuthenticated" :name="authStore.getUserInfo.avatar"></var-avatar>
+          <var-avatar v-if="authStore.isAuthenticated" :src="authStore.getUserInfo.avatar"></var-avatar>
           <p v-else>登录</p>
         </var-link>
       </template>
     </var-app-bar>
+    <var-divider class="app-bar-divider"/>
   </header>
-  <var-divider class="app-bar-divider"/>
 </template>
 
 <style scoped>
@@ -57,7 +64,7 @@ if (authStore.isAuthenticated) {
   --app-bar-color: rgba(0, 0, 0, 0);
   --app-bar-text-color: var(--color-heading);
   --app-bar-height: 100%;
-  --app-bar-title-font-size: 24px;
+  --app-bar-title-font-size: 22px;
 }
 
 .image-container {
@@ -73,12 +80,12 @@ if (authStore.isAuthenticated) {
 .bar-link {
   padding: 0 10px;
 
-  --link-font-size: 24px;
+  --link-font-size: var(--app-bar-title-font-size);
 }
 
 .app-bar-divider {
-  position: fixed;
-  top: 6%;
+  position: absolute;
+  bottom: 0;
   left: 0;
   width: 100%;
   place-items: center;

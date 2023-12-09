@@ -35,6 +35,7 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+  --header-bar-height: min(60px, 6vh);
 }
 
 :root body[theme='dark'] {
@@ -59,7 +60,8 @@
 }
 
 body {
-  min-height: 100vh;
+  margin-top: var(--header-bar-height);
+  min-height: calc(100vh - var(--header-bar-height));
   color: var(--color-text);
   background: var(--color-background);
   transition:

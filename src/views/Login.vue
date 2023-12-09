@@ -10,7 +10,7 @@ let isLoginView = ref(true);
 
 <template>
   <GradientBackground/>
-  <main class="login" style="grid-column-start: span 2">
+  <main class="login">
     <Transition name="fade" mode="out-in">
       <LoginForm v-if="isLoginView" :to-register-view="() => isLoginView = false"/>
       <RegisterForm v-else :to-login-view="() => isLoginView = true"/>

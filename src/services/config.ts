@@ -23,6 +23,20 @@ axios.defaults.timeout = 5000;
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
+// loading...
+let loading = false;
+
+export const startLoading = () => {
+    Snackbar.loading("加载中...");
+    loading = true;
+};
+
+export const endLoading = () => {
+    if (!loading) return;
+    Snackbar.clear();
+    loading = false;
+};
+
 // before request
 axios.interceptors.request.use(function (config) {
     // 在发送请求前做些什么
@@ -32,7 +46,6 @@ axios.interceptors.request.use(function (config) {
     } else if (localStorage._refresh_token) {
         config.headers.Authorization = "Bearer " + localStorage._refresh_token;
     }
-    Snackbar.loading("加载中...");
     return config;
 }, function (error) {
     // 对请求错误做些什么
@@ -42,7 +55,7 @@ axios.interceptors.request.use(function (config) {
 
 // after response
 axios.interceptors.response.use(function (response) {
-    Snackbar.info({content: "加载结束", duration: 1000});
+    endLoading();
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
     if (response.data.hasOwnProperty('token')) {
