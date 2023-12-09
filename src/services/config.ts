@@ -1,5 +1,8 @@
 import axios from "axios";
 import {Snackbar} from "@varlet/ui";
+import {useAuthStore} from "@/store/user";
+import {doRefreshToken} from "./user";
+import ErrorCode from "./errorcode";
 
 export interface ErrorData {
     code: number;
@@ -21,7 +24,7 @@ axios.defaults.timeout = 5000;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 // before request
-axios.interceptors.request.use(function (config){
+axios.interceptors.request.use(function (config) {
     // 在发送请求前做些什么
     //config.headers['X-Requested-With'] = 'XMLHttpRequest'
     if (localStorage._token) {
@@ -31,7 +34,7 @@ axios.interceptors.request.use(function (config){
     }
     Snackbar.loading("加载中...");
     return config;
-},function (error) {
+}, function (error) {
     // 对请求错误做些什么
     Snackbar.error('网络连接异常，请稍后再试！')
     return Promise.reject(error);
@@ -39,9 +42,11 @@ axios.interceptors.request.use(function (config){
 
 // after response
 axios.interceptors.response.use(function (response) {
+    Snackbar.info({content: "加载结束", duration: 1000});
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
     if (response.data.hasOwnProperty('token')) {
+        useAuthStore().login();
         localStorage.setItem('_token', response.data.token);
         delete response.data.token;
     }
@@ -51,6 +56,8 @@ axios.interceptors.response.use(function (response) {
     }
     return response
 }, async function (error) {
+    Snackbar.info({content: "加载结束", duration: 1000});
+    const userStore = useAuthStore();
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
     if (error?.response) {
@@ -58,8 +65,30 @@ axios.interceptors.response.use(function (response) {
             Snackbar.error('系统错误，请稍后再试！');
         } else try {
             const data = error.response.data as ErrorData;
-            const msg = data.error_msg.split(': ');
-            Snackbar.error(msg[msg.length - 1]);
+            if (data.detailed_error_code === ErrorCode.UNAUTHORIZED_ERROR) if (userStore.isAuthenticated) {
+                userStore.logout();
+                localStorage.removeItem('_token');
+                if (localStorage._refresh_token) try {
+                    await doRefreshToken();
+                    if (!userStore.isAuthenticated) throw new Error('refresh token failed');
+                    // 重新执行之前失败的请求
+                    const originRequest = error.config
+                    return axios(originRequest);
+                } catch (e) {
+                    Snackbar.error('登录已过期，请重新登录！');
+                    localStorage.removeItem('_refresh_token');
+                    window.location.href = '/login';
+                } else {
+                    Snackbar.error('登录已过期，请重新登录！');
+                    window.location.href = '/login';
+                }
+            } else {
+                Snackbar.error('未登录，请先登录！');
+                window.location.href = '/login';
+            } else {
+                const msg = data.error_msg.split(': ');
+                Snackbar.error(msg[msg.length - 1]);
+            }
         } catch (e) {
             Snackbar.error('未知错误，请稍后再试！');
         }

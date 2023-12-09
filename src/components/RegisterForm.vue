@@ -110,7 +110,7 @@ async function onKeyDown(event: KeyboardEvent) {
       </var-space>
     </var-form>
     <var-button
-        class="switch-button"
+        class="right-button"
         type="default"
         @click="toLoginView()">
       已有账号？去登录

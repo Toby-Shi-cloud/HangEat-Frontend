@@ -33,3 +33,13 @@ body {
     padding: 0 2rem;
   }
 }
+
+#app-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6%;
+  place-items: center;
+  background: var(--color-background);
+}

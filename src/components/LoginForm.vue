@@ -65,13 +65,7 @@ async function onKeyDown(event: KeyboardEvent) {
       </var-space>
     </var-form>
     <var-button
-        class="left-button"
-        type="default"
-        @click="getInfo()">
-      获取用户信息
-    </var-button>
-    <var-button
-        class="switch-button"
+        class="right-button"
         type="default"
         @click="toRegisterView()">
       没有账号？去注册
