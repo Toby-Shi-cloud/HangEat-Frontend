@@ -34,6 +34,7 @@ async function sendCaptcha() {
   }, 1000);
   doSendCaptcha(data.email).then(response => {
     Snackbar.success(response.data.message);
+    window.location.href = "/";
   }).catch(() => {
     captchaCountdown.value = 0;
   });

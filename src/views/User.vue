@@ -2,6 +2,7 @@
 import {ref, computed, onMounted} from "vue";
 import {useAuthStore} from "@/store/user";
 import {Snackbar} from "@varlet/ui";
+import {setAppStyle} from "@/components/themes";
 
 const authStore = useAuthStore();
 const userInfo = computed(() => authStore.getUserInfo);
@@ -16,6 +17,8 @@ onMounted(() => {
     Snackbar.error("获取关注列表失败");
   });
 });
+
+setAppStyle("user");
 </script>
 
 <template>
@@ -60,13 +63,6 @@ onMounted(() => {
     </var-paper>
   </main>
 </template>
-
-<style>
-#app {
-  margin-top: 2rem;
-  align-self: start;
-}
-</style>
 
 <style scoped>
 main {

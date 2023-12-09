@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import HelloWorld from '../components/HelloWorld.vue'
 import TheWelcome from '../components/TheWelcome.vue'
+import {setAppStyle} from "@/components/themes";
+
+setAppStyle("index");
 </script>
 
 <template>
@@ -43,11 +46,5 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
-}
-</style>
-
-<style>
-#app {
-  grid-template-columns: 1fr 1fr;
 }
 </style>

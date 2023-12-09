@@ -31,3 +31,7 @@ export function setTheme(theme: Theme) {
 export function toggleTheme() {
     setTheme(isLight.value ? Theme.Dark : Theme.Light);
 }
+
+export function setAppStyle(page: string) {
+    document.getElementById('app')?.setAttribute('page', page);
+}

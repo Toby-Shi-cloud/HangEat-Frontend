@@ -26,6 +26,7 @@ async function login() {
   if (!validation) return;
   doLogin(data.username, data.password).then(response => {
     Snackbar.success(response.data.message);
+    window.location.href = "/";
   }).catch(() => {});
 }
 

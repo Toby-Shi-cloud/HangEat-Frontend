@@ -30,7 +30,13 @@ body {
   #app {
     display: grid;
     padding: 0 2rem;
+    grid-template-columns: 1fr 1fr;
   }
+}
+
+#app[page='user'] {
+  margin-top: 2rem;
+  align-self: start;
 }
 
 #app-bar {

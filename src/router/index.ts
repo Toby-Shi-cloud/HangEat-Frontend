@@ -26,15 +26,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
-    if (to.path === "/login") {
+    if (to.path === "/login" && authStore.isAuthenticated) {
         // 若用户已登录且前往登录页，则跳转到首页
         Snackbar.info("您已登录，即将跳转到首页");
-        authStore.isAuthenticated ? next("/") : next()
-    } else if (to.path.startsWith('/user')) { // 拦截
-        authStore.isAuthenticated ? next() : next("/login")
+        next("/");
+    } else if (to.path.startsWith('/user') && !authStore.isAuthenticated) { // 拦截
+        next("/login");
     } else {
-        next()
+        next();
     }
-})
+});
 
 export default router;

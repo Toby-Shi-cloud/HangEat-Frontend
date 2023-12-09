@@ -2,11 +2,23 @@
 import {computed, watch, onMounted} from 'vue'
 import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
+import {doLogout} from "@/services/user";
+import {Snackbar} from "@varlet/ui";
 
 const headerStore = useHeaderStore();
 const title = computed(() => headerStore.getTitle);
 
 const authStore = useAuthStore();
+
+const logout = () => {
+  doLogout().then(() => {
+    localStorage.removeItem('_token');
+    localStorage.removeItem('_refresh_token');
+    authStore.logout();
+    Snackbar.success('登出成功');
+    window.location.href = "/";
+  }).catch();
+};
 
 watch(
     () => [authStore.isAuthenticated, authStore.needRefreshInfo],
@@ -44,6 +56,9 @@ onMounted(() => {
       </div>
 
       <template #right>
+        <var-link v-if="authStore.isAuthenticated" class="bar-link"
+                  underline="hover" @click="logout()">登出
+        </var-link>
         <var-link v-if="headerStore.showUser" class="bar-link" underline="none"
                   :to="authStore.isAuthenticated ? '/user' : '/login'">
           <var-avatar v-if="authStore.isAuthenticated" :src="authStore.getUserInfo.avatar"></var-avatar>
