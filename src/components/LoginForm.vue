@@ -17,6 +17,7 @@ const form = ref<Form | null>(null);
 async function getInfo() {
   doGetUserInfo().then(response => {
     console.log(response.data);
+    Snackbar.success("获取用户信息成功");
   }).catch(() => {});
 }
 

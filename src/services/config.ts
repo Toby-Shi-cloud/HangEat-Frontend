@@ -15,8 +15,8 @@ if (process.env.NODE_ENV === "production") {
     axios.defaults.baseURL = "http://" + domain + ":8000";
 }
 
-// timeout: 60s
-axios.defaults.timeout = 60000;
+// timeout: 5s
+axios.defaults.timeout = 5000;
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
