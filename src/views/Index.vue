@@ -1,26 +1,35 @@
 <script setup lang="ts">
 import HelloWorld from '../components/HelloWorld.vue'
 import TheWelcome from '../components/TheWelcome.vue'
-import {setAppStyle} from "@/components/themes";
-
-setAppStyle("index");
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="../assets/logo.svg" width="125" height="125"/>
+  <div id="main-div">
+    <header>
+      <img alt="Vue logo" class="logo" src="../assets/logo.svg" width="125" height="125"/>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!"/>
-    </div>
-  </header>
+      <div class="wrapper">
+        <HelloWorld msg="You did it!"/>
+      </div>
+    </header>
 
-  <main>
-    <TheWelcome/>
-  </main>
+    <main>
+      <TheWelcome/>
+    </main>
+  </div>
 </template>
 
 <style scoped>
+@media (min-width: 1024px) {
+  #main-div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "header main";
+    place-self: center;
+  }
+}
+
 header {
   line-height: 1.5;
 }

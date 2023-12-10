@@ -10,6 +10,10 @@ const title = computed(() => headerStore.getTitle);
 
 const authStore = useAuthStore();
 
+const toUser = () => {
+  window.location.href = `/user/${authStore.getUserInfo.id}`;
+};
+
 const logout = () => {
   doLogout().then(() => {
     localStorage.removeItem('_token');
@@ -29,10 +33,6 @@ watch(
     },
     {immediate: true}
 );
-
-onMounted(() => {
-  authStore.setup();
-});
 </script>
 
 <template>
@@ -55,15 +55,21 @@ onMounted(() => {
         </var-link>
       </div>
 
-      <template #right>
-        <var-link v-if="authStore.isAuthenticated" class="bar-link"
-                  underline="hover" @click="logout()">登出
-        </var-link>
-        <var-link v-if="headerStore.showUser" class="bar-link" underline="none"
-                  :to="authStore.isAuthenticated ? '/user' : '/login'">
-          <var-avatar v-if="authStore.isAuthenticated" :src="authStore.getUserInfo.avatar"></var-avatar>
-          <p v-else>登录</p>
-        </var-link>
+      <template #right v-if="headerStore.showUser">
+        <var-skeleton v-if="authStore.isAuthenticated"
+                      avatar :rows="0" class="user-avatar"
+                      :loading="authStore.getUserInfo.avatar === undefined">
+          <var-menu placement="bottom-start" offset-y="5px" popover-class="user-menu">
+            <var-avatar :src="authStore.getUserInfo.avatar" :hoverable="true"/>
+            <template #menu>
+              <var-button-group vertical size="large">
+                <var-button ripple class="menu-btn" @click="toUser()">查看主页</var-button>
+                <var-button ripple class="menu-btn" @click="logout()">退出登录</var-button>
+              </var-button-group>
+            </template>
+          </var-menu>
+        </var-skeleton>
+        <var-link v-else class="bar-link" underline="none" to="/login">登录</var-link>
       </template>
     </var-app-bar>
     <var-divider class="app-bar-divider"/>
@@ -108,6 +114,10 @@ onMounted(() => {
   --divider-text-margin: 0;
   --divider-text-padding: 0;
   --divider-color: var(--color-border);
+}
+
+.user-avatar {
+  --skeleton-avatar-size: calc(var(--header-bar-height) * 0.8);
 }
 
 *, *::before, *::after {

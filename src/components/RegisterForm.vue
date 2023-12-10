@@ -34,7 +34,6 @@ async function sendCaptcha() {
   }, 1000);
   doSendCaptcha(data.email).then(response => {
     Snackbar.success(response.data.message);
-    window.location.href = "/";
   }).catch(() => {
     captchaCountdown.value = 0;
   });
@@ -45,6 +44,9 @@ async function register() {
   if (!await (regForm.value as Form).validate()) return;
   doRegister(data.email, data.captcha, data.username, data.password).then(response => {
     Snackbar.success(response.data.message);
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 1000);
   }).catch(() => {});
 }
 
@@ -105,6 +107,7 @@ async function onKeyDown(event: KeyboardEvent) {
         <var-button
             block
             type="primary"
+            native-type="submit"
             @click="register">
           注册
         </var-button>

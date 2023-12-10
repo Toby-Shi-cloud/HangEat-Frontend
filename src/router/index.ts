@@ -15,8 +15,13 @@ const routes = [{
     component: Login
 }, {
     path: '/user',
+    name: 'Myself',
+    component: User,
+}, {
+    path: '/user/:id',
     name: 'User',
-    component: User
+    component: User,
+    props: (route: any) => ({ userId: parseInt(route.params.id) })
 }];
 
 const router = createRouter({
@@ -24,14 +29,20 @@ const router = createRouter({
     routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore();
-    if (to.path === "/login" && authStore.isAuthenticated) {
+    await authStore.setup();
+    if (to.name === 'Login' && authStore.isAuthenticated) {
         // 若用户已登录且前往登录页，则跳转到首页
-        Snackbar.info("您已登录，即将跳转到首页");
-        next("/");
-    } else if (to.path.startsWith('/user') && !authStore.isAuthenticated) { // 拦截
-        next("/login");
+        Snackbar.info("您已登录！" + from.path);
+        next(from.path === "/login" ? "/" : from);
+    } else if (to.name === 'Myself') {
+        if (authStore.isAuthenticated) {
+            next("/user/" + authStore.getUserInfo.id);
+        } else {
+            Snackbar.error("请先登录后访问！");
+            next("/login");
+        }
     } else {
         next();
     }

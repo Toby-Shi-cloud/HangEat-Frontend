@@ -26,7 +26,9 @@ async function login() {
   if (!validation) return;
   doLogin(data.username, data.password).then(response => {
     Snackbar.success(response.data.message);
-    window.location.href = "/";
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 1000);
   }).catch(() => {});
 }
 
@@ -60,6 +62,7 @@ async function onKeyDown(event: KeyboardEvent) {
         <var-button
             block
             type="primary"
+            native-type="submit"
             @click="login">
           登录
         </var-button>

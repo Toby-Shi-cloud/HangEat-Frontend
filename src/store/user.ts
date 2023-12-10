@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {doGetFans, doGetSubscribes, doGetUserInfo} from "@/services/user";
+import {doGetUserInfo} from "@/services/user";
 
 export interface UserInfo {
     id?: number;
@@ -9,25 +9,20 @@ export interface UserInfo {
     motto?: string;
 }
 
-export interface UserList {
-    count: number;
-    list: Map<string, UserInfo>;
-}
-
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         authenticated: false,
         userInfo: {} as UserInfo,
-        followers: {count: 0, list: new Map<string, UserInfo>()} as UserList,
-        following: {count: 0, list: new Map<string, UserInfo>()} as UserList,
+        followers: 0,
+        following: 0,
     }),
 
     getters: {
         isAuthenticated: (state) => state.authenticated,
         getUserInfo: (state) => state.userInfo,
-        needRefreshInfo: (state) => state.userInfo == {} as UserInfo,
-        getFollowersCount: (state) => state.followers.count,
-        getFollowingCount: (state) => state.following.count,
+        needRefreshInfo: (state) => state.userInfo.id === undefined,
+        getFollowersCount: (state) => state.followers,
+        getFollowingCount: (state) => state.following,
     },
 
     actions: {
@@ -57,24 +52,10 @@ export const useAuthStore = defineStore('auth', {
             this.setUserInfo(data);
         },
         async updateFollowers() {
-            const {data} = await doGetFans();
-            for (const key in data) {
-                if (key === '粉丝人数') {
-                    this.followers.count = data[key];
-                } else {
-                    this.followers.list.set(key, data[key]);
-                }
-            }
+            // TODO: update followers
         },
         async updateFollowing() {
-            const {data} = await doGetSubscribes();
-            for (const key in data) {
-                if (key === '关注人数') {
-                    this.following.count = data[key];
-                } else {
-                    this.following.list.set(key, data[key]);
-                }
-            }
+            // TODO: update following
         },
     }
 });

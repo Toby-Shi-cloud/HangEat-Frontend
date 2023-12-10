@@ -92,11 +92,3 @@ export const doSubscribe = (target_id: number) => {
 export const doUnsubscribe = (target_id: number) => {
     return axios.post('user/unsubscribe', {target_id: target_id});
 }
-
-export const doGetSubscribes = () => {
-    return axios.get('user/get-subscribes');
-}
-
-export const doGetFans = () => {
-    return axios.get('user/get-fans');
-}

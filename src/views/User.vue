@@ -1,71 +1,84 @@
 <script setup lang="ts">
 import {ref, computed, onMounted} from "vue";
 import {useAuthStore} from "@/store/user";
-import {Snackbar} from "@varlet/ui";
-import {setAppStyle} from "@/components/themes";
+
+defineProps<{
+  userId: number
+}>();
 
 const authStore = useAuthStore();
 const userInfo = computed(() => authStore.getUserInfo);
-
 const active = ref(0);
 
-onMounted(() => {
-  authStore.updateFollowers().catch(() => {
-    Snackbar.error("获取粉丝列表失败");
-  });
-  authStore.updateFollowing().catch(() => {
-    Snackbar.error("获取关注列表失败");
-  });
-});
+const returnToIndex = () => {
+  window.location.href = "/";
+};
 
-setAppStyle("user");
+onMounted(() => {
+  authStore.updateFollowers().catch();
+  authStore.updateFollowing().catch();
+});
 </script>
 
 <template>
   <main>
-    <var-paper id="user-profile-header" :elevation="2" :radius="8">
-      <div style="display: flex">
-        <div id="user-profile-main">
-          <var-avatar id="user-profile-avatar" :src="userInfo.avatar" :size="120"></var-avatar>
-          <var-cell id="user-profile-username" :title="userInfo.username"></var-cell>
-          <var-row :gutter="[10, 10]">
-            <var-col :span="8">
-              <var-cell class="user-info-cell" title="贡献" description="0"></var-cell>
-            </var-col>
-            <var-col :span="8">
-              <var-cell class="user-info-cell" title="粉丝"
-                        :description="authStore.getFollowersCount.toString()"></var-cell>
-            </var-col>
-            <var-col :span="8">
-              <var-cell class="user-info-cell" title="关注"
-                        :description="authStore.getFollowingCount.toString()"></var-cell>
-            </var-col>
-          </var-row>
-        </div>
-      </div>
-      <var-button style="top: 30%; width: 90%">编辑资料</var-button>
-      <var-tabs class="user-tabs-container" v-model:active="active">
-        <var-tab class="user-tab">选项1</var-tab>
-        <var-tab class="user-tab">选项22</var-tab>
-        <var-tab class="user-tab">选项333</var-tab>
-        <var-tab class="user-tab">选项4444</var-tab>
-        <var-tab class="user-tab">选项55555</var-tab>
-      </var-tabs>
-    </var-paper>
-    <var-paper :elevation="2" :radius="8">
-      <var-card title="个人信息" style="padding: 0 5px">
-        <template #description>
-          <var-divider/>
-          <var-cell icon="email" :title="userInfo.email"></var-cell>
-          <var-cell icon="notebook" :title="userInfo.motto"></var-cell>
-        </template>
-      </var-card>
-    </var-paper>
+    <div v-if="authStore.needRefreshInfo || userId === userInfo.id" id="main-container">
+      <var-paper style="grid-column-start: span 3;" :elevation="2" :radius="8">
+        <var-skeleton avatar title :rows="5" :avatar-size="120"
+                      :loading="authStore.needRefreshInfo">
+          <div id="user-profile-header">
+            <div style="display: flex">
+              <div id="user-profile-main">
+                <var-avatar id="user-profile-avatar" :src="userInfo.avatar" :size="120"></var-avatar>
+                <var-cell id="user-profile-username" :title="userInfo.username"></var-cell>
+                <var-row :gutter="[10, 10]">
+                  <var-col :span="8">
+                    <var-cell class="user-info-cell" title="贡献" description="0"></var-cell>
+                  </var-col>
+                  <var-col :span="8">
+                    <var-cell class="user-info-cell" title="粉丝"
+                              :description="authStore.getFollowersCount.toString()"></var-cell>
+                  </var-col>
+                  <var-col :span="8">
+                    <var-cell class="user-info-cell" title="关注"
+                              :description="authStore.getFollowingCount.toString()"></var-cell>
+                  </var-col>
+                </var-row>
+              </div>
+            </div>
+            <var-button style="top: 30%; width: 90%">编辑资料</var-button>
+            <var-tabs class="user-tabs-container" v-model:active="active">
+              <var-tab class="user-tab">帖子</var-tab>
+              <var-tab class="user-tab">粉丝列表</var-tab>
+              <var-tab class="user-tab">关注列表</var-tab>
+            </var-tabs>
+          </div>
+        </var-skeleton>
+      </var-paper>
+
+      <var-paper :elevation="2" :radius="8">
+        <var-card title="个人信息" style="padding: 0 5px">
+          <template #description>
+            <var-skeleton :rows="4" :loading="authStore.needRefreshInfo">
+              <var-divider/>
+              <var-cell icon="email" :title="userInfo.email"></var-cell>
+              <var-cell icon="notebook" :title="userInfo.motto"></var-cell>
+            </var-skeleton>
+          </template>
+        </var-card>
+      </var-paper>
+    </div>
+    <var-result v-else type="error" title="不能访问该用户"
+                description="您查找的用户不存在或您无权访问！">
+      <template #footer>
+        <var-button type="primary" @click="returnToIndex()">返回首页</var-button>
+      </template>
+    </var-result>
   </main>
 </template>
 
 <style scoped>
-main {
+#main-container {
   display: grid;
   gap: 2em;
   grid-template-columns: 1fr 2fr 1fr;
@@ -75,7 +88,6 @@ main {
 }
 
 #user-profile-header {
-  grid-column-start: span 3;
   display: grid;
   grid-template-columns: 7fr 1fr;
   grid-template-rows: 3fr 1fr;
