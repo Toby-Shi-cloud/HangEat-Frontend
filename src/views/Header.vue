@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import {computed, watch, onMounted} from 'vue'
+import {watch} from 'vue'
 import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
 import {doLogout} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
 
 const headerStore = useHeaderStore();
-const title = computed(() => headerStore.getTitle);
-
 const authStore = useAuthStore();
 
 const toUser = () => {
@@ -42,7 +40,7 @@ watch(
         <div class="image-container">
           <var-icon :name="headerStore.getLogo" size="100%"></var-icon>
         </div>
-        <var-link id="app-title" class="bar-link" underline="hover" to="/">{{ title }}</var-link>
+        <var-link id="app-title" class="bar-link" underline="hover" to="/">{{ headerStore.getTitle }}</var-link>
       </template>
 
       <!-- TODO: implement search -->

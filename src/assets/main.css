@@ -9,6 +9,10 @@
   min-height: calc(100vh - var(--header-bar-height));
 }
 
+main {
+  max-width: inherit;
+}
+
 a,
 .green {
   text-decoration: none;

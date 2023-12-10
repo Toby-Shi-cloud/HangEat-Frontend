@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue"
 import {type Form, Snackbar} from "@varlet/ui";
-import {doGetUserInfo, doLogin} from "@/services/user";
+import {doLogin} from "@/services/user";
 
 defineProps<{
   toRegisterView: () => void
@@ -14,13 +14,6 @@ const data = reactive({
 
 const form = ref<Form | null>(null);
 
-async function getInfo() {
-  doGetUserInfo().then(response => {
-    console.log(response.data);
-    Snackbar.success("获取用户信息成功");
-  }).catch(() => {});
-}
-
 async function login() {
   let validation = await (form.value as Form).validate();
   if (!validation) return;
@@ -29,7 +22,10 @@ async function login() {
     setTimeout(() => {
       window.location.href = "/";
     }, 1000);
-  }).catch(() => {});
+  }).catch(() => {
+    data.password = "";
+    document.getElementById("reg-log.username")?.focus();
+  });
 }
 
 async function onKeyDown(event: KeyboardEvent) {
@@ -37,6 +33,16 @@ async function onKeyDown(event: KeyboardEvent) {
     await login();
   }
 }
+
+const usernameRules = [
+  (v: string) => !!v || '用户名或邮箱不能为空',
+  (v: string) => !v.includes('@') || v.endsWith('@buaa.edu.cn') || '请使用北航邮箱',
+  (v: string) => !v.includes('$') || '用户名不能含有$',
+];
+
+const passwordRules = [
+  (v: string) => !!v || '密码不能为空',
+];
 </script>
 
 <template>
@@ -49,15 +55,17 @@ async function onKeyDown(event: KeyboardEvent) {
         :onkeydown="onKeyDown">
       <var-space direction="column" justify="space-around">
         <var-input
+            id="reg-log.username"
             v-model="data.username"
-            placeholder="请输入用户名"
-            :rules="[v => !!v || '用户名不能为空']"
+            placeholder="请输入用户名或邮箱"
+            :rules="usernameRules"
         />
         <var-input
+            id="reg-log.password"
             type="password"
             v-model="data.password"
             placeholder="请输入密码"
-            :rules="[v => !!v || '密码不能为空']"
+            :rules="passwordRules"
         />
         <var-button
             block

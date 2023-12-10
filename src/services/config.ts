@@ -12,7 +12,7 @@ export interface ErrorData {
 
 // @ts-ignore
 if (process.env.NODE_ENV === "production") {
-    axios.defaults.baseURL = "api/";
+    axios.defaults.baseURL = "/api/";
 } else {
     const domain = window.location.host.split(':').slice(0, -1).join(':');
     axios.defaults.baseURL = "http://" + domain + ":8000";

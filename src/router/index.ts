@@ -34,7 +34,7 @@ router.beforeEach(async (to, from, next) => {
     await authStore.setup();
     if (to.name === 'Login' && authStore.isAuthenticated) {
         // 若用户已登录且前往登录页，则跳转到首页
-        Snackbar.info("您已登录！" + from.path);
+        Snackbar.info("您已登录！");
         next(from.path === "/login" ? "/" : from);
     } else if (to.name === 'Myself') {
         if (authStore.isAuthenticated) {

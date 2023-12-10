@@ -47,7 +47,10 @@ async function register() {
     setTimeout(() => {
       window.location.href = "/";
     }, 1000);
-  }).catch(() => {});
+  }).catch(() => {
+    data.password = "";
+    data.re_password = "";
+  });
 }
 
 async function onKeyDown(event: KeyboardEvent) {
@@ -55,6 +58,34 @@ async function onKeyDown(event: KeyboardEvent) {
     await register();
   }
 }
+
+const emailRules = [
+  (v: string) => !!v || '邮箱不能为空',
+  (v: string) => v.endsWith('@buaa.edu.cn') || '请输入北航邮箱',
+  (v: string) => v !== '@buaa.edu.cn' || '非法邮箱',
+];
+
+const captchaRules = [
+  (v: string) => !!v || '验证码不能为空',
+  (v: string) => v.length == 6 || '验证码长度必须为6位',
+];
+
+const usernameRules = [
+  (v: string) => !!v || '用户名不能为空',
+  (v: string) => !v.includes('@') || '用户名不能包含@',
+  (v: string) => !v.includes('$') || '用户名不能包含$',
+];
+
+const passwordRules = [
+  (v: string) => !!v || '密码不能为空',
+  (v: string) => v.length >= 6 || '密码长度不能小于6位',
+];
+
+const rePasswordRules = [
+  (v: string) => !!v || '密码不能为空',
+  (v: string) => v.length >= 6 || '密码长度不能小于6位',
+  (v: string) => v == data.password || '两次输入密码不一致',
+];
 </script>
 
 <template>
@@ -66,7 +97,7 @@ async function onKeyDown(event: KeyboardEvent) {
           <var-input
               v-model="data.email"
               placeholder="请输入北航邮箱"
-              :rules="[v => !!v || '邮箱不能为空', v => v.endsWith('@buaa.edu.cn') || '请输入北航邮箱']"
+              :rules="emailRules"
               style="width: 100%"
           />
         </var-col>
@@ -85,24 +116,24 @@ async function onKeyDown(event: KeyboardEvent) {
         <var-input
             v-model="data.captcha"
             placeholder="请输入验证码"
-            :rules="[v => !!v || '验证码不能为空', v => v.length == 6 || '验证码长度必须为6位']"
+            :rules="captchaRules"
         />
         <var-input
             v-model="data.username"
             placeholder="请输入用户名"
-            :rules="[v => !!v || '用户名不能为空']"
+            :rules="usernameRules"
         />
         <var-input
             type="password"
             v-model="data.password"
             placeholder="请输入密码"
-            :rules="[v => !!v || '密码不能为空', v => v.length >= 6 || '密码长度不能小于6位']"
+            :rules="passwordRules"
         />
         <var-input
             type="password"
             v-model="data.re_password"
             placeholder="请再次输入密码"
-            :rules="[v => !!v || '密码不能为空', v => v == data.password || '两次输入密码不一致']"
+            :rules="rePasswordRules"
         />
         <var-button
             block

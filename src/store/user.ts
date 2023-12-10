@@ -49,6 +49,7 @@ export const useAuthStore = defineStore('auth', {
         },
         async refreshUserInfo() {
             const {data} = await doGetUserInfo();
+            console.log(data);
             this.setUserInfo(data);
         },
         async updateFollowers() {
