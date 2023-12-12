@@ -3,6 +3,7 @@ import {Snackbar} from "@varlet/ui";
 import {useAuthStore} from "@/store/user";
 import {doRefreshToken} from "./user";
 import ErrorCode from "./errorcode";
+import Mutex from "ts-mutex";
 
 export interface ErrorData {
     code: number;
@@ -39,6 +40,9 @@ export const endLoading = () => {
     loading = false;
 };
 
+// mutex
+const refreshTokenMutex = new Mutex();
+
 // before request
 axios.interceptors.request.use(async function (config) {
     // 在发送请求前做些什么
@@ -70,47 +74,51 @@ axios.interceptors.response.use(function (response) {
     }
     return response
 }, async function (error) {
-    Snackbar.info({content: "加载结束", duration: 1000});
+    Snackbar.info({content: "加载结束", duration: 0});
     const userStore = useAuthStore();
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
     if (error?.response) {
-        if (error.response.status === 500) {
+        if (error.response.status >= 500 && error.response.status < 600) {
             Snackbar.error('系统错误，请稍后再试！');
-        } else try {
-            const data = error.response.data as ErrorData;
-            if (data.detailed_error_code === ErrorCode.UNAUTHORIZED_ERROR) {
-                if (userStore.isAuthenticated) {
-                    userStore.logout();
-                    localStorage.removeItem('_token');
-                    if (localStorage._refresh_token) try {
-                        await doRefreshToken();
-                        if (!userStore.isAuthenticated) throw new Error('refresh token failed');
-                        // 重新执行之前失败的请求
-                        const originRequest = error.config
-                        return axios(originRequest);
-                    } catch (e) {
-                        Snackbar.error('登录已过期，请重新登录！');
-                        localStorage.removeItem('_refresh_token');
-                        window.location.href = '/login';
-                    } else {
-                        Snackbar.error('登录已过期，请重新登录！');
-                        window.location.href = '/login';
-                    }
+            return Promise.reject(error);
+        }
+        const data = error.response.data as ErrorData;
+        if (data.code != error.response.status || !data.detailed_error_code || !data.error_msg) {
+            Snackbar.error('未知错误，请稍后再试！');
+            return Promise.reject(error);
+        }
+        if (data.detailed_error_code !== ErrorCode.UNAUTHORIZED_ERROR) {
+            const msg = data.error_msg.split(': ');
+            Snackbar.error(msg[msg.length - 1]);
+            return Promise.reject(error);
+        }
+        return await refreshTokenMutex.use(async () => {
+            if (userStore.isAuthenticated) {
+                userStore.logout();
+                localStorage.removeItem('_token');
+                if (localStorage._refresh_token) try {
+                    await doRefreshToken();
+                    if (!userStore.isAuthenticated) throw new Error('refresh token failed');
+                    // 重新执行之前失败的请求
+                    const originRequest = error.config
+                    return axios(originRequest);
+                } catch (e) {
+                    Snackbar.error('登录已过期，请重新登录！');
+                    localStorage.removeItem('_refresh_token');
+                    window.location.href = '/login';
                 } else {
-                    Snackbar.error('未登录，请先登录！');
+                    Snackbar.error('登录已过期，请重新登录！');
                     window.location.href = '/login';
                 }
             } else {
-                const msg = data.error_msg.split(': ');
-                Snackbar.error(msg[msg.length - 1]);
+                Snackbar.error('未登录，请先登录！');
+                window.location.href = '/login';
             }
-        } catch (e) {
-            Snackbar.error('未知错误，请稍后再试！');
-        }
-    } else {
-        Snackbar.error('请求超时，请稍后再试！');
+            return Promise.reject(error);
+        });
     }
+    Snackbar.error('请求超时，请稍后再试！');
     return Promise.reject(error);
 });
 

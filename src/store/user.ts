@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', {
         userInfo: {} as UserInfo,
         followers: 0,
         following: 0,
-        timestamp: Date.now()
+        timestamp: Date.now(),
     }),
 
     getters: {
@@ -30,10 +30,10 @@ export const useAuthStore = defineStore('auth', {
         async setup() {
             if (localStorage._token) {
                 this.login();
-                await this.refreshUserInfo(true);
+                await this.refreshUserInfo();
             } else if (localStorage._refresh_token) try {
                 await doRefreshToken().catch(() => localStorage.removeItem('_refresh_token'));
-                await this.refreshUserInfo(true);
+                await this.refreshUserInfo();
             } catch (e) {
                 console.error(e);
             }

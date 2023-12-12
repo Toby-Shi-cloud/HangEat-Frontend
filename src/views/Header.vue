@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {watch} from 'vue'
 import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
 import {doLogout} from "@/services/user";
@@ -21,16 +20,6 @@ const logout = () => {
     window.location.href = "/";
   }).catch();
 };
-
-watch(
-    () => [authStore.isAuthenticated, authStore.needRefreshInfo],
-    ([isAuthenticated, needRefreshInfo]) => {
-      if (isAuthenticated && needRefreshInfo) {
-        authStore.refreshUserInfo().catch(authStore.logout);
-      }
-    },
-    {immediate: true}
-);
 </script>
 
 <template>
