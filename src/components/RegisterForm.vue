@@ -2,6 +2,7 @@
 import {reactive, ref} from "vue";
 import {type Form, Snackbar} from "@varlet/ui";
 import {doRegister, doSendCaptcha} from "@/services/user";
+import {emailRules, captchaRules, usernameRules, passwordRules} from "./ts/rules";
 
 defineProps<{
   toLoginView: () => void
@@ -59,33 +60,9 @@ async function onKeyDown(event: KeyboardEvent) {
   }
 }
 
-const emailRules = [
-  (v: string) => !!v || '邮箱不能为空',
-  (v: string) => v.endsWith('@buaa.edu.cn') || '请输入北航邮箱',
-  (v: string) => v !== '@buaa.edu.cn' || '非法邮箱',
-];
-
-const captchaRules = [
-  (v: string) => !!v || '验证码不能为空',
-  (v: string) => v.length == 6 || '验证码长度必须为6位',
-];
-
-const usernameRules = [
-  (v: string) => !!v || '用户名不能为空',
-  (v: string) => !v.includes('@') || '用户名不能包含@',
-  (v: string) => !v.includes('$') || '用户名不能包含$',
-];
-
-const passwordRules = [
-  (v: string) => !!v || '密码不能为空',
-  (v: string) => v.length >= 6 || '密码长度不能小于6位',
-];
-
-const rePasswordRules = [
-  (v: string) => !!v || '密码不能为空',
-  (v: string) => v.length >= 6 || '密码长度不能小于6位',
-  (v: string) => v == data.password || '两次输入密码不一致',
-];
+const rePasswordRules = passwordRules.concat([
+  (v: string) => v === data.password || '两次输入密码不一致',
+]);
 </script>
 
 <template>
@@ -138,7 +115,6 @@ const rePasswordRules = [
         <var-button
             block
             type="primary"
-            native-type="submit"
             @click="register">
           注册
         </var-button>

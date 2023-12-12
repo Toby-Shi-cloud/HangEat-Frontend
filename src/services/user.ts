@@ -27,9 +27,9 @@ export const doDelete = () => {
     return axios.get('user/delete');
 }
 
-export const doUpdateInfo = (username: string, motto: string) => {
+export const doUpdateInfo = (username: string | null, motto: string) => {
     startLoading();
-    return axios.post('user/update-info', {
+    return axios.put('user/update-info', {
         username: username,
         motto: motto,
     });
@@ -39,12 +39,7 @@ export const doUpdateAvatar = (avatar: File) => {
     startLoading();
     let formData = new FormData();
     formData.append('avatar', avatar);
-
-    return axios.put('user/update-avatar', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
+    return axios.post('user/update-avatar', formData);
 }
 
 export const doChangePassword = (old_password: string, new_password: string) => {
@@ -64,8 +59,9 @@ export const doForgetPassword = (email: string, captcha: string, new_password: s
     });
 }
 
-export const doGetUserInfo = () => {
-    return axios.get('user/get-user-info');
+export const doGetUserInfo = (timestamp: number | null = null) => {
+    const suffix = timestamp ? '?timestamp=' + timestamp : '';
+    return axios.get('user/get-user-info' + suffix);
 }
 
 export const doRefreshToken = () => {

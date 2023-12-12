@@ -15,6 +15,7 @@ export const useAuthStore = defineStore('auth', {
         userInfo: {} as UserInfo,
         followers: 0,
         following: 0,
+        timestamp: Date.now()
     }),
 
     getters: {
@@ -29,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
         async setup() {
             if (localStorage._refresh_token) try {
                 this.login();
-                await this.refreshUserInfo();
+                await this.refreshUserInfo(true);
             } catch (e) {
                 console.error(e);
             }
@@ -42,14 +43,14 @@ export const useAuthStore = defineStore('auth', {
             this.userInfo = {};
         },
         setUserInfo(userInfo: UserInfo) {
-            for (const key in userInfo) {
-                // @ts-ignore
-                this.userInfo[key] = userInfo[key] || this.userInfo[key];
+            this.userInfo = {
+                ...this.userInfo,
+                ...userInfo
             }
         },
-        async refreshUserInfo() {
-            const {data} = await doGetUserInfo();
-            console.log(data);
+        async refreshUserInfo(force: boolean = false) {
+            if (force) this.timestamp = Date.now();
+            const {data} = await doGetUserInfo(this.timestamp);
             this.setUserInfo(data);
         },
         async updateFollowers() {

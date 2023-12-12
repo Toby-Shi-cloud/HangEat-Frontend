@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import {ref, onMounted} from "vue";
+import {ref, computed, onMounted} from "vue";
 import {useAuthStore} from "@/store/user";
+import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
+import ChangePassword from "@/components/ChangePassword.vue";
 
-defineProps<{
-  userId: number
+const props = defineProps<{
+  id: string
 }>();
+const userId = /^\d+$/.test(props.id) ? parseInt(props.id) : undefined;
 
 const authStore = useAuthStore();
-const active = ref(0);
+const activeTab = ref(0);
+const editInfo = ref(false);
+const editPassword = ref(false);
+
+const isMyself = computed(() => !!userId && userId === authStore.getUserInfo.id);
 
 const returnToIndex = () => {
   window.location.href = "/";
@@ -21,7 +28,13 @@ onMounted(() => {
 
 <template>
   <main>
-    <div v-if="authStore.needRefreshInfo || userId === authStore.getUserInfo.id" id="main-container">
+    <var-result v-if="userId === undefined" type="error" title="非法用户ID"
+                description="您查找的用户ID非法！">
+      <template #footer>
+        <var-button type="primary" @click="returnToIndex()">返回首页</var-button>
+      </template>
+    </var-result>
+    <div v-else-if="authStore.needRefreshInfo || isMyself" id="main-container">
       <var-paper style="grid-column-start: span 3;" :elevation="2" :radius="8">
         <var-skeleton avatar title :rows="5" :avatar-size="120"
                       :loading="authStore.needRefreshInfo">
@@ -45,8 +58,11 @@ onMounted(() => {
                 </var-row>
               </div>
             </div>
-            <var-button style="top: 30%; width: 90%">编辑资料</var-button>
-            <var-tabs class="user-tabs-container" v-model:active="active">
+            <div>
+              <var-button style="top: 20%; width: 90%" @click="editInfo = true">编辑资料</var-button>
+              <var-button style="top: 30%; width: 90%" @click="editPassword = true">更改密码</var-button>
+            </div>
+            <var-tabs class="user-tabs-container" v-model:active="activeTab">
               <var-tab class="user-tab">帖子</var-tab>
               <var-tab class="user-tab">粉丝列表</var-tab>
               <var-tab class="user-tab">关注列表</var-tab>
@@ -61,7 +77,7 @@ onMounted(() => {
             <var-skeleton :rows="4" :loading="authStore.needRefreshInfo">
               <var-divider/>
               <var-cell icon="email" :title="authStore.getUserInfo.email"></var-cell>
-              <var-cell icon="notebook" :title="authStore.getUserInfo.motto"></var-cell>
+              <pre class="var-cell">{{ authStore.getUserInfo.motto }}</pre>
             </var-skeleton>
           </template>
         </var-card>
@@ -74,6 +90,16 @@ onMounted(() => {
       </template>
     </var-result>
   </main>
+  <var-popup overlay-class="edit-popup-overlay"
+             style="border-radius: 8px"
+             v-model:show="editInfo">
+    <ChangeUserInfo @close="editInfo = false"/>
+  </var-popup>
+  <var-popup overlay-class="edit-popup-overlay"
+             style="border-radius: 8px"
+             v-model:show="editPassword">
+    <ChangePassword @close="editPassword = false"/>
+  </var-popup>
 </template>
 
 <style scoped>
@@ -108,7 +134,7 @@ onMounted(() => {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: left;
-  padding-left: 40px;
+  padding-left: 10px;
 }
 
 .user-info-cell {
@@ -125,5 +151,10 @@ onMounted(() => {
 
 .user-tab {
   padding: 10px 20px;
+}
+
+.edit-popup-overlay {
+  background: var(--color-background-opacity);
+  backdrop-filter: blur(10px);
 }
 </style>

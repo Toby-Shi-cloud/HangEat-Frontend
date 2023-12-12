@@ -17,12 +17,12 @@ const routes = [{
 }, {
     path: '/user',
     name: 'Myself',
-    component: User,
+    component: User
 }, {
     path: '/user/:id',
     name: 'User',
     component: User,
-    props: (route: any) => ({ userId: parseInt(route.params.id) })
+    props: true
 }, {
     path:"/:pathMatch(.*)*",
     name: 'NotFound',

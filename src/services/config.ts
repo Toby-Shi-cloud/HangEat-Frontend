@@ -21,7 +21,9 @@ if (process.env.NODE_ENV === "production") {
 // timeout: 5s
 axios.defaults.timeout = 5000;
 
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+const contentType = 'application/x-www-form-urlencoded';
+axios.defaults.headers.post['Content-Type'] = contentType;
+axios.defaults.headers.put['Content-Type'] = contentType;
 
 // loading...
 let loading = false;

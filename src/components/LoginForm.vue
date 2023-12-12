@@ -2,6 +2,7 @@
 import {reactive, ref} from "vue"
 import {type Form, Snackbar} from "@varlet/ui";
 import {doLogin} from "@/services/user";
+import {usernameOrEmailRules, passwordRules} from "./ts/rules";
 
 defineProps<{
   toRegisterView: () => void
@@ -33,16 +34,6 @@ async function onKeyDown(event: KeyboardEvent) {
     await login();
   }
 }
-
-const usernameRules = [
-  (v: string) => !!v || '用户名或邮箱不能为空',
-  (v: string) => !v.includes('@') || v.endsWith('@buaa.edu.cn') || '请使用北航邮箱',
-  (v: string) => !v.includes('$') || '用户名不能含有$',
-];
-
-const passwordRules = [
-  (v: string) => !!v || '密码不能为空',
-];
 </script>
 
 <template>
@@ -58,7 +49,7 @@ const passwordRules = [
             id="reg-log.username"
             v-model="data.username"
             placeholder="请输入用户名或邮箱"
-            :rules="usernameRules"
+            :rules="usernameOrEmailRules"
         />
         <var-input
             id="reg-log.password"
@@ -70,7 +61,6 @@ const passwordRules = [
         <var-button
             block
             type="primary"
-            native-type="submit"
             @click="login">
           登录
         </var-button>
