@@ -4,10 +4,6 @@ import {type Form, Snackbar} from "@varlet/ui";
 import {doLogin} from "@/services/user";
 import {usernameOrEmailRules, passwordRules} from "./ts/rules";
 
-defineProps<{
-  toRegisterView: () => void
-}>();
-
 const data = reactive({
   username: "",
   password: "",
@@ -70,7 +66,7 @@ async function onKeyDown(event: KeyboardEvent) {
     <var-button
         class="right-button"
         type="default"
-        @click="toRegisterView()">
+        @click="$emit('toggle')">
       没有账号？去注册
     </var-button>
   </var-paper>

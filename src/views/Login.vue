@@ -4,6 +4,12 @@ import LoginForm from "@/components/LoginForm.vue";
 import RegisterForm from "@/components/RegisterForm.vue";
 import GradientBackground from "@/components/GradientBackground.vue";
 
+withDefaults(defineProps<{
+  special?: boolean
+}>(), {
+  special: false
+});
+
 let isLoginView = ref(true);
 </script>
 
@@ -11,8 +17,8 @@ let isLoginView = ref(true);
   <GradientBackground/>
   <main class="login" style="place-self: center">
     <Transition name="fade" mode="out-in">
-      <LoginForm v-if="isLoginView" :to-register-view="() => isLoginView = false"/>
-      <RegisterForm v-else :to-login-view="() => isLoginView = true"/>
+      <LoginForm v-if="isLoginView" @toggle="isLoginView = false"/>
+      <RegisterForm v-else @toggle="isLoginView = true" :special="special"/>
     </Transition>
   </main>
 </template>

@@ -24,7 +24,7 @@ export const doLogout = () => {
 }
 
 export const doDelete = () => {
-    return axios.get('user/delete');
+    return axios.delete('user/delete');
 }
 
 export const doUpdateInfo = (username: string | null, motto: string) => {
@@ -65,7 +65,8 @@ export const doGetUserInfo = (timestamp: number | null = null) => {
 }
 
 export const doRefreshToken = () => {
-    return axios.get('user/refresh-token');
+    console.log('refresh token');
+    return axios.get('user/refresh-token?timestamp=' + Date.now());
 }
 
 export const doSendCaptcha = (email: string) => {

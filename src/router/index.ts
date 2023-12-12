@@ -15,6 +15,11 @@ const routes = [{
     name: 'Login',
     component: Login
 }, {
+    path: '/login/special',
+    name: 'LoginSp',
+    component: Login,
+    props: {special: true}
+}, {
     path: '/user',
     name: 'Myself',
     component: User
@@ -24,7 +29,7 @@ const routes = [{
     component: User,
     props: true
 }, {
-    path:"/:pathMatch(.*)*",
+    path: "/:pathMatch(.*)*",
     name: 'NotFound',
     component: NotFound
 }];

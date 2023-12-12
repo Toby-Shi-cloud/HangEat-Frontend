@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {doGetUserInfo} from "@/services/user";
+import {doGetUserInfo, doRefreshToken} from "@/services/user";
 
 export interface UserInfo {
     id?: number;
@@ -28,17 +28,22 @@ export const useAuthStore = defineStore('auth', {
 
     actions: {
         async setup() {
-            if (localStorage._refresh_token) try {
+            if (localStorage._token) {
                 this.login();
+                await this.refreshUserInfo(true);
+            } else if (localStorage._refresh_token) try {
+                await doRefreshToken().catch(() => localStorage.removeItem('_refresh_token'));
                 await this.refreshUserInfo(true);
             } catch (e) {
                 console.error(e);
             }
         },
         login() {
+            if (this.authenticated) return;
             this.authenticated = true;
         },
         logout() {
+            if (!this.authenticated) return;
             this.authenticated = false;
             this.userInfo = {};
         },
@@ -49,6 +54,7 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         async refreshUserInfo(force: boolean = false) {
+            if (!this.authenticated) return;
             if (force) this.timestamp = Date.now();
             const {data} = await doGetUserInfo(this.timestamp);
             this.setUserInfo(data);

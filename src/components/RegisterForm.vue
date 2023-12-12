@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 import {type Form, Snackbar} from "@varlet/ui";
-import {doRegister, doSendCaptcha} from "@/services/user";
+import {doLogin, doRegister, doSendCaptcha} from "@/services/user";
 import {emailRules, captchaRules, usernameRules, passwordRules} from "./ts/rules";
 
 defineProps<{
-  toLoginView: () => void
+  special: boolean
 }>();
 
 const data = reactive({
@@ -44,6 +44,7 @@ async function register() {
   if (!await (emailForm.value as Form).validate()) return;
   if (!await (regForm.value as Form).validate()) return;
   doRegister(data.email, data.captcha, data.username, data.password).then(response => {
+    doLogin(data.username, data.password).catch();
     Snackbar.success(response.data.message);
     setTimeout(() => {
       window.location.href = "/";
@@ -73,9 +74,9 @@ const rePasswordRules = passwordRules.concat([
         <var-col :span="20">
           <var-input
               v-model="data.email"
-              placeholder="请输入北航邮箱"
+              :placeholder="special ? '请输入邮箱' : '请输入北航邮箱'"
               :autofocus="true"
-              :rules="emailRules"
+              :rules="special ? [v => v.includes('@') || '请输入邮箱'] : emailRules"
               style="width: 100%"
           />
         </var-col>
@@ -124,7 +125,7 @@ const rePasswordRules = passwordRules.concat([
     <var-button
         class="right-button"
         type="default"
-        @click="toLoginView()">
+        @click="$emit('toggle')">
       已有账号？去登录
     </var-button>
   </var-paper>
