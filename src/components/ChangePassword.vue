@@ -21,15 +21,27 @@ async function updatePassword() {
   doChangePassword(oldPassword.value, newPassword.value).then(response => {
     Snackbar.success(response.data.message);
     emit("close");
-  }).catch();
+  }).catch(() => {
+    oldPassword.value = "";
+    newPassword.value = "";
+    rePassword.value = "";
+  });
+}
+
+async function onKeyDown(event: KeyboardEvent) {
+  if (event.key === "Enter") {
+    await updatePassword();
+  } else if (event.key === "Escape") {
+    emit("close");
+  }
 }
 </script>
 
 <template>
-  <var-form class="edit-block" ref="form">
+  <var-form class="edit-block" ref="form" :onkeydown="onKeyDown">
     <h1>更改密码</h1>
     <var-input class="edit-input" v-model="oldPassword" placeholder="原密码"
-               type="password" :rules="passwordRules" variant="outlined"/>
+               type="password" :rules="passwordRules" variant="outlined" :autofocus="true"/>
     <var-input class="edit-input" v-model="newPassword" placeholder="新密码"
                type="password" :rules="passwordRules" variant="outlined"/>
     <var-input class="edit-input" v-model="rePassword" placeholder="重复新密码"

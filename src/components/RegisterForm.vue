@@ -74,6 +74,7 @@ const rePasswordRules = passwordRules.concat([
           <var-input
               v-model="data.email"
               placeholder="请输入北航邮箱"
+              :autofocus="true"
               :rules="emailRules"
               style="width: 100%"
           />

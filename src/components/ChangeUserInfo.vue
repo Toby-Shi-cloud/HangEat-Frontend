@@ -34,8 +34,10 @@ async function updateUserInfo() {
   }).catch();
 }
 
-interface FileObj {
-  url: string
+async function onKeyDown(event: KeyboardEvent) {
+  if (event.key === "Escape") {
+    emit("close");
+  }
 }
 
 const uploadingAvatar = ref(false);
@@ -66,9 +68,9 @@ async function updateAvatar() {
     <div class="edit-block">
       <var-avatar class="edit-avatar" :src="authStore.getUserInfo.avatar" :size="120"
                   @click="uploadingAvatar = true" :hoverable="true"/>
-      <var-form ref="form" class="edit-form">
+      <var-form ref="form" class="edit-form" :onkeydown="onKeyDown">
         <var-input class="edit-input" v-model="username" placeholder="用户名"
-                   :rules="usernameRules" variant="outlined"/>
+                   :rules="usernameRules" variant="outlined" :autofocus="true"/>
         <var-input class="edit-input" v-model="motto" placeholder="用户签名"
                    :textarea="true" variant="outlined"/>
         <var-button-group class="edit-button-group">

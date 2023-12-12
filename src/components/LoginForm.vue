@@ -49,6 +49,7 @@ async function onKeyDown(event: KeyboardEvent) {
             id="reg-log.username"
             v-model="data.username"
             placeholder="请输入用户名或邮箱"
+            :autofocus="true"
             :rules="usernameOrEmailRules"
         />
         <var-input
