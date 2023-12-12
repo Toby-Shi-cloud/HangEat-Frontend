@@ -3,6 +3,7 @@ import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
 import {doLogout} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
+import {isLight, toggleTheme} from "@/components/themes";
 
 const headerStore = useHeaderStore();
 const authStore = useAuthStore();
@@ -43,10 +44,14 @@ const logout = () => {
       </div>
 
       <template #right v-if="headerStore.showUser">
+        <var-button round @click="toggleTheme" style="margin-right: 15px; background: rgba(0, 0, 0, 0)">
+          <var-icon animation-class="fade" :transition="300"
+                    :name="isLight ? 'white-balance-sunny' : 'weather-night'"/>
+        </var-button>
         <var-skeleton v-if="authStore.isAuthenticated"
                       avatar :rows="0" class="user-avatar"
                       :loading="authStore.getUserInfo.avatar === undefined">
-          <var-menu placement="bottom-start" offset-y="5px" popover-class="user-menu">
+          <var-menu placement="bottom-start" popover-class="user-menu">
             <var-avatar :src="authStore.getUserInfo.avatar" :hoverable="true"/>
             <template #menu>
               <var-button-group vertical size="large">
@@ -104,7 +109,16 @@ const logout = () => {
 }
 
 .user-avatar {
-  --skeleton-avatar-size: calc(var(--header-bar-height) * 0.8);
+  margin-right: 10px;
+  width: var(--avatar-normal-size);
+  height: var(--avatar-normal-size);
+  --avatar-normal-size: calc(var(--header-bar-height) * 0.7);
+  --skeleton-avatar-size: var(--avatar-normal-size);
+}
+
+.fade {
+  opacity: 0;
+  transition-property: opacity;
 }
 
 *, *::before, *::after {

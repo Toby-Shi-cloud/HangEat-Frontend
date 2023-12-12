@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {doGetUserInfo, doRefreshToken} from "@/services/user";
+import {doGetFansNum, doGetSubscribesNum, doGetUserInfo, doRefreshToken} from "@/services/user";
 
 export interface UserInfo {
     id?: number;
@@ -59,11 +59,15 @@ export const useAuthStore = defineStore('auth', {
             const {data} = await doGetUserInfo(this.timestamp);
             this.setUserInfo(data);
         },
-        async updateFollowers() {
-            // TODO: update followers
+        async updateFollowersNum() {
+            if (!this.authenticated) return;
+            const {data} = await doGetFansNum();
+            this.followers = data.fans_num;
         },
-        async updateFollowing() {
-            // TODO: update following
+        async updateFollowingNum() {
+            if (!this.authenticated) return;
+            const {data} = await doGetSubscribesNum();
+            this.following = data.follower_num;
         },
     }
 });

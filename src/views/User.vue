@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import {ref, computed, onMounted} from "vue";
-import {useAuthStore} from "@/store/user";
+import {useAuthStore, type UserInfo} from "@/store/user";
 import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
+import {doGetUserById, doSubscribe} from "@/services/user";
+import {Snackbar} from "@varlet/ui";
 
 const props = defineProps<{
   id: string
@@ -21,9 +23,30 @@ const returnToIndex = () => {
 };
 
 onMounted(() => {
-  authStore.updateFollowers().catch();
-  authStore.updateFollowing().catch();
+  if (isMyself.value) {
+    authStore.updateFollowersNum().catch();
+    authStore.updateFollowingNum().catch();
+  }
 });
+
+const userInfoWithId = ref<UserInfo>({});
+const userInfo = computed(() => isMyself.value ? authStore.getUserInfo : userInfoWithId.value);
+const needRefreshInfo = computed(() => userInfo.value.id === undefined);
+const failedToGetUserInfo = ref(false);
+
+if (userId !== undefined) {
+  doGetUserById(userId).then(res => {
+    userInfoWithId.value = res.data;
+  }).catch(() => {
+    failedToGetUserInfo.value = true;
+  });
+}
+
+function subscribe() {
+  doSubscribe(userId!).then(() => {
+    Snackbar.success("关注成功！");
+  }).catch();
+}
 </script>
 
 <template>
@@ -34,38 +57,40 @@ onMounted(() => {
         <var-button type="primary" @click="returnToIndex()">返回首页</var-button>
       </template>
     </var-result>
-    <div v-else-if="authStore.needRefreshInfo || isMyself" id="main-container">
+    <div v-else-if="!failedToGetUserInfo" id="main-container">
       <var-paper style="grid-column-start: span 3;" :elevation="2" :radius="8">
-        <var-skeleton avatar title :rows="5" :avatar-size="120"
-                      :loading="authStore.needRefreshInfo">
+        <var-skeleton avatar title :rows="5" :avatar-size="120" :loading="needRefreshInfo">
           <div id="user-profile-header">
             <div style="display: flex">
               <div id="user-profile-main">
-                <var-avatar id="user-profile-avatar" :src="authStore.getUserInfo.avatar" :size="120"></var-avatar>
-                <var-cell id="user-profile-username" :title="authStore.getUserInfo.username"></var-cell>
+                <var-avatar id="user-profile-avatar" :src="userInfo.avatar" :size="120"></var-avatar>
+                <var-cell id="user-profile-username" :title="userInfo.username"></var-cell>
                 <var-row :gutter="[10, 10]">
                   <var-col :span="8">
                     <var-cell class="user-info-cell" title="贡献" description="0"></var-cell>
                   </var-col>
                   <var-col :span="8">
-                    <var-cell class="user-info-cell" title="粉丝"
+                    <var-cell v-if="isMyself" class="user-info-cell" title="粉丝"
                               :description="authStore.getFollowersCount.toString()"></var-cell>
                   </var-col>
-                  <var-col :span="8">
+                  <var-col v-if="isMyself" :span="8">
                     <var-cell class="user-info-cell" title="关注"
                               :description="authStore.getFollowingCount.toString()"></var-cell>
                   </var-col>
                 </var-row>
               </div>
             </div>
-            <div>
+            <div v-if="isMyself">
               <var-button style="top: 20%; width: 90%" @click="editInfo = true">编辑资料</var-button>
               <var-button style="top: 30%; width: 90%" @click="editPassword = true">更改密码</var-button>
             </div>
+            <div v-else>
+              <var-button style="top: 30%; width: 90%" @click="subscribe">关注</var-button>
+            </div>
             <var-tabs class="user-tabs-container" v-model:active="activeTab">
               <var-tab class="user-tab">帖子</var-tab>
-              <var-tab class="user-tab">粉丝列表</var-tab>
-              <var-tab class="user-tab">关注列表</var-tab>
+              <var-tab v-if="isMyself" class="user-tab">粉丝列表</var-tab>
+              <var-tab v-if="isMyself" class="user-tab">关注列表</var-tab>
             </var-tabs>
           </div>
         </var-skeleton>
@@ -74,10 +99,10 @@ onMounted(() => {
       <var-paper :elevation="2" :radius="8">
         <var-card title="个人信息" style="padding: 0 5px">
           <template #description>
-            <var-skeleton :rows="4" :loading="authStore.needRefreshInfo">
+            <var-skeleton :rows="4" :loading="needRefreshInfo">
               <var-divider/>
-              <var-cell icon="email" :title="authStore.getUserInfo.email"></var-cell>
-              <pre class="var-cell">{{ authStore.getUserInfo.motto }}</pre>
+              <var-cell v-if="userInfo.email" icon="email" :title="userInfo.email"/>
+              <pre class="var-cell">{{ userInfo.motto }}</pre>
             </var-skeleton>
           </template>
         </var-card>

@@ -20,7 +20,7 @@ export const doRegister = (email: string, captcha: string, username: string, pas
 }
 
 export const doLogout = () => {
-    return axios.get('user/logout');
+    return axios.get('user/logout?timestamp=' + Date.now());
 }
 
 export const doDelete = () => {
@@ -64,8 +64,11 @@ export const doGetUserInfo = (timestamp: number | null = null) => {
     return axios.get('user/get-user-info' + suffix);
 }
 
+export const doGetUserById = (id: number) => {
+    return axios.get('user/get-user-info/' + id + '?timestamp=' + Date.now());
+}
+
 export const doRefreshToken = () => {
-    console.log('refresh token');
     return axios.get('user/refresh-token?timestamp=' + Date.now());
 }
 
@@ -88,4 +91,30 @@ export const doSubscribe = (target_id: number) => {
 
 export const doUnsubscribe = (target_id: number) => {
     return axios.post('user/unsubscribe', {target_id: target_id});
+}
+
+export const doGetSubscribesNum = () => {
+    return axios.get('user/get-subscribes-num?timestamp=' + Date.now());
+}
+
+export const doGetSubscribesList = (from: number, to: number) => {
+    return axios.get('user/get-subscribes-list', {
+        data: {
+            from: from,
+            to: to,
+        }
+    });
+}
+
+export const doGetFansNum = () => {
+    return axios.get('user/get-fans-num?timestamp=' + Date.now());
+}
+
+export const doGetFansList = (from: number, to: number) => {
+    return axios.get('user/get-fans-list', {
+        data: {
+            from: from,
+            to: to,
+        }
+    });
 }
