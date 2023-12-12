@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from 'vue-router';
 import Index from "@/views/Index.vue";
 import Login from "@/views/Login.vue";
 import User from "@/views/User.vue";
+import NotFound from "@/views/404.vue";
 import {useAuthStore} from "@/store/user";
 import {Snackbar} from "@varlet/ui";
 
@@ -22,6 +23,10 @@ const routes = [{
     name: 'User',
     component: User,
     props: (route: any) => ({ userId: parseInt(route.params.id) })
+}, {
+    path:"/:pathMatch(.*)*",
+    name: 'NotFound',
+    component: NotFound
 }];
 
 const router = createRouter({

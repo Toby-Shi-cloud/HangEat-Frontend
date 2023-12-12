@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', {
     getters: {
         isAuthenticated: (state) => state.authenticated,
         getUserInfo: (state) => state.userInfo,
-        needRefreshInfo: (state) => state.userInfo.id === undefined,
+        needRefreshInfo: (state) => state.authenticated && state.userInfo.id === undefined,
         getFollowersCount: (state) => state.followers,
         getFollowingCount: (state) => state.following,
     },
