@@ -41,3 +41,8 @@ body {
   height: var(--header-bar-height);
   background: var(--color-background);
 }
+
+.normal-popup-overlay {
+  background: var(--color-background-opacity);
+  backdrop-filter: blur(10px);
+}

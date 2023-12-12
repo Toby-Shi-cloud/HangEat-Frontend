@@ -81,7 +81,7 @@ async function updateAvatar() {
     </div>
   </var-skeleton>
   <var-popup
-      overlay-class="upload-popup-overlay"
+      overlay-class="normal-popup-overlay"
       style="border-radius: 8px"
       v-model:show="uploadingAvatar">
     <div class="upload-avatar">
@@ -122,11 +122,6 @@ async function updateAvatar() {
 .edit-button-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
-}
-
-.upload-popup-overlay {
-  background: var(--color-background-opacity);
-  backdrop-filter: blur(10px);
 }
 
 .upload-avatar {

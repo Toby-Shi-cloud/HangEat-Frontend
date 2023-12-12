@@ -3,6 +3,7 @@ import {reactive, ref} from "vue"
 import {type Form, Snackbar} from "@varlet/ui";
 import {doLogin} from "@/services/user";
 import {usernameOrEmailRules, passwordRules} from "./ts/rules";
+import RegisterForm from "@/components/RegisterForm.vue";
 
 const data = reactive({
   username: "",
@@ -30,6 +31,8 @@ async function onKeyDown(event: KeyboardEvent) {
     await login();
   }
 }
+
+const forgetPassword = ref(false);
 </script>
 
 <template>
@@ -63,12 +66,25 @@ async function onKeyDown(event: KeyboardEvent) {
         </var-button>
       </var-space>
     </var-form>
+
+    <var-button
+        class="left-button"
+        type="default"
+        @click="forgetPassword = true">
+      忘记密码？去找回
+    </var-button>
     <var-button
         class="right-button"
         type="default"
         @click="$emit('toggle')">
       没有账号？去注册
     </var-button>
+
+    <var-popup overlay-class="normal-popup-overlay"
+               style="border-radius: 8px"
+               v-model:show="forgetPassword">
+      <RegisterForm :special="true" :forgetPassword="true"/>
+    </var-popup>
   </var-paper>
 </template>
 

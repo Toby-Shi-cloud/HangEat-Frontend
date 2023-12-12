@@ -18,7 +18,7 @@ let isLoginView = ref(true);
   <main class="login" style="place-self: center">
     <Transition name="fade" mode="out-in">
       <LoginForm v-if="isLoginView" @toggle="isLoginView = false"/>
-      <RegisterForm v-else @toggle="isLoginView = true" :special="special"/>
+      <RegisterForm v-else @toggle="isLoginView = true" :special="special" :forget-password="false"/>
     </Transition>
   </main>
 </template>

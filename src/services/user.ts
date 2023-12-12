@@ -50,12 +50,12 @@ export const doChangePassword = (old_password: string, new_password: string) => 
     });
 }
 
-export const doForgetPassword = (email: string, captcha: string, new_password: string) => {
+export const doForgetPassword = (email: string, captcha: string, password: string) => {
     startLoading();
     return axios.post('user/forget-password', {
         email: email,
         captcha: captcha,
-        new_password: new_password,
+        password: password,
     });
 }
 

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 import {type Form, Snackbar} from "@varlet/ui";
-import {doLogin, doRegister, doSendCaptcha} from "@/services/user";
+import {doForgetPassword, doLogin, doRegister, doSendCaptcha} from "@/services/user";
 import {emailRules, captchaRules, usernameRules, passwordRules} from "./ts/rules";
 
-defineProps<{
+const props = defineProps<{
   special: boolean
+  forgetPassword: boolean
 }>();
 
 const data = reactive({
@@ -48,7 +49,22 @@ async function register() {
     Snackbar.success(response.data.message);
     setTimeout(() => {
       window.location.href = "/";
-    }, 1000);
+    }, 500);
+  }).catch(() => {
+    data.password = "";
+    data.re_password = "";
+  });
+}
+
+async function resetPassword() {
+  if (!await (emailForm.value as Form).validate()) return;
+  if (!await (regForm.value as Form).validate()) return;
+  doForgetPassword(data.email, data.captcha, data.password).then(response => {
+    doLogin(data.email, data.password).catch();
+    Snackbar.success(response.data.message);
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 500);
   }).catch(() => {
     data.password = "";
     data.re_password = "";
@@ -57,7 +73,7 @@ async function register() {
 
 async function onKeyDown(event: KeyboardEvent) {
   if (event.key === "Enter") {
-    await register();
+    await (props.forgetPassword ? resetPassword() : register());
   }
 }
 
@@ -68,7 +84,7 @@ const rePasswordRules = passwordRules.concat([
 
 <template>
   <var-paper class="login-paper" :elevation="20" :radius="8">
-    <h1 style="text-align: center">注册</h1>
+    <h1 style="text-align: center">{{ forgetPassword ? '忘记密码' : '注册' }}</h1>
     <var-form class="login-form" ref="emailForm" style="padding-bottom: 5px" :onkeydown="onKeyDown">
       <var-row :gutter="5" style="align-items: flex-end">
         <var-col :span="20">
@@ -98,6 +114,7 @@ const rePasswordRules = passwordRules.concat([
             :rules="captchaRules"
         />
         <var-input
+            v-if="!forgetPassword"
             v-model="data.username"
             placeholder="请输入用户名"
             :rules="usernameRules"
@@ -115,14 +132,23 @@ const rePasswordRules = passwordRules.concat([
             :rules="rePasswordRules"
         />
         <var-button
+            v-if="forgetPassword"
             block
             type="primary"
-            @click="register">
+            @click="resetPassword">
+          确定
+        </var-button>
+        <var-button
+            v-else
+            block
+            type="primary"
+            @click="resetPassword">
           注册
         </var-button>
       </var-space>
     </var-form>
     <var-button
+        v-if="!forgetPassword"
         class="right-button"
         type="default"
         @click="$emit('toggle')">

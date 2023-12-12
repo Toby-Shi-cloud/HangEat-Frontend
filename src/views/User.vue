@@ -90,12 +90,12 @@ onMounted(() => {
       </template>
     </var-result>
   </main>
-  <var-popup overlay-class="edit-popup-overlay"
+  <var-popup overlay-class="normal-popup-overlay"
              style="border-radius: 8px"
              v-model:show="editInfo">
     <ChangeUserInfo @close="editInfo = false"/>
   </var-popup>
-  <var-popup overlay-class="edit-popup-overlay"
+  <var-popup overlay-class="normal-popup-overlay"
              style="border-radius: 8px"
              v-model:show="editPassword">
     <ChangePassword @close="editPassword = false"/>
@@ -151,10 +151,5 @@ onMounted(() => {
 
 .user-tab {
   padding: 10px 20px;
-}
-
-.edit-popup-overlay {
-  background: var(--color-background-opacity);
-  backdrop-filter: blur(10px);
 }
 </style>
