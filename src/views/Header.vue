@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import {getCurrentTheme, getSystemTheme, isLight} from "@/components/themes";
+import {setTheme, Theme, toggleTheme} from "@/components/themes";
 import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
 import {doLogout} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
-import {isLight, toggleTheme} from "@/components/themes";
 
 const headerStore = useHeaderStore();
 const authStore = useAuthStore();
@@ -20,6 +21,12 @@ const logout = () => {
     Snackbar.success('登出成功');
     window.location.href = "/";
   }).catch();
+};
+
+const changeTheme = () => {
+  if (getCurrentTheme.value === Theme.System) return toggleTheme();
+  if (getCurrentTheme.value === getSystemTheme.value) return setTheme(Theme.System);
+  return toggleTheme();
 };
 </script>
 
@@ -44,10 +51,16 @@ const logout = () => {
       </div>
 
       <template #right v-if="headerStore.showUser">
-        <var-button round @click="toggleTheme" style="margin-right: 15px; background: rgba(0, 0, 0, 0)">
-          <var-icon animation-class="fade" :transition="300"
-                    :name="isLight ? 'white-balance-sunny' : 'weather-night'"/>
-        </var-button>
+        <var-tooltip :content="(isLight ? '白昼模式' : '暗夜模式') + (getCurrentTheme === Theme.System ? '（跟随系统）' : '')">
+          <var-button round class="switch-btn" @click="changeTheme">
+            <var-badge position="right-bottom" style="color: inherit" :hidden="getCurrentTheme !== Theme.System">
+              <font-awesome-icon :icon="['fas', isLight ? 'sun' : 'moon']" size="xl"/>
+              <template #value>
+                <font-awesome-icon :icon="['fas', 'a']"/>
+              </template>
+            </var-badge>
+          </var-button>
+        </var-tooltip>
         <var-skeleton v-if="authStore.isAuthenticated"
                       avatar :rows="0" class="user-avatar"
                       :loading="authStore.getUserInfo.avatar === undefined">
@@ -108,17 +121,19 @@ const logout = () => {
   --divider-color: var(--color-border);
 }
 
+.switch-btn {
+  width: var(--avatar-small-size);
+  height: var(--avatar-small-size);
+  background: rgba(0, 0, 0, 0);
+}
+
 .user-avatar {
-  margin-right: 10px;
+  margin: 0 10px;
   width: var(--avatar-normal-size);
   height: var(--avatar-normal-size);
   --avatar-normal-size: calc(var(--header-bar-height) * 0.7);
   --skeleton-avatar-size: var(--avatar-normal-size);
-}
-
-.fade {
-  opacity: 0;
-  transition-property: opacity;
+  --skeleton-content-padding: 0;
 }
 
 *, *::before, *::after {

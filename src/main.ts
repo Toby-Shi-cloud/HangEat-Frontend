@@ -1,9 +1,21 @@
 import './assets/main.css'
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from "@/router";
 import Varlet from "@varlet/ui";
 import '@varlet/ui/es/style'
-import { createPinia } from "pinia";
+import {createPinia} from "pinia";
 
-createApp(App).use(Varlet).use(router).use(createPinia()).mount('#app')
+/* import the fontawesome core */
+import {library} from '@fortawesome/fontawesome-svg-core';
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+import {faA, faSun, faMoon} from '@fortawesome/free-solid-svg-icons';
+
+library.add(faA, faSun, faMoon);
+
+createApp(App)
+    .use(Varlet)
+    .use(router)
+    .use(createPinia())
+    .component('font-awesome-icon', FontAwesomeIcon)
+    .mount('#app');

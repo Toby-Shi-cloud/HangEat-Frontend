@@ -15,6 +15,8 @@ export const isLight = computed(() =>
     currentTheme.value === Theme.Light || (currentTheme.value === Theme.System && isSysLightTheme()));
 export const isDark = computed(() =>
     currentTheme.value === Theme.Dark || (currentTheme.value === Theme.System && isSysDarkTheme()));
+export const getCurrentTheme = computed(() => currentTheme.value);
+export const getSystemTheme = computed(() => isSysDarkTheme() ? Theme.Dark : Theme.Light);
 
 async function refreshTheme() {
     await nextTick();
