@@ -47,6 +47,15 @@ function subscribe() {
     Snackbar.success("关注成功！");
   }).catch();
 }
+
+function updateInfo(active: number | string) {
+  const activeNum = parseInt(active.toString());
+  if (activeNum === 1) {
+    authStore.updateFollowersNum().catch();
+  } else if (activeNum === 2) {
+    authStore.updateFollowingNum().catch();
+  }
+}
 </script>
 
 <template>
@@ -87,7 +96,7 @@ function subscribe() {
             <div v-else>
               <var-button style="top: 30%; width: 90%" @click="subscribe">关注</var-button>
             </div>
-            <var-tabs class="user-tabs-container" v-model:active="activeTab">
+            <var-tabs class="user-tabs-container" v-model:active="activeTab" @change="updateInfo">
               <var-tab class="user-tab">帖子</var-tab>
               <var-tab v-if="isMyself" class="user-tab">粉丝列表</var-tab>
               <var-tab v-if="isMyself" class="user-tab">关注列表</var-tab>

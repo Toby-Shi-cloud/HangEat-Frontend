@@ -15,6 +15,7 @@ const isMyself = computed(() => props.userId === authStore.getUserInfo.id);
 const subscribe = (id: number) => {
   doSubscribe(id).then(() => {
     Snackbar.success("关注成功！");
+    authStore.updateFollowingNum();
   }).catch();
 }
 </script>

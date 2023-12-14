@@ -16,6 +16,7 @@ const unsubscribe = (id: number, data: UserInfo[]) => {
   doUnsubscribe(id).then(() => {
     Snackbar.success("取关成功！");
     data.splice(data.findIndex(item => item.id === id), 1);
+    authStore.updateFollowingNum();
   }).catch();
 }
 </script>

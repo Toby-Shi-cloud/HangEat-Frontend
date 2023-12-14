@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, computed} from 'vue';
+import {reactive, computed, watch} from 'vue';
 import LazyList from "@/components/LazyList.vue";
 import {type UserInfo} from "@/store/user";
 
@@ -10,6 +10,16 @@ const props = defineProps<{
 
 const data = reactive<UserInfo[]>([]);
 const finished = computed(() => data.length === props.total);
+
+watch(() => props.total, () => {
+  props.load(0, 1).then(res => {
+    if (data.length === 0) return;
+    if (res.data.list[0].id != data[0].id) {
+      data.splice(0, data.length);
+      data.push(...res.data.list);
+    }
+  }).catch();
+});
 
 const load = () => {
   if (finished.value) return;
