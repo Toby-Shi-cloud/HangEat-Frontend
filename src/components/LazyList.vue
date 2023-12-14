@@ -1,8 +1,8 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import {ref} from 'vue';
 
 const props = withDefaults(defineProps<{
-  data: any[]
+  data: T[]
   finished: boolean
   column?: number
 }>(), {

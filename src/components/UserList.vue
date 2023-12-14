@@ -38,12 +38,12 @@ const toUser = (id: number) => {
     <template #default="{item}">
       <div style="display: block; width: 100%">
         <var-cell :description="item.motto" style="height: 80px">
-          <var-link underline="hover" @click="toUser(item.id)">{{ item.username }}</var-link>
+          <var-link underline="hover" @click="toUser(item.id!)">{{ item.username }}</var-link>
           <template #icon>
-            <var-avatar :src="item.avatar" style="margin-right: 8px" :hoverable="true" @click="toUser(item.id)"/>
+            <var-avatar :src="item.avatar" style="margin-right: 8px" :hoverable="true" @click="toUser(item.id!)"/>
           </template>
           <template #extra>
-            <slot :data="data" :id="item.id"></slot>
+            <slot :data="data" :id="item.id!"></slot>
           </template>
         </var-cell>
         <var-divider/>
