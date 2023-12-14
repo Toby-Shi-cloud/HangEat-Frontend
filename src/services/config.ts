@@ -3,7 +3,6 @@ import {Snackbar} from "@varlet/ui";
 import {useAuthStore} from "@/store/user";
 import {doRefreshToken} from "./user";
 import ErrorCode from "./errorcode";
-import Mutex from "ts-mutex";
 
 export interface ErrorData {
     code: number;
@@ -39,9 +38,6 @@ export const endLoading = () => {
     Snackbar.clear();
     loading = false;
 };
-
-// mutex
-const refreshTokenMutex = new Mutex();
 
 // before request
 axios.interceptors.request.use(async function (config) {
@@ -86,39 +82,30 @@ axios.interceptors.response.use(function (response) {
         const data = error.response.data as ErrorData;
         if (data.code != error.response.status || !data.detailed_error_code || !data.error_msg) {
             Snackbar.error('未知错误，请稍后再试！');
-            return Promise.reject(error);
-        }
-        if (data.detailed_error_code !== ErrorCode.UNAUTHORIZED_ERROR) {
+        } else if (data.detailed_error_code !== ErrorCode.UNAUTHORIZED_ERROR) {
             const msg = data.error_msg.split(': ');
             Snackbar.error(msg[msg.length - 1]);
-            return Promise.reject(error);
-        }
-        return await refreshTokenMutex.use(async () => {
-            if (userStore.isAuthenticated) {
-                userStore.logout();
-                localStorage.removeItem('_token');
-                if (localStorage._refresh_token) try {
-                    await doRefreshToken();
-                    if (!userStore.isAuthenticated) throw new Error('refresh token failed');
-                    // 重新执行之前失败的请求
-                    const originRequest = error.config
-                    return axios(originRequest);
-                } catch (e) {
-                    Snackbar.error('登录已过期，请重新登录！');
-                    localStorage.removeItem('_refresh_token');
-                    window.location.href = '/login';
-                } else {
-                    Snackbar.error('登录已过期，请重新登录！');
-                    window.location.href = '/login';
-                }
+        } else if (userStore.isAuthenticated) {
+            userStore.logout();
+            localStorage.removeItem('_token');
+            if (localStorage._refresh_token) try {
+                await doRefreshToken();
+                if (!userStore.isAuthenticated) throw new Error('refresh token failed');
+                // 重新执行之前失败的请求
+                const originRequest = error.config
+                return axios(originRequest);
+            } catch (e) {
+                Snackbar.error('登录已过期，请重新登录！');
+                localStorage.removeItem('_refresh_token');
             } else {
-                Snackbar.error('未登录，请先登录！');
-                window.location.href = '/login';
+                Snackbar.error('登录已过期，请重新登录！');
             }
-            return Promise.reject(error);
-        });
+        } else {
+            Snackbar.error('未登录，请先登录！');
+        }
+    } else {
+        Snackbar.error('请求超时，请稍后再试！');
     }
-    Snackbar.error('请求超时，请稍后再试！');
     return Promise.reject(error);
 });
 
