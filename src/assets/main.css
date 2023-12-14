@@ -42,6 +42,10 @@ body {
   background: var(--color-background);
 }
 
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
 .normal-popup-overlay {
   background: var(--color-background-opacity);
   backdrop-filter: blur(10px);

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import {ref, computed, onMounted} from "vue";
+import {ref, computed} from "vue";
 import {useAuthStore, type UserInfo} from "@/store/user";
 import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
 import {doGetUserById, doSubscribe} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
+import Followers from "@/components/Followers.vue";
+import Followings from "@/components/Followings.vue";
 
 const props = defineProps<{
   id: string
@@ -22,12 +24,10 @@ const returnToIndex = () => {
   window.location.href = "/";
 };
 
-onMounted(() => {
-  if (isMyself.value) {
-    authStore.updateFollowersNum().catch();
-    authStore.updateFollowingNum().catch();
-  }
-});
+if (isMyself.value) {
+  authStore.updateFollowersNum().catch();
+  authStore.updateFollowingNum().catch();
+}
 
 const userInfoWithId = ref<UserInfo>({});
 const userInfo = computed(() => isMyself.value ? authStore.getUserInfo : userInfoWithId.value);
@@ -96,16 +96,29 @@ function subscribe() {
         </var-skeleton>
       </var-paper>
 
-      <var-paper :elevation="2" :radius="8">
+      <var-paper :elevation="2" :radius="8" style="align-self: start">
         <var-card title="个人信息" style="padding: 0 5px">
           <template #description>
             <var-skeleton :rows="4" :loading="needRefreshInfo">
               <var-divider/>
               <var-cell v-if="userInfo.email" icon="email" :title="userInfo.email"/>
-              <pre class="var-cell">{{ userInfo.motto }}</pre>
+              <div class="var-cell pre-wrap">{{ userInfo.motto }}</div>
             </var-skeleton>
           </template>
         </var-card>
+      </var-paper>
+
+      <var-paper :radius="8" :elevation="2" style="align-self: start; grid-column-start: span 2">
+        <var-tabs-items v-model:active="activeTab">
+          <var-tab-item>
+          </var-tab-item>
+          <var-tab-item>
+            <Followers :userId="userId"/>
+          </var-tab-item>
+          <var-tab-item>
+            <Followings :userId="userId"/>
+          </var-tab-item>
+        </var-tabs-items>
       </var-paper>
     </div>
     <var-result v-else type="error" title="不能访问该用户"

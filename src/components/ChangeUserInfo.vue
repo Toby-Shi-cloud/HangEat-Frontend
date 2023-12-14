@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import {ref, watch, defineEmits} from "vue";
+import {ref, watch} from "vue";
 import {type Form, type VarFile, Snackbar} from "@varlet/ui";
 import {useAuthStore} from "@/store/user";
 import {usernameRules} from "./ts/rules";
 import {doUpdateAvatar, doUpdateInfo} from "@/services/user";
 
-const emit = defineEmits(['close']);
+const emit = defineEmits<{
+  (e: 'close'): void
+}>();
 
 const authStore = useAuthStore();
 if (authStore.needRefreshInfo) {

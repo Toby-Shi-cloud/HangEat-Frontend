@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import {ref, defineEmits} from "vue";
+import {ref} from "vue";
 import {type Form, Snackbar} from "@varlet/ui";
 import {passwordRules} from "./ts/rules";
 import {doChangePassword} from "@/services/user";
 
-const emit = defineEmits(['close']);
+const emit = defineEmits<{
+  (e: 'close'): void
+}>();
 
 const oldPassword = ref("");
 const newPassword = ref("");

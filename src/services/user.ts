@@ -59,7 +59,7 @@ export const doForgetPassword = (email: string, captcha: string, password: strin
     });
 }
 
-export const doGetUserInfo = (timestamp: number | null = null) => {
+export const doGetUserInfo = (timestamp?: number) => {
     const suffix = timestamp ? '?timestamp=' + timestamp : '';
     return axios.get('user/get-user-info' + suffix);
 }
@@ -98,12 +98,7 @@ export const doGetSubscribesNum = () => {
 }
 
 export const doGetSubscribesList = (from: number, to: number) => {
-    return axios.get('user/get-subscribes-list', {
-        data: {
-            from: from,
-            to: to,
-        }
-    });
+    return axios.get('user/get-subscribes-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
 }
 
 export const doGetFansNum = () => {
@@ -111,10 +106,5 @@ export const doGetFansNum = () => {
 }
 
 export const doGetFansList = (from: number, to: number) => {
-    return axios.get('user/get-fans-list', {
-        data: {
-            from: from,
-            to: to,
-        }
-    });
+    return axios.get('user/get-fans-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
 }
