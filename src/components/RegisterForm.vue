@@ -4,10 +4,13 @@ import {type Form, Snackbar} from "@varlet/ui";
 import {doForgetPassword, doLogin, doRegister, doSendCaptcha} from "@/services/user";
 import {emailRules, captchaRules, usernameRules, passwordRules} from "./ts/rules";
 
-const props = defineProps<{
-  special: boolean
-  forgetPassword: boolean
-}>();
+const props = withDefaults(defineProps<{
+  special?: boolean
+  forgetPassword?: boolean
+}>(), {
+  special: false,
+  forgetPassword: false
+});
 
 const data = reactive({
   email: "",
@@ -142,7 +145,7 @@ const rePasswordRules = passwordRules.concat([
             v-else
             block
             type="primary"
-            @click="resetPassword">
+            @click="register">
           注册
         </var-button>
       </var-space>

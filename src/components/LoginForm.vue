@@ -83,7 +83,7 @@ const forgetPassword = ref(false);
     <var-popup overlay-class="normal-popup-overlay"
                style="border-radius: 8px"
                v-model:show="forgetPassword">
-      <RegisterForm :special="true" :forgetPassword="true"/>
+      <RegisterForm special forgetPassword/>
     </var-popup>
   </var-paper>
 </template>

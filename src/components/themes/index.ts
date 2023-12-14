@@ -1,8 +1,8 @@
 import {ref, computed, nextTick} from "vue";
 import {StyleProvider, Themes} from '@varlet/ui';
 
-const isSysDarkTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
-const isSysLightTheme = () => !isSysDarkTheme();
+const isSysDarkTheme = ref(false);
+const isSysLightTheme = computed(() => !isSysDarkTheme.value);
 
 export enum Theme {
     Light = "light",
@@ -12,14 +12,15 @@ export enum Theme {
 
 let currentTheme = ref(Theme.System);
 export const isLight = computed(() =>
-    currentTheme.value === Theme.Light || (currentTheme.value === Theme.System && isSysLightTheme()));
+    currentTheme.value === Theme.Light || (currentTheme.value === Theme.System && isSysLightTheme.value));
 export const isDark = computed(() =>
-    currentTheme.value === Theme.Dark || (currentTheme.value === Theme.System && isSysDarkTheme()));
+    currentTheme.value === Theme.Dark || (currentTheme.value === Theme.System && isSysDarkTheme.value));
 export const getCurrentTheme = computed(() => currentTheme.value);
-export const getSystemTheme = computed(() => isSysDarkTheme() ? Theme.Dark : Theme.Light);
+export const getSystemTheme = computed(() => isSysDarkTheme.value ? Theme.Dark : Theme.Light);
 
 async function refreshTheme() {
     await nextTick();
+    isSysDarkTheme.value = window.matchMedia("(prefers-color-scheme: dark)").matches;
     document.body.setAttribute("theme", isLight.value ? "light" : "dark");
     StyleProvider(isLight.value ? null : Themes.dark);
 }
@@ -33,3 +34,8 @@ export function setTheme(theme: Theme) {
 export function toggleTheme() {
     setTheme(isLight.value ? Theme.Dark : Theme.Light);
 }
+
+window.matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener('change', () => {
+        refreshTheme().then();
+    })
