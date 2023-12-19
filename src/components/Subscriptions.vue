@@ -23,8 +23,14 @@ const unsubscribe = (id: number, data: UserInfo[]) => {
 
 <template>
   <UserList v-if="isMyself" :total="authStore.getUserInfo.subscriptions_num!" :load="doGetSubscriptionsList">
-    <template #default="{id, data}">
-      <var-button type="primary" size="small" @click="unsubscribe(id, data)">取消关注</var-button>
+    <template #default="{id, item, data}">
+      <var-menu trigger="hover">
+        <var-button v-if="item.is_mutual" type="success" size="small">已互关</var-button>
+        <var-button v-else type="primary" size="small">已关注</var-button>
+        <template #menu>
+          <var-button type="danger" size="small" @click="unsubscribe(id, data)">取消关注</var-button>
+        </template>
+      </var-menu>
     </template>
   </UserList>
   <var-result v-else type="error" title="无权访问！"

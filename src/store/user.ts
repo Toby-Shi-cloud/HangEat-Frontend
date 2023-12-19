@@ -9,6 +9,7 @@ export interface UserInfo {
     motto?: string;
     subscribers_num?: number;
     subscriptions_num?: number;
+    is_mutual?: boolean;
 }
 
 export const useAuthStore = defineStore('auth', {

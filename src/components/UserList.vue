@@ -43,7 +43,7 @@ const toUser = (id: number) => {
             <var-avatar :src="item.avatar" style="margin-right: 8px" :hoverable="true" @click="toUser(item.id!)"/>
           </template>
           <template #extra>
-            <slot :data="data" :id="item.id!"></slot>
+            <slot :data="data" :item="item" :id="item.id!"></slot>
           </template>
         </var-cell>
         <var-divider/>

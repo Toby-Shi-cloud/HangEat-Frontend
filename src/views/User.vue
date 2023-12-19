@@ -3,7 +3,7 @@ import {ref, computed} from "vue";
 import {useAuthStore, type UserInfo} from "@/store/user";
 import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
-import {doDelete, doGetUserById, doSubscribe} from "@/services/user";
+import {doDelete, doGetRelationBetween, doGetUserById, doSubscribe, doUnsubscribe} from "@/services/user";
 import {type Input, Snackbar} from "@varlet/ui";
 import Subscribers from "@/components/Subscribers.vue";
 import Subscriptions from "@/components/Subscriptions.vue";
@@ -31,18 +31,37 @@ const userInfoWithId = ref<UserInfo>({});
 const userInfo = computed(() => isMyself.value ? authStore.getUserInfo : userInfoWithId.value);
 const needRefreshInfo = computed(() => userInfo.value.id === undefined);
 const failedToGetUserInfo = ref(false);
+const isSubscription = ref(false);
+const isSubscriber = ref(false);
 
-if (userId !== undefined) {
-  doGetUserById(userId).then(res => {
-    userInfoWithId.value = res.data;
-  }).catch(() => {
-    failedToGetUserInfo.value = true;
-  });
-}
+const refreshInfo = () => {
+  if (userId !== undefined) {
+    doGetUserById(userId).then(res => {
+      userInfoWithId.value = res.data;
+    }).catch(() => {
+      failedToGetUserInfo.value = true;
+    });
+    if (authStore.isAuthenticated) {
+      doGetRelationBetween(authStore.getUserInfo.id!, userId).then(res => {
+        isSubscription.value = res.data['1subscribe2'];
+        isSubscriber.value = res.data['2subscribe1'];
+      }).catch();
+    }
+  }
+};
+refreshInfo();
 
 function subscribe() {
   doSubscribe(userId!).then(() => {
     Snackbar.success("关注成功！");
+    refreshInfo();
+  }).catch();
+}
+
+function unsubscribe() {
+  doUnsubscribe(userId!).then(() => {
+    Snackbar.success("取关成功！");
+    refreshInfo();
   }).catch();
 }
 
@@ -95,7 +114,17 @@ async function deleteAccount() {
               <var-button style="top: 30%; width: 90%" @click="editPassword = true">更改密码</var-button>
             </div>
             <div v-else>
-              <var-button style="top: 30%; width: 90%" @click="subscribe" :disabled="!authStore.isAuthenticated">关注
+              <var-menu v-if="isSubscription" style="top: 30%; width: 90%; position: relative" trigger="hover" same-width>
+                <var-button v-if="isSubscriber" type="success" style="width: 100%">已互关</var-button>
+                <var-button v-else type="primary" style="width: 100%">已关注</var-button>
+                <template #menu>
+                  <var-button type="danger" @click="unsubscribe">取消关注</var-button>
+                </template>
+              </var-menu>
+              <var-button
+                  style="top: 30%; width: 90%" v-else @click="subscribe"
+                  :disabled="!authStore.isAuthenticated">
+                {{ isSubscriber ? "回关" : "关注" }}
               </var-button>
             </div>
             <var-tabs class="user-tabs-container" v-model:active="activeTab">

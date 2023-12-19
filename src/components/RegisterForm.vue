@@ -44,15 +44,22 @@ async function sendCaptcha() {
   });
 }
 
+function login() {
+  doLogin(data.email, data.password).then(() => {
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 500);
+  }).catch(error => {
+    console.log(error);
+  });
+}
+
 async function register() {
   if (!await (emailForm.value as Form).validate()) return;
   if (!await (regForm.value as Form).validate()) return;
   doRegister(data.email, data.captcha, data.username, data.password).then(response => {
-    doLogin(data.username, data.password).catch();
     Snackbar.success(response.data.message);
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 500);
+    login();
   }).catch(() => {
     data.password = "";
     data.re_password = "";
@@ -64,14 +71,7 @@ async function resetPassword() {
   if (!await (regForm.value as Form).validate()) return;
   doForgetPassword(data.email, data.captcha, data.password).then(response => {
     Snackbar.success(response.data.message);
-    doLogin(data.email, data.password).then(() => {
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 500);
-    }).catch(error => {
-      // wtf?
-      console.log(error);
-    });
+    login();
   }).catch(() => {
     data.password = "";
     data.re_password = "";

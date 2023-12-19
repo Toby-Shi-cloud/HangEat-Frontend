@@ -108,3 +108,7 @@ export const doGetSubscribersNum = () => {
 export const doGetSubscribersList = (from: number, to: number) => {
     return axios.get('user/get-subscribers-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
 }
+
+export const doGetRelationBetween = (user1: number, user2: number) => {
+    return axios.get('user/get-relation-between?user1=' + user1 + '&user2=' + user2 + '&timestamp=' + Date.now());
+}
