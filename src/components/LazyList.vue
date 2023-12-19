@@ -1,16 +1,27 @@
+/**
+* LazyList
+* @description 封装的 Varlet 库的 VarList 组件，用于实现懒加载列表
+* @param {T[]} data 列表数据
+* @param {boolean} finished 是否加载完毕
+* @param {number} column 列数 (默认为 1)
+* @param {number | [number, number]} gutter 列间距。可设置为 [垂直间距, 水平间距]
+**/
+
 <script setup lang="ts" generic="T">
 import {ref} from 'vue';
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   data: T[]
   finished: boolean
   column?: number
+  gutter?: string | number | [string | number, string |number]
 }>(), {
-  column: 1
+  column: 1,
+  gutter: 0
 });
 
 const emits = defineEmits<{
-  (e: 'load'): void
+  load: []
 }>();
 
 const error = ref(false);
@@ -34,7 +45,7 @@ const load = () => {
       v-model:error="error"
       v-model:loading="loading"
       @load="load">
-    <var-row>
+    <var-row :gutter="gutter">
       <var-col :key="item" v-for="item in data" :span="24 / column">
         <slot :item="item"></slot>
       </var-col>

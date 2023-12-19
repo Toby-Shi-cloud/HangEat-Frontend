@@ -39,7 +39,7 @@ window.onresize = () => {
 </script>
 
 <template>
-  <LazyList :data="data" :column="column" :finished="finished" @load="load">
+  <LazyList :data="data" :column="column" :finished="finished" :gutter="[10, 10]" @load="load">
     <template #default="{item}">
       <var-card class="restaurant-card" :title="item.name" :src="item.img">
         <template #description>
@@ -56,6 +56,5 @@ window.onresize = () => {
 .restaurant-card {
   width: 100%;
   height: 100%;
-  padding: 6px;
 }
 </style>

@@ -20,8 +20,13 @@ import RestaurantList from "@/components/RestaurantList.vue";
 </template>
 
 <style scoped>
+main {
+  width: calc(100vw - 2rem);
+  max-width: inherit;
+}
+
 .swipe-example {
-  width: 90vw;
+  width: 100%;
   height: 30vh;
   margin: 0 auto 30px;
 }
@@ -33,7 +38,4 @@ import RestaurantList from "@/components/RestaurantList.vue";
   pointer-events: none;
 }
 
-.restaurant-list {
-  width: calc(90vw + 12px);
-}
 </style>
