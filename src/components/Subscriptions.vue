@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed} from 'vue';
 import {useAuthStore, type UserInfo} from "@/store/user";
-import {doGetSubscribesList, doUnsubscribe} from "@/services/user";
+import {doGetSubscriptionsList, doUnsubscribe} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
 import UserList from "@/components/UserList.vue";
 
@@ -16,13 +16,13 @@ const unsubscribe = (id: number, data: UserInfo[]) => {
   doUnsubscribe(id).then(() => {
     Snackbar.success("取关成功！");
     data.splice(data.findIndex(item => item.id === id), 1);
-    authStore.updateFollowingNum();
+    authStore.updateSubscriptionsNum();
   }).catch();
 }
 </script>
 
 <template>
-  <UserList v-if="isMyself" :total="authStore.getFollowingCount" :load="doGetSubscribesList">
+  <UserList v-if="isMyself" :total="authStore.getUserInfo.subscriptions_num!" :load="doGetSubscriptionsList">
     <template #default="{id, data}">
       <var-button type="primary" size="small" @click="unsubscribe(id, data)">取消关注</var-button>
     </template>

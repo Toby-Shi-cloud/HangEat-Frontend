@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed} from 'vue';
 import {useAuthStore} from "@/store/user";
-import {doGetFansList, doSubscribe} from "@/services/user";
+import {doGetSubscribersList, doSubscribe} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
 import UserList from "@/components/UserList.vue";
 
@@ -15,13 +15,13 @@ const isMyself = computed(() => props.userId === authStore.getUserInfo.id);
 const subscribe = (id: number) => {
   doSubscribe(id).then(() => {
     Snackbar.success("关注成功！");
-    authStore.updateFollowingNum();
+    authStore.updateSubscriptionsNum();
   }).catch();
 }
 </script>
 
 <template>
-  <UserList v-if="isMyself" :total="authStore.getFollowersCount" :load="doGetFansList">
+  <UserList v-if="isMyself" :total="authStore.getUserInfo.subscribers_num!" :load="doGetSubscribersList">
     <template #default="{id}">
       <var-button type="primary" size="small" @click="subscribe(id)">回关</var-button>
     </template>

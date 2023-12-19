@@ -93,18 +93,18 @@ export const doUnsubscribe = (target_id: number) => {
     return axios.post('user/unsubscribe', {target_id: target_id});
 }
 
-export const doGetSubscribesNum = () => {
-    return axios.get('user/get-subscribes-num?timestamp=' + Date.now());
+export const doGetSubscriptionsNum = () => {
+    return axios.get('user/get-subscriptions-num?timestamp=' + Date.now());
 }
 
-export const doGetSubscribesList = (from: number, to: number) => {
-    return axios.get('user/get-subscribes-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
+export const doGetSubscriptionsList = (from: number, to: number) => {
+    return axios.get('user/get-subscriptions-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
 }
 
-export const doGetFansNum = () => {
-    return axios.get('user/get-fans-num?timestamp=' + Date.now());
+export const doGetSubscribersNum = () => {
+    return axios.get('user/get-subscribers-num?timestamp=' + Date.now());
 }
 
-export const doGetFansList = (from: number, to: number) => {
-    return axios.get('user/get-fans-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
+export const doGetSubscribersList = (from: number, to: number) => {
+    return axios.get('user/get-subscribers-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
 }

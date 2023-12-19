@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {doGetFansNum, doGetSubscribesNum, doGetUserInfo, doRefreshToken} from "@/services/user";
+import {doGetSubscribersNum, doGetSubscriptionsNum, doGetUserInfo, doRefreshToken} from "@/services/user";
 
 export interface UserInfo {
     id?: number;
@@ -7,14 +7,14 @@ export interface UserInfo {
     email?: string;
     avatar?: string;
     motto?: string;
+    subscribers_num?: number;
+    subscriptions_num?: number;
 }
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         authenticated: false,
         userInfo: {} as UserInfo,
-        followers: 0,
-        following: 0,
         timestamp: Date.now(),
     }),
 
@@ -22,8 +22,6 @@ export const useAuthStore = defineStore('auth', {
         isAuthenticated: (state) => state.authenticated,
         getUserInfo: (state) => state.userInfo,
         needRefreshInfo: (state) => state.authenticated && state.userInfo.id === undefined,
-        getFollowersCount: (state) => state.followers,
-        getFollowingCount: (state) => state.following,
     },
 
     actions: {
@@ -59,15 +57,15 @@ export const useAuthStore = defineStore('auth', {
             const {data} = await doGetUserInfo(this.timestamp);
             this.setUserInfo(data);
         },
-        async updateFollowersNum() {
+        async updateSubscribersNum() {
             if (!this.authenticated) return;
-            const {data} = await doGetFansNum();
-            this.followers = data.fans_num;
+            const {data} = await doGetSubscribersNum();
+            this.userInfo.subscribers_num = data.subscribers_num;
         },
-        async updateFollowingNum() {
+        async updateSubscriptionsNum() {
             if (!this.authenticated) return;
-            const {data} = await doGetSubscribesNum();
-            this.following = data.follower_num;
+            const {data} = await doGetSubscriptionsNum();
+            this.userInfo.subscriptions_num = data.subscriptions_num;
         },
     }
 });

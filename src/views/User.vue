@@ -5,8 +5,8 @@ import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
 import {doGetUserById, doSubscribe} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
-import Followers from "@/components/Followers.vue";
-import Followings from "@/components/Followings.vue";
+import Subscribers from "@/components/Subscribers.vue";
+import Subscriptions from "@/components/Subscriptions.vue";
 
 const props = defineProps<{
   id: string
@@ -23,11 +23,6 @@ const isMyself = computed(() => !!userId && userId === authStore.getUserInfo.id)
 const returnToIndex = () => {
   window.location.href = "/";
 };
-
-if (isMyself.value) {
-  authStore.updateFollowersNum().catch();
-  authStore.updateFollowingNum().catch();
-}
 
 const userInfoWithId = ref<UserInfo>({});
 const userInfo = computed(() => isMyself.value ? authStore.getUserInfo : userInfoWithId.value);
@@ -47,15 +42,6 @@ function subscribe() {
     Snackbar.success("关注成功！");
   }).catch();
 }
-
-function updateInfo(active: number | string) {
-  const activeNum = parseInt(active.toString());
-  if (activeNum === 1) {
-    authStore.updateFollowersNum().catch();
-  } else if (activeNum === 2) {
-    authStore.updateFollowingNum().catch();
-  }
-}
 </script>
 
 <template>
@@ -72,19 +58,19 @@ function updateInfo(active: number | string) {
           <div id="user-profile-header">
             <div style="display: flex">
               <div id="user-profile-main">
-                <var-avatar id="user-profile-avatar" :src="userInfo.avatar" :size="120"></var-avatar>
-                <var-cell id="user-profile-username" :title="userInfo.username"></var-cell>
+                <var-avatar id="user-profile-avatar" :src="userInfo.avatar" :size="120"/>
+                <var-cell id="user-profile-username" :title="userInfo.username"/>
                 <var-row :gutter="[10, 10]">
                   <var-col :span="8">
-                    <var-cell class="user-info-cell" title="贡献" description="0"></var-cell>
+                    <var-cell class="user-info-cell" title="贡献" description="0"/>
                   </var-col>
                   <var-col :span="8">
-                    <var-cell v-if="isMyself" class="user-info-cell" title="粉丝"
-                              :description="authStore.getFollowersCount.toString()"></var-cell>
+                    <var-cell class="user-info-cell" title="粉丝"
+                              :description="userInfo.subscribers_num!.toString()"/>
                   </var-col>
-                  <var-col v-if="isMyself" :span="8">
+                  <var-col :span="8">
                     <var-cell class="user-info-cell" title="关注"
-                              :description="authStore.getFollowingCount.toString()"></var-cell>
+                              :description="userInfo.subscriptions_num!.toString()"/>
                   </var-col>
                 </var-row>
               </div>
@@ -96,7 +82,7 @@ function updateInfo(active: number | string) {
             <div v-else>
               <var-button style="top: 30%; width: 90%" @click="subscribe">关注</var-button>
             </div>
-            <var-tabs class="user-tabs-container" v-model:active="activeTab" @change="updateInfo">
+            <var-tabs class="user-tabs-container" v-model:active="activeTab">
               <var-tab class="user-tab">帖子</var-tab>
               <var-tab v-if="isMyself" class="user-tab">粉丝列表</var-tab>
               <var-tab v-if="isMyself" class="user-tab">关注列表</var-tab>
@@ -122,10 +108,10 @@ function updateInfo(active: number | string) {
           <var-tab-item>
           </var-tab-item>
           <var-tab-item>
-            <Followers :userId="userId"/>
+            <Subscribers :userId="userId"/>
           </var-tab-item>
           <var-tab-item>
-            <Followings :userId="userId"/>
+            <Subscriptions :userId="userId"/>
           </var-tab-item>
         </var-tabs-items>
       </var-paper>
