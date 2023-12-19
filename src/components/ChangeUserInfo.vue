@@ -84,7 +84,7 @@ async function updateAvatar() {
   </var-skeleton>
   <var-popup
       overlay-class="normal-popup-overlay"
-      style="border-radius: 8px"
+      class="normal-popup-class"
       v-model:show="uploadingAvatar">
     <div class="upload-avatar">
       <h2>上传头像</h2>

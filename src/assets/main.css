@@ -37,19 +37,32 @@ body {
   }
 }
 
-#app-bar {
+#app-header {
   z-index: 10;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  place-items: center;
   height: var(--header-bar-height);
+  background: var(--color-background);
+}
+
+#app-footer {
+  z-index: 10;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--header-bar-height) / 2);
   background: var(--color-background);
 }
 
 .pre-wrap {
   white-space: pre-wrap;
+}
+
+.normal-popup-class {
+  border-radius: 0.5rem;
 }
 
 .normal-popup-overlay {

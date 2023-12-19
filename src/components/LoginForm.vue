@@ -4,6 +4,7 @@ import {type Form, Snackbar} from "@varlet/ui";
 import {doLogin} from "@/services/user";
 import {usernameOrEmailRules, passwordRules} from "./ts/rules";
 import RegisterForm from "@/components/RegisterForm.vue";
+import GradientBackground from "@/components/GradientBackground.vue";
 
 const data = reactive({
   username: "",
@@ -81,7 +82,7 @@ const forgetPassword = ref(false);
     </var-button>
 
     <var-popup overlay-class="normal-popup-overlay"
-               style="border-radius: 8px"
+               class="normal-popup-class"
                v-model:show="forgetPassword">
       <RegisterForm special forgetPassword/>
     </var-popup>

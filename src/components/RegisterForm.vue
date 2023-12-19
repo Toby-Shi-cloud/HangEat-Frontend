@@ -63,11 +63,15 @@ async function resetPassword() {
   if (!await (emailForm.value as Form).validate()) return;
   if (!await (regForm.value as Form).validate()) return;
   doForgetPassword(data.email, data.captcha, data.password).then(response => {
-    doLogin(data.email, data.password).catch();
     Snackbar.success(response.data.message);
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 500);
+    doLogin(data.email, data.password).then(() => {
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 500);
+    }).catch(error => {
+      // wtf?
+      console.log(error);
+    });
   }).catch(() => {
     data.password = "";
     data.re_password = "";
@@ -86,7 +90,7 @@ const rePasswordRules = passwordRules.concat([
 </script>
 
 <template>
-  <var-paper class="login-paper" :elevation="20" :radius="8">
+  <var-paper :class="forgetPassword ? '' : 'login-paper'" :elevation="20" :radius="8">
     <h1 style="text-align: center">{{ forgetPassword ? '忘记密码' : '注册' }}</h1>
     <var-form class="login-form" ref="emailForm" style="padding-bottom: 5px" :onkeydown="onKeyDown">
       <var-row :gutter="5" style="align-items: flex-end">

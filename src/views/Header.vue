@@ -31,7 +31,7 @@ const changeTheme = () => {
 </script>
 
 <template>
-  <header id="app-bar">
+  <header id="app-header">
     <var-app-bar class="container" elevation="false" title-position="center" color="rgba(0,0,0,0)">
       <template #left>
         <div class="image-container">

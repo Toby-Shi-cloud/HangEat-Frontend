@@ -10,9 +10,9 @@ import {createPinia} from "pinia";
 /* import the fontawesome core */
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-import {faA, faSun, faMoon} from '@fortawesome/free-solid-svg-icons';
+import {faA, faSun, faMoon, faCircleExclamation} from '@fortawesome/free-solid-svg-icons';
 
-library.add(faA, faSun, faMoon);
+library.add(faA, faSun, faMoon, faCircleExclamation);
 
 createApp(App)
     .use(Varlet)

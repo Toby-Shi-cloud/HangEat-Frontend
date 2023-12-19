@@ -3,8 +3,8 @@ import {ref, computed} from "vue";
 import {useAuthStore, type UserInfo} from "@/store/user";
 import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
-import {doGetUserById, doSubscribe} from "@/services/user";
-import {Snackbar} from "@varlet/ui";
+import {doDelete, doGetUserById, doSubscribe} from "@/services/user";
+import {type Input, Snackbar} from "@varlet/ui";
 import Subscribers from "@/components/Subscribers.vue";
 import Subscriptions from "@/components/Subscriptions.vue";
 
@@ -17,6 +17,9 @@ const authStore = useAuthStore();
 const activeTab = ref(0);
 const editInfo = ref(false);
 const editPassword = ref(false);
+const deletingAccount = ref(false);
+const deletingInputString = ref("");
+const deletingInput = ref<Input | null>(null);
 
 const isMyself = computed(() => !!userId && userId === authStore.getUserInfo.id);
 
@@ -41,6 +44,18 @@ function subscribe() {
   doSubscribe(userId!).then(() => {
     Snackbar.success("关注成功！");
   }).catch();
+}
+
+async function deleteAccount() {
+  if (await deletingInput.value?.validate()) {
+    doDelete().then(() => {
+      authStore.logout();
+      localStorage.removeItem('_token');
+      localStorage.removeItem('_refresh_token');
+      Snackbar.success("账号已删除！");
+      setTimeout(returnToIndex, 2000);
+    }).catch();
+  }
 }
 </script>
 
@@ -80,7 +95,8 @@ function subscribe() {
               <var-button style="top: 30%; width: 90%" @click="editPassword = true">更改密码</var-button>
             </div>
             <div v-else>
-              <var-button style="top: 30%; width: 90%" @click="subscribe">关注</var-button>
+              <var-button style="top: 30%; width: 90%" @click="subscribe" :disabled="!authStore.isAuthenticated">关注
+              </var-button>
             </div>
             <var-tabs class="user-tabs-container" v-model:active="activeTab">
               <var-tab class="user-tab">帖子</var-tab>
@@ -123,15 +139,45 @@ function subscribe() {
       </template>
     </var-result>
   </main>
+  <footer v-if="isMyself" id="app-footer">
+    <div style="display: inline-grid; place-items: center; width: 100%">
+      <var-link type="danger" @click="deletingAccount = true" style="place-self: center">永久删除账号</var-link>
+    </div>
+  </footer>
   <var-popup overlay-class="normal-popup-overlay"
-             style="border-radius: 8px"
+             class="normal-popup-class"
              v-model:show="editInfo">
     <ChangeUserInfo @close="editInfo = false"/>
   </var-popup>
   <var-popup overlay-class="normal-popup-overlay"
-             style="border-radius: 8px"
+             class="normal-popup-class"
              v-model:show="editPassword">
     <ChangePassword @close="editPassword = false"/>
+  </var-popup>
+  <var-popup overlay-class="normal-popup-overlay"
+             class="normal-popup-class"
+             v-model:show="deletingAccount"
+             @closed="deletingInput?.reset()">
+    <var-result type="warning" title="永久删除账号" description="您确定要永久删除账号吗？">
+      <template #image>
+        <font-awesome-icon
+            :icon="['fas', 'circle-exclamation']"
+            style="color: var(--color-danger); width: 72px; height: 72px"/>
+      </template>
+      <template #footer>
+        <var-form>
+          <var-input
+              ref="deletingInput"
+              v-model="deletingInputString"
+              placeholder="请输入：“我确定删除账号”"
+              :validate-trigger="[]"
+              :rules="[v => v === '我确定删除账号' || '输入内容错误']"
+              style="margin-top: -20px"
+          />
+          <var-button block type="danger" @click="deleteAccount" style="margin-top: 5px">确定删除</var-button>
+        </var-form>
+      </template>
+    </var-result>
   </var-popup>
 </template>
 
