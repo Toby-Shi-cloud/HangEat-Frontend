@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref, computed} from "vue";
-import {useAuthStore, type UserInfo} from "@/store/user";
+import type {UserInfo} from "@/store";
+import {useAuthStore} from "@/store/user";
 import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
 import {doDelete, doGetRelationBetween, doGetUserById, doSubscribe, doUnsubscribe} from "@/services/user";
@@ -118,7 +119,7 @@ async function deleteAccount() {
                 <var-button v-if="isSubscriber" type="success" style="width: 100%">已互关</var-button>
                 <var-button v-else type="primary" style="width: 100%">已关注</var-button>
                 <template #menu>
-                  <var-button type="danger" @click="unsubscribe">取消关注</var-button>
+                  <var-button block type="danger" @click="unsubscribe">取消关注</var-button>
                 </template>
               </var-menu>
               <var-button

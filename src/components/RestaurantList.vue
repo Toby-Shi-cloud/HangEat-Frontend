@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, reactive, computed} from "vue";
 import LazyList from "@/components/LazyList.vue";
-import type {RestaurantInfo} from "@/services/restaurant";
+import type {RestaurantInfo} from "@/store";
 import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
 
 const total = ref(-1);

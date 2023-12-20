@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {reactive, computed, watch} from 'vue';
 import LazyList from "@/components/LazyList.vue";
-import {type UserInfo} from "@/store/user";
+import {type UserInfo} from "@/store";
 
 const props = defineProps<{
   total: number

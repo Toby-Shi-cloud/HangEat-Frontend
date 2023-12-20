@@ -112,3 +112,23 @@ export const doGetSubscribersList = (from: number, to: number) => {
 export const doGetRelationBetween = (user1: number, user2: number) => {
     return axios.get('user/get-relation-between?user1=' + user1 + '&user2=' + user2 + '&timestamp=' + Date.now());
 }
+
+export const doFavoriteRestaurant = (target_id: number) => {
+    return axios.post('user/collect', {
+        target_id: target_id,
+    });
+}
+
+export const doUnfavoriteRestaurant = (target_id: number) => {
+    return axios.post('user/uncollect', {
+        target_id: target_id,
+    });
+}
+
+export const doGetFavorableRestaurantsNum = () => {
+    return axios.get('user/get-collections-num?timestamp=' + Date.now());
+}
+
+export const doGetFavorableRestaurantsList = () => {
+    return axios.get('user/get-collections-list?timestamp=' + Date.now());
+}

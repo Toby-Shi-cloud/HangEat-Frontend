@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {computed} from 'vue';
-import {useAuthStore, type UserInfo} from "@/store/user";
+import type {UserInfo} from "@/store";
+import {useAuthStore} from "@/store/user";
 import {doGetSubscribersList, doSubscribe, doUnsubscribe} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
 import UserList from "@/components/UserList.vue";

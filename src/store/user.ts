@@ -1,16 +1,6 @@
 import {defineStore} from "pinia";
+import type {UserInfo} from "@/store";
 import {doGetSubscribersNum, doGetSubscriptionsNum, doGetUserInfo, doRefreshToken} from "@/services/user";
-
-export interface UserInfo {
-    id?: number;
-    username?: string;
-    email?: string;
-    avatar?: string;
-    motto?: string;
-    subscribers_num?: number;
-    subscriptions_num?: number;
-    is_mutual?: boolean;
-}
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
