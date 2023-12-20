@@ -35,6 +35,9 @@ body {
   #app {
     padding: 2rem 0;
   }
+  body {
+    overflow-x: hidden;
+  }
 }
 
 #app-header {

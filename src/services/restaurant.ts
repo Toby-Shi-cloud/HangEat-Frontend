@@ -83,8 +83,8 @@ export const doGetTagList = (from: number, to: number) => {
     // -> data: List<{name:string}>
 }
 
-export const doRestaurantNumByTags = (tags: string[]) => {
-    return axios.get('restaurant/get-tag-restaurant-num?tags=' + tags + '&timestamp=' + Date.now());
+export const doGetRestaurantNumByTags = (tags: string[]) => {
+    return axios.get('restaurant/get-tag-restaurant-num?tags=' + (tags) + '&timestamp=' + Date.now());
     // -> data: { restaurant_num: number }
 }
 

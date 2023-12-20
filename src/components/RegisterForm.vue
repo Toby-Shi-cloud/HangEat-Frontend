@@ -5,6 +5,7 @@ import {doForgetPassword, doLogin, doRegister, doSendCaptcha} from "@/services/u
 import {emailRules, captchaRules, usernameRules, passwordRules} from "./ts/rules";
 
 const props = withDefaults(defineProps<{
+  url: string
   special?: boolean
   forgetPassword?: boolean
 }>(), {
@@ -47,7 +48,7 @@ async function sendCaptcha() {
 function login() {
   doLogin(data.email, data.password).then(() => {
     setTimeout(() => {
-      window.location.href = "/";
+      window.location.href = props.url;
     }, 500);
   }).catch(error => {
     console.log(error);

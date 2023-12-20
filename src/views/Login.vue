@@ -6,8 +6,10 @@ import GradientBackground from "@/components/GradientBackground.vue";
 
 withDefaults(defineProps<{
   special?: boolean
+  url?: string
 }>(), {
-  special: false
+  special: false,
+  url: '/'
 });
 
 let isLoginView = ref(true);
@@ -17,8 +19,8 @@ let isLoginView = ref(true);
   <GradientBackground/>
   <main class="login" style="place-self: center">
     <Transition name="fade" mode="out-in">
-      <LoginForm v-if="isLoginView" @toggle="isLoginView = false"/>
-      <RegisterForm v-else @toggle="isLoginView = true" :special="special"/>
+      <LoginForm v-if="isLoginView" @toggle="isLoginView = false" :url="url"/>
+      <RegisterForm v-else @toggle="isLoginView = true" :special="special" :url="url"/>
     </Transition>
   </main>
 </template>

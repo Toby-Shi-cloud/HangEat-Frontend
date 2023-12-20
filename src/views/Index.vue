@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import RestaurantList from "@/components/RestaurantList.vue";
+import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
 </script>
 
 <template>
@@ -15,7 +16,10 @@ import RestaurantList from "@/components/RestaurantList.vue";
         <img class="swipe-example-image" src="https://varlet.gitee.io/varlet-ui/cat3.jpg">
       </var-swipe-item>
     </var-swipe>
-    <RestaurantList class="restaurant-list"/>
+    <RestaurantList
+        class="restaurant-list"
+        :get-restaurant-num="doGetRestaurantNum"
+        :get-restaurant-list="doGetRestaurantList"/>
   </main>
 </template>
 

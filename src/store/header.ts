@@ -10,7 +10,13 @@ export const useHeaderStore = defineStore('header', {
         logo: "/favicon.ico",
         title: "航小炫",
         search: false,
-        tabs: [{name: "首页", path: "/"} as TabItem],
+        tabs: [{
+            name: "首页",
+            path: "/"
+        }, {
+            name: "餐馆",
+            path: "/restaurants"
+        }] as TabItem[],
         user: true,
     }),
 

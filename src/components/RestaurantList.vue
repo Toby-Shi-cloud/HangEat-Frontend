@@ -4,44 +4,46 @@ import LazyList from "@/components/LazyList.vue";
 import type {RestaurantInfo} from "@/store";
 import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
 
+const props = withDefaults(defineProps<{
+  width?: number
+  layout?: 'row' | 'column'
+  getRestaurantNum: typeof doGetRestaurantNum
+  getRestaurantList: typeof doGetRestaurantList
+}>(), {
+  layout: 'column'
+});
+
+const screenWidth = ref(window.innerWidth);
+window.onresize = () => screenWidth.value = window.innerWidth;
+const width = computed(() => props.width || screenWidth.value);
+const column = computed(() => props.layout == 'row' ? 1 : width.value < 668 ? 1 : width.value < 992 ? 2 : 3);
+
 const total = ref(-1);
-const column = ref(3);
 const data = reactive<RestaurantInfo[]>([]);
 const finished = computed(() => total.value === data.length);
 
-doGetRestaurantNum().then(res => {
+props.getRestaurantNum().then(res => {
   total.value = res.data.restaurant_num;
 }).catch();
 
 const load = () => {
   if (finished.value) return;
-  doGetRestaurantList(data.length, data.length + 20).then(res => {
+  props.getRestaurantList(data.length, data.length + 20).then(res => {
     data.push(...res.data.list);
     total.value = res.data.all_num;
-    console.log(res.data);
   }).catch();
 };
 
-const reCalculateColumn = (screenWidth: number) => {
-  if (screenWidth < 668) {
-    column.value = 1;
-  } else if (screenWidth < 992) {
-    column.value = 2;
-  } else {
-    column.value = 3;
-  }
-}
-
-reCalculateColumn(window.innerWidth);
-window.onresize = () => {
-  reCalculateColumn(window.innerWidth);
+const toRestaurant = (id: number) => {
+  window.location.href = '/restaurant/' + id;
 }
 </script>
 
 <template>
   <LazyList :data="data" :column="column" :finished="finished" :gutter="[10, 10]" @load="load">
     <template #default="{item}">
-      <var-card class="restaurant-card" :title="item.name" :src="item.img">
+      <var-card class="restaurant-card" :layout="layout"
+                :title="item.name" :src="item.img" @click="toRestaurant(item.id!)">
         <template #description>
           <var-cell icon="phone-outline" :title="item.phone || ''"/>
           <var-cell icon="map-marker-radius-outline" :title="item.address || ''"/>

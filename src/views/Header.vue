@@ -9,9 +9,8 @@ import {Snackbar} from "@varlet/ui";
 const headerStore = useHeaderStore();
 const authStore = useAuthStore();
 
-const toUser = () => {
-  window.location.href = `/user/${authStore.getUserInfo.id}`;
-};
+const toUser = () => location.href = `/user/${authStore.getUserInfo.id}`;
+const toLogin = () => location.href = `/login?url=${location.href}`;
 
 const logout = () => {
   doLogout().then(() => {
@@ -74,7 +73,7 @@ const changeTheme = () => {
             </template>
           </var-menu>
         </var-skeleton>
-        <var-link v-else class="bar-link" underline="none" to="/login">登录</var-link>
+        <var-link v-else class="bar-link" underline="none" @click="toLogin">登录</var-link>
       </template>
     </var-app-bar>
     <var-divider class="app-bar-divider"/>

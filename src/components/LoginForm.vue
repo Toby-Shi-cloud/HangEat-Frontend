@@ -6,6 +6,14 @@ import {usernameOrEmailRules, passwordRules} from "./ts/rules";
 import RegisterForm from "@/components/RegisterForm.vue";
 import GradientBackground from "@/components/GradientBackground.vue";
 
+const props = defineProps<{
+  url: string
+}>();
+
+defineEmits<{
+  toggle: []
+}>();
+
 const data = reactive({
   username: "",
   password: "",
@@ -19,7 +27,7 @@ async function login() {
   doLogin(data.username, data.password).then(response => {
     Snackbar.success(response.data.message);
     setTimeout(() => {
-      window.location.href = "/";
+      window.location.href = props.url;
     }, 1000);
   }).catch(() => {
     data.password = "";
@@ -84,7 +92,7 @@ const forgetPassword = ref(false);
     <var-popup overlay-class="normal-popup-overlay"
                class="normal-popup-class"
                v-model:show="forgetPassword">
-      <RegisterForm special forgetPassword/>
+      <RegisterForm special forgetPassword :url="url"/>
     </var-popup>
   </var-paper>
 </template>

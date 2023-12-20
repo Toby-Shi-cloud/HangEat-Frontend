@@ -2,6 +2,8 @@ import {createRouter, createWebHistory} from 'vue-router';
 import Index from "@/views/Index.vue";
 import Login from "@/views/Login.vue";
 import User from "@/views/User.vue";
+import Restaurant from "@/views/Restaurant.vue";
+import Restaurants from "@/views/Restaurants.vue";
 import NotFound from "@/views/404.vue";
 import {useAuthStore} from "@/store/user";
 import {Snackbar} from "@varlet/ui";
@@ -13,12 +15,13 @@ const routes = [{
 }, {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    props: (route: any) => ({ url: route.query.url })
 }, {
     path: '/login/special',
     name: 'LoginSp',
     component: Login,
-    props: {special: true}
+    props: (route: any) => ({ special: true, url: route.query.url })
 }, {
     path: '/user',
     name: 'Myself',
@@ -27,6 +30,16 @@ const routes = [{
     path: '/user/:id',
     name: 'User',
     component: User,
+    props: true
+}, {
+    path: '/restaurants',
+    name: 'Restaurants',
+    component: Restaurants,
+    props: (route: any) => ({ tag: route.query.tag })
+}, {
+    path: '/restaurant/:id',
+    name: 'Restaurant',
+    component: Restaurant,
     props: true
 }, {
     path: "/:pathMatch(.*)*",
