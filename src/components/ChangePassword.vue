@@ -55,20 +55,4 @@ async function onKeyDown(event: KeyboardEvent) {
   </var-form>
 </template>
 
-<style scoped>
-.edit-block {
-  display: block;
-  width: min(100vw, 720px);
-  background: var(--color-background);
-  padding: 20px;
-}
-
-.edit-input {
-  padding: 10px 0;
-}
-
-.edit-button-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-</style>
+<style scoped src="./css/edit.css"/>

@@ -22,7 +22,7 @@ export const doUpdateRestaurant = (id: number, name?: string, description?: stri
     // -> data: { message: string }
 }
 
-export const doUploadImage = (id: number, image: File) => {
+export const doUpdateImage = (id: number, image: File) => {
     startLoading();
     let formData = new FormData();
     formData.append('image', image);

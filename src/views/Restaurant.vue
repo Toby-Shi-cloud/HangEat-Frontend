@@ -5,6 +5,8 @@ import {doGetRestaurantDetail} from "@/services/restaurant";
 import {Snackbar} from "@varlet/ui";
 import {useAuthStore} from "@/store/user";
 import {doFavoriteRestaurant, doUnfavoriteRestaurant} from "@/services/user";
+import RestaurantEdition from "@/components/RestaurantEdition.vue";
+import RestaurantNewImg from "@/components/RestaurantNewImg.vue";
 
 const props = defineProps<{
   id: string
@@ -63,7 +65,23 @@ const handleShare = async () => {
 
 const handlePosition = unimplement;
 
-const handleEdition = unimplement;
+const inEdition = ref(false);
+const updatingImg = ref(false);
+const handleEdition = (what: string) => {
+  if (!authStore.isAuthenticated) {
+    if (what === 'img') return;
+    Snackbar.error('请先登录');
+    setTimeout(() => location.href = `/login?url=${location.href}`, 1000);
+    return;
+  }
+  if (restaurant.value.creator !== authStore.getUserInfo.id) {
+    if (what === 'img') return;
+    Snackbar.error('您无权修改此餐厅信息');
+    return;
+  }
+  if (what === 'edit') inEdition.value = true;
+  if (what === 'img') updatingImg.value = true;
+};
 
 const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}`;
 </script>
@@ -98,7 +116,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
           <p v-else>&emsp;-&emsp;</p>
           <span>|</span>
           <font-awesome-icon :icon="['far', 'pen-to-square']"/>
-          <var-link @click="handleEdition">更改信息</var-link>
+          <var-link @click="handleEdition('edit')">更改信息</var-link>
         </var-space>
       </template>
     </var-app-bar>
@@ -127,7 +145,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
           <var-card title="详细信息" style="height: 100%">
             <template #description>
               <div class="restaurant-overview-description">
-                <var-image fit="scale-down" :src="restaurant.img"/>
+                <var-image fit="scale-down" :src="restaurant.img" @click="handleEdition('img')"/>
                 <var-divider/>
                 <h3>详细描述</h3>
                 <pre class="pre-wrap">{{ restaurant.description || '\n' }}</pre>
@@ -166,7 +184,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
               </div>
             </template>
             <template #extra>
-              <var-button outline text type="primary" @click="handleEdition">修改信息</var-button>
+              <var-button outline text type="primary" @click="handleEdition('edit')">修改信息</var-button>
             </template>
           </var-card>
         </var-col>
@@ -177,6 +195,18 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
       </var-paper>
     </var-space>
   </main>
+
+  <var-popup overlay-class="normal-popup-overlay"
+             class="normal-popup-class"
+             v-model:show="inEdition">
+    <RestaurantEdition :restaurant="restaurant" @close="inEdition = false" @update-img="updatingImg = true"/>
+  </var-popup>
+
+  <var-popup overlay-class="normal-popup-overlay"
+             class="normal-popup-class"
+             v-model:show="updatingImg">
+    <RestaurantNewImg :restaurant="restaurant" @close="updatingImg = false; getRestaurantInfo()"/>
+  </var-popup>
 </template>
 
 <style scoped>
