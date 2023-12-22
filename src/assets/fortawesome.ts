@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {
     faA, faSun, faMoon, faCircleExclamation, faCircleCheck,
     faPencil, faHeart, faUpRightFromSquare, faLocationDot,
-    faPhone,
+    faPhone, faTags,
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faHeart as farHeart,
@@ -14,7 +14,7 @@ import {
 library.add(
     faA, faSun, faMoon, faCircleExclamation, faCircleCheck,
     faPencil, faHeart, faUpRightFromSquare, faLocationDot,
-    faPhone,
+    faPhone, faTags,
 );
 library.add(
     farHeart, farPenToSquare

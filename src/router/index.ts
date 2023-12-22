@@ -54,7 +54,11 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore();
-    await authStore.setup();
+    try {
+        await authStore.setup();
+    } catch (e) {
+        console.log(e);
+    }
     if (to.name === 'Login' && authStore.isAuthenticated) {
         // 若用户已登录且前往登录页，则跳转到首页
         Snackbar.info("您已登录！");

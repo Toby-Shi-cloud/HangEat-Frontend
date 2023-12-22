@@ -13,6 +13,10 @@ const props = withDefaults(defineProps<{
   layout: 'column'
 });
 
+const emits = defineEmits<{
+  changed: [total: number]
+}>();
+
 const screenWidth = ref(window.innerWidth);
 window.onresize = () => screenWidth.value = window.innerWidth;
 const width = computed(() => props.width || screenWidth.value);
@@ -23,7 +27,8 @@ const data = reactive<RestaurantInfo[]>([]);
 const finished = computed(() => total.value === data.length);
 
 props.getRestaurantNum().then(res => {
-  total.value = res.data.restaurant_num;
+  total.value = res.data.restaurant_num || res.data.collections_num;
+  emits('changed', total.value);
 }).catch();
 
 const load = () => {
@@ -31,6 +36,7 @@ const load = () => {
   props.getRestaurantList(data.length, data.length + 20).then(res => {
     data.push(...res.data.list);
     total.value = res.data.all_num;
+    emits('changed', total.value);
   }).catch();
 };
 
@@ -45,9 +51,11 @@ const toRestaurant = (id: number) => {
       <var-card class="restaurant-card" :layout="layout"
                 :title="item.name" :src="item.img" @click="toRestaurant(item.id!)">
         <template #description>
-          <var-cell icon="phone-outline" :title="item.phone || ''"/>
-          <var-cell icon="map-marker-radius-outline" :title="item.address || ''"/>
-          <var-cell icon="star" :title="item.tags?.join('，') || ''"/>
+          <var-cell :title="item.tags?.join('，') || ''">
+            <template #icon>
+              <font-awesome-icon :icon="['fas', 'tags']" style="margin-right: 5px"/>
+            </template>
+          </var-cell>
         </template>
       </var-card>
     </template>

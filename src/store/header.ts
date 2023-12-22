@@ -7,7 +7,7 @@ export interface TabItem {
 
 export const useHeaderStore = defineStore('header', {
     state: () => ({
-        logo: "/favicon.ico",
+        logo: "/favicon.png",
         title: "航小炫",
         search: false,
         tabs: [{

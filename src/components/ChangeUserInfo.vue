@@ -28,10 +28,11 @@ async function updateUserInfo() {
   const newName = username.value === authStore.getUserInfo.username ? null : username.value;
   doUpdateInfo(newName, motto.value).then(response => {
     Snackbar.success(response.data.message);
+    authStore.refreshTimestamp();
     authStore.setUserInfo({
       username: username.value,
       motto: motto.value
-    })
+    });
     emit("close");
   }).catch();
 }
@@ -57,6 +58,7 @@ async function updateAvatar() {
   }
   doUpdateAvatar(avatar.file).then(response => {
     Snackbar.success(response.data.message);
+    authStore.refreshTimestamp();
     authStore.setUserInfo({
       avatar: response.data.url
     });

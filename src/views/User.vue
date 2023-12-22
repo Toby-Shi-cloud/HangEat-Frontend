@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import {ref, computed} from "vue";
+import {ref, computed, watch, type ComponentPublicInstance} from "vue";
 import type {UserInfo} from "@/store";
 import {useAuthStore} from "@/store/user";
 import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
-import {doDelete, doGetRelationBetween, doGetUserById, doSubscribe, doUnsubscribe} from "@/services/user";
+import {
+  doDelete, doGetFavorableRestaurantsList,
+  doGetFavorableRestaurantsNum,
+  doGetRelationBetween,
+  doGetUserById,
+  doSubscribe,
+  doUnsubscribe
+} from "@/services/user";
 import {type Input, Snackbar} from "@varlet/ui";
 import Subscribers from "@/components/Subscribers.vue";
 import Subscriptions from "@/components/Subscriptions.vue";
+import RestaurantList from "@/components/RestaurantList.vue";
 
 const props = defineProps<{
   id: string
@@ -34,6 +42,9 @@ const needRefreshInfo = computed(() => userInfo.value.id === undefined);
 const failedToGetUserInfo = ref(false);
 const isSubscription = ref(false);
 const isSubscriber = ref(false);
+const restaurantList = ref<ComponentPublicInstance | null>(null);
+const restaurantListWidth = computed(() => restaurantList.value?.$el.width || 0);
+const restaurantListTotal = ref(0);
 
 const refreshInfo = () => {
   if (userId !== undefined) {
@@ -48,6 +59,11 @@ const refreshInfo = () => {
         isSubscriber.value = res.data['2subscribe1'];
       }).catch();
     }
+    watch(isMyself, () => {
+      if (isMyself.value) doGetFavorableRestaurantsNum().then(res => {
+        restaurantListTotal.value = res.data.collections_num;
+      }).catch();
+    });
   }
 };
 refreshInfo();
@@ -96,16 +112,20 @@ async function deleteAccount() {
                 <var-avatar id="user-profile-avatar" :src="userInfo.avatar" :size="120"/>
                 <var-cell id="user-profile-username" :title="userInfo.username"/>
                 <var-row :gutter="[10, 10]">
-                  <var-col :span="8">
+                  <var-col :span="isMyself ? 6 : 8">
                     <var-cell class="user-info-cell" title="贡献" description="0"/>
                   </var-col>
-                  <var-col :span="8">
+                  <var-col :span="isMyself ? 6 : 8">
                     <var-cell class="user-info-cell" title="粉丝"
                               :description="userInfo.subscribers_num!.toString()"/>
                   </var-col>
-                  <var-col :span="8">
+                  <var-col :span="isMyself ? 6 : 8">
                     <var-cell class="user-info-cell" title="关注"
                               :description="userInfo.subscriptions_num!.toString()"/>
+                  </var-col>
+                  <var-col :span="isMyself ? 6 : 0">
+                    <var-cell class="user-info-cell" title="收藏"
+                              :description="`${restaurantListTotal}`"/>
                   </var-col>
                 </var-row>
               </div>
@@ -115,7 +135,8 @@ async function deleteAccount() {
               <var-button style="top: 30%; width: 90%" @click="editPassword = true">更改密码</var-button>
             </div>
             <div v-else>
-              <var-menu v-if="isSubscription" style="top: 30%; width: 90%; position: relative" trigger="hover" same-width>
+              <var-menu v-if="isSubscription" style="top: 30%; width: 90%; position: relative" trigger="hover"
+                        same-width>
                 <var-button v-if="isSubscriber" type="success" style="width: 100%">已互关</var-button>
                 <var-button v-else type="primary" style="width: 100%">已关注</var-button>
                 <template #menu>
@@ -132,6 +153,7 @@ async function deleteAccount() {
               <var-tab class="user-tab">帖子</var-tab>
               <var-tab v-if="isMyself" class="user-tab">粉丝列表</var-tab>
               <var-tab v-if="isMyself" class="user-tab">关注列表</var-tab>
+              <var-tab v-if="isMyself" class="user-tab">收藏的餐馆</var-tab>
             </var-tabs>
           </div>
         </var-skeleton>
@@ -158,6 +180,14 @@ async function deleteAccount() {
           </var-tab-item>
           <var-tab-item>
             <Subscriptions :userId="userId"/>
+          </var-tab-item>
+          <var-tab-item>
+            <RestaurantList
+                class="restaurant-list" style="margin: 10px 10px 0"
+                :width="restaurantListWidth" ref="restaurantList"
+                @changed="(total) => restaurantListTotal = total"
+                :get-restaurant-num="doGetFavorableRestaurantsNum"
+                :get-restaurant-list="doGetFavorableRestaurantsList"/>
           </var-tab-item>
         </var-tabs-items>
       </var-paper>

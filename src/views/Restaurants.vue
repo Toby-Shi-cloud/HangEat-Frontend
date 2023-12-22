@@ -18,7 +18,7 @@ const getRestaurantList = props.tag ? (from: number, to: number) => doGetRestaur
 <template>
   <main>
     <RestaurantList
-        class="restaurant-list" layout="row"
+        class="restaurant-list"
         :get-restaurant-num="getRestaurantNum"
         :get-restaurant-list="getRestaurantList"/>
   </main>

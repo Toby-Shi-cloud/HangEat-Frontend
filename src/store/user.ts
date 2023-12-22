@@ -40,11 +40,13 @@ export const useAuthStore = defineStore('auth', {
             this.userInfo = {
                 ...this.userInfo,
                 ...userInfo
-            }
+            };
         },
-        async refreshUserInfo(force: boolean = false) {
+        refreshTimestamp() {
+            this.timestamp = Date.now();
+        },
+        async refreshUserInfo() {
             if (!this.authenticated) return;
-            if (force) this.timestamp = Date.now();
             const {data} = await doGetUserInfo(this.timestamp);
             this.setUserInfo(data);
         },

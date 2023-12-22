@@ -183,7 +183,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
 #restaurant-header {
   z-index: 9;
   margin-top: -2rem;
-  width: 100vw;
+  width: calc(100vw - 4rem);
   max-width: 1280px;
   --app-bar-color: rgba(0, 0, 0, 0);
   --app-bar-text-color: var(--color-heading);
@@ -203,12 +203,18 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
 
 #restaurant-main {
   margin-top: 1rem;
+  max-width: calc(100vw - 4rem);
 }
 
 #restaurant-images {
   display: flex;
   flex-direction: column;
   height: 30vh;
+  max-width: inherit;
+}
+
+#restaurant-overview {
+  max-width: inherit;
 }
 
 .restaurant-overview-description {

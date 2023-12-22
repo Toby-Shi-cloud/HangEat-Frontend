@@ -20,7 +20,7 @@ export const doRegister = (email: string, captcha: string, username: string, pas
 }
 
 export const doLogout = () => {
-    return axios.get('user/logout?timestamp=' + Date.now());
+    return axios.get(`user/logout?timestamp=${Date.now()}`);
 }
 
 export const doDelete = () => {
@@ -65,7 +65,7 @@ export const doGetUserInfo = (timestamp?: number) => {
 }
 
 export const doGetUserById = (id: number) => {
-    return axios.get('user/get-user-info/' + id + '?timestamp=' + Date.now());
+    return axios.get(`user/get-user-info/${id}?timestamp=${Date.now()}`);
 }
 
 export const doRefreshToken = () => {
@@ -94,23 +94,23 @@ export const doUnsubscribe = (target_id: number) => {
 }
 
 export const doGetSubscriptionsNum = () => {
-    return axios.get('user/get-subscriptions-num?timestamp=' + Date.now());
+    return axios.get(`user/get-subscriptions-num?timestamp=${Date.now()}`);
 }
 
 export const doGetSubscriptionsList = (from: number, to: number) => {
-    return axios.get('user/get-subscriptions-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
+    return axios.get(`user/get-subscriptions-list?from=${from}&to=${to}&timestamp=${Date.now()}`);
 }
 
 export const doGetSubscribersNum = () => {
-    return axios.get('user/get-subscribers-num?timestamp=' + Date.now());
+    return axios.get(`user/get-subscribers-num?timestamp=${Date.now()}`);
 }
 
 export const doGetSubscribersList = (from: number, to: number) => {
-    return axios.get('user/get-subscribers-list?from=' + from + '&to=' + to + '&timestamp=' + Date.now());
+    return axios.get(`user/get-subscribers-list?from=${from}&to=${to}&timestamp=${Date.now()}`);
 }
 
 export const doGetRelationBetween = (user1: number, user2: number) => {
-    return axios.get('user/get-relation-between?user1=' + user1 + '&user2=' + user2 + '&timestamp=' + Date.now());
+    return axios.get(`user/get-relation-between?user1=${user1}&user2=${user2}&timestamp=${Date.now()}`);
 }
 
 export const doFavoriteRestaurant = (target_id: number) => {
@@ -126,9 +126,9 @@ export const doUnfavoriteRestaurant = (target_id: number) => {
 }
 
 export const doGetFavorableRestaurantsNum = () => {
-    return axios.get('user/get-collections-num?timestamp=' + Date.now());
+    return axios.get(`user/get-collections-num?timestamp=${Date.now()}`);
 }
 
-export const doGetFavorableRestaurantsList = () => {
-    return axios.get('user/get-collections-list?timestamp=' + Date.now());
+export const doGetFavorableRestaurantsList = (from: number, to: number) => {
+    return axios.get(`user/get-collections-list?from=${from}&to=${to}&timestamp=${Date.now()}`);
 }
