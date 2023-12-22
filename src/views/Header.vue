@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {getCurrentTheme, getSystemTheme, isLight} from "@/components/themes";
+import {getCurrentTheme, getSystemTheme, isDark, isLight} from "@/components/themes";
 import {setTheme, Theme, toggleTheme} from "@/components/themes";
 import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
@@ -8,6 +8,12 @@ import {Snackbar} from "@varlet/ui";
 
 const headerStore = useHeaderStore();
 const authStore = useAuthStore();
+
+const getIcon = () => {
+  if (isLight) return new URL('../assets/favicon-light.png', import.meta.url).href;
+  if (isDark) return new URL('../assets/favicon-dark.png', import.meta.url).href;
+  return new URL('/favicon.png', import.meta.url).href;
+};
 
 const toUser = () => location.href = `/user/${authStore.getUserInfo.id}`;
 const toLogin = () => location.href = `/login?url=${location.href}`;
@@ -34,7 +40,7 @@ const changeTheme = () => {
     <var-app-bar class="container" elevation="false" title-position="center" color="rgba(0,0,0,0)">
       <template #left>
         <div class="image-container">
-          <var-icon :name="headerStore.getLogo" size="100%"></var-icon>
+          <var-icon :name="getIcon()" size="100%"></var-icon>
         </div>
         <var-link id="app-title" class="bar-link" underline="hover" to="/">{{ headerStore.getTitle }}</var-link>
       </template>

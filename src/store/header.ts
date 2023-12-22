@@ -1,4 +1,6 @@
 import {defineStore} from "pinia";
+import {computed} from 'vue';
+import {isDark} from "@/components/themes";
 
 export interface TabItem {
     name: string,
@@ -7,7 +9,6 @@ export interface TabItem {
 
 export const useHeaderStore = defineStore('header', {
     state: () => ({
-        logo: "/favicon.png",
         title: "航小炫",
         search: false,
         tabs: [{
@@ -21,7 +22,6 @@ export const useHeaderStore = defineStore('header', {
     }),
 
     getters: {
-        getLogo: (state) => state.logo,
         getTitle: (state) => state.title,
         needSearch: (state) => state.search,
         getTabs: (state) => state.tabs,
@@ -29,9 +29,6 @@ export const useHeaderStore = defineStore('header', {
     },
 
     actions: {
-        setLogo(logo: string) {
-            this.logo = logo;
-        },
         setTitle(title: string) {
             this.title = title;
         },
