@@ -183,6 +183,7 @@ async function deleteAccount() {
           </var-tab-item>
           <var-tab-item>
             <RestaurantList
+                v-if="isMyself"
                 class="restaurant-list" style="margin: 10px 10px 0"
                 :width="restaurantListWidth" ref="restaurantList"
                 @changed="(total) => restaurantListTotal = total"

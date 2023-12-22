@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {computed, watch} from 'vue';
 import RestaurantList from "@/components/RestaurantList.vue";
 import {
   doGetRestaurantList,
@@ -11,8 +12,8 @@ const props = defineProps<{
   tag?: string,
 }>();
 
-const getRestaurantNum = props.tag ? () => doGetRestaurantNumByTags([props.tag!]) : doGetRestaurantNum;
-const getRestaurantList = props.tag ? (from: number, to: number) => doGetRestaurantListByTags([props.tag!], from, to) : doGetRestaurantList;
+const getRestaurantNum = computed(() => props.tag ? () => doGetRestaurantNumByTags([props.tag!]) : doGetRestaurantNum);
+const getRestaurantList = computed(() => props.tag ? (from: number, to: number) => doGetRestaurantListByTags([props.tag!], from, to) : doGetRestaurantList);
 </script>
 
 <template>
@@ -25,5 +26,8 @@ const getRestaurantList = props.tag ? (from: number, to: number) => doGetRestaur
 </template>
 
 <style scoped>
-
+.restaurant-list {
+  width: 100vw;
+  max-width: min(1280px, 100vw - 4rem);
+}
 </style>

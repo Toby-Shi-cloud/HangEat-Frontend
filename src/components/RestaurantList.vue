@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, computed} from "vue";
+import {ref, reactive, computed, watch} from "vue";
 import LazyList from "@/components/LazyList.vue";
 import type {RestaurantInfo} from "@/store";
 import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
@@ -25,24 +25,28 @@ const column = computed(() => props.layout == 'row' ? 1 : width.value < 668 ? 1 
 const total = ref(-1);
 const data = reactive<RestaurantInfo[]>([]);
 const finished = computed(() => total.value === data.length);
-
-props.getRestaurantNum().then(res => {
-  total.value = res.data.restaurant_num || res.data.collections_num;
-  emits('changed', total.value);
-}).catch();
+const loading = ref(false);
 
 const load = () => {
   if (finished.value) return;
+  if (loading.value) return;
+  loading.value = true;
   props.getRestaurantList(data.length, data.length + 20).then(res => {
     data.push(...res.data.list);
     total.value = res.data.all_num;
     emits('changed', total.value);
-  }).catch();
+  }).finally(() => loading.value = false);
 };
 
 const toRestaurant = (id: number) => {
   window.location.href = '/restaurant/' + id;
 }
+
+watch(() => props.getRestaurantNum, () => {
+  total.value = -1;
+  data.splice(0, data.length);
+  load();
+}, {immediate: true});
 </script>
 
 <template>

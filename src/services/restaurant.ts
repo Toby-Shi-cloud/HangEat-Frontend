@@ -89,6 +89,6 @@ export const doGetRestaurantNumByTags = (tags: string[]) => {
 }
 
 export const doGetRestaurantListByTags = (tags: string[], from: number, to: number) => {
-    return axios.get(`restaurant/get-restaurant-list?tags=${tags.join(',')}&from=${from}&to=${to}&timestamp=${Date.now()}`);
+    return axios.get(`restaurant/get-tag-restaurant-list?tags=${tags.join(',')}&from=${from}&to=${to}&timestamp=${Date.now()}`);
     // -> data: List<RestaurantInfo>
 }

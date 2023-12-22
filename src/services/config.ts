@@ -50,6 +50,8 @@ axios.interceptors.request.use(async function (config) {
     return Promise.reject(error);
 });
 
+let tokenRefreshing = false;
+
 // after response
 axios.interceptors.response.use(function (response) {
     endLoading();
@@ -82,18 +84,23 @@ axios.interceptors.response.use(function (response) {
             const msg = data.error_msg.split(': ');
             Snackbar.error(msg[msg.length - 1]);
         } else if (userStore.isAuthenticated) {
-            userStore.logout();
+            if (tokenRefreshing) {
+                while (tokenRefreshing) await new Promise(resolve => setTimeout(resolve, 100));
+                // 重新执行之前失败的请求
+                return axios(error.config);
+            }
+            tokenRefreshing = true;
             localStorage.removeItem('_token');
             if (localStorage._refresh_token) try {
                 await doRefreshToken();
-                if (!userStore.isAuthenticated) throw new Error('refresh token failed');
                 // 重新执行之前失败的请求
-                const originRequest = error.config
-                return axios(originRequest);
+                return axios(error.config);
             } catch (e) {
+                userStore.logout();
                 Snackbar.error('登录已过期，请重新登录！');
                 localStorage.removeItem('_refresh_token');
             } else {
+                userStore.logout();
                 Snackbar.error('登录已过期，请重新登录！');
             }
         } else {
