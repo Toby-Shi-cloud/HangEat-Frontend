@@ -150,11 +150,13 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                 <h3>详细描述</h3>
                 <pre class="pre-wrap">{{ restaurant.description || '\n' }}</pre>
                 <h3>Tags</h3>
-                <div v-if="restaurant.tags">
-                  <div v-for="tag in restaurant.tags" class="restaurant-overview-tag">
-                    <var-link @click="handleTagClick(tag)">{{ tag }}</var-link>
-                  </div>
-                </div>
+                <var-space direction="row" v-if="restaurant.tags">
+                  <var-chip v-for="tag in restaurant.tags" class="restaurant-overview-tag"
+                            size="large" @click="handleTagClick(tag)"
+                            v-hover="{ color: '#fff', background: 'var(--color-primary)' }">
+                    {{ tag }}
+                  </var-chip>
+                </var-space>
               </div>
             </template>
           </var-card>
@@ -253,13 +255,5 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
 
 .restaurant-overview-tag {
   display: inline;
-}
-
-.restaurant-overview-tag:before {
-  content: "，";
-}
-
-.restaurant-overview-tag:first-child:before {
-  content: "";
 }
 </style>

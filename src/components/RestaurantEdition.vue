@@ -2,7 +2,7 @@
 import {ref} from "vue";
 import {type Form, Snackbar} from "@varlet/ui";
 import type {RestaurantInfo} from "@/store";
-import {doUpdateRestaurant} from "@/services/restaurant";
+import {doDeleteTag, doReferTag, doUpdateRestaurant} from "@/services/restaurant";
 
 const props = defineProps<{
   restaurant: RestaurantInfo
@@ -18,6 +18,8 @@ const name = ref(props.restaurant.name || '');
 const description = ref(props.restaurant.description || '');
 const address = ref(props.restaurant.detail_addr || '');
 const phone = ref(props.restaurant.phone || '');
+props.restaurant.tags ||= [];
+const tag = ref('');
 const form = ref<Form | null>(null);
 
 const doEdition = async () => {
@@ -32,6 +34,23 @@ const doEdition = async () => {
     emit("close");
   }).catch();
 };
+
+const deleteTag = async (tg: string) => {
+  doDeleteTag(id, tg).then(response => {
+    Snackbar.success(response.data.message);
+    props.restaurant.tags!.splice(props.restaurant.tags!.indexOf(tg), 1);
+  }).catch();
+};
+
+async function onTagEnter(event: KeyboardEvent) {
+  if (event.key === "Enter") {
+    doReferTag(id, [tag.value]).then(response => {
+      Snackbar.success(response.data.message);
+      props.restaurant.tags!.push(tag.value);
+      tag.value = '';
+    }).catch();
+  }
+}
 </script>
 
 <template>
@@ -40,6 +59,11 @@ const doEdition = async () => {
     <var-input class="edit-input" v-model="name" placeholder="餐馆名称" variant="outlined" :autofocus="true"/>
     <var-input class="edit-input" v-model="address" placeholder="餐馆地址" variant="outlined"/>
     <var-input class="edit-input" v-model="phone" placeholder="餐馆电话" variant="outlined"/>
+    <var-space direction="row" align="center" class="edit-tags edit-input">
+      <font-awesome-icon size="xl" :icon="['fas', 'tags']"/>
+      <var-chip v-for="tag in restaurant.tags!" closeable @close="deleteTag(tag)"> {{ tag }}</var-chip>
+    </var-space>
+    <var-input class="edit-input" v-model="tag" placeholder="新标签" variant="outlined" :onkeydown="onTagEnter"/>
     <var-input class="edit-input" v-model="description" :textarea="true" placeholder="餐馆描述" variant="outlined"/>
     <var-button-group class="edit-button-group" style="grid-template-columns: 1fr 1fr 1fr">
       <var-button type="default" @click="$emit('close')">取消</var-button>
