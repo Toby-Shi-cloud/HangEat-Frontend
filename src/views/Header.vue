@@ -10,8 +10,8 @@ const headerStore = useHeaderStore();
 const authStore = useAuthStore();
 
 const getIcon = () => {
-  if (isLight) return new URL('../assets/favicon-light.png', import.meta.url).href;
-  if (isDark) return new URL('../assets/favicon-dark.png', import.meta.url).href;
+  if (isLight.value) return new URL('../assets/favicon-light.png', import.meta.url).href;
+  if (isDark.value) return new URL('../assets/favicon-dark.png', import.meta.url).href;
   return new URL('/favicon.png', import.meta.url).href;
 };
 
