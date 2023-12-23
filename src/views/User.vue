@@ -83,7 +83,7 @@ function unsubscribe() {
 }
 
 async function deleteAccount() {
-  if (await deletingInput.value?.validate()) {
+  if (await (deletingInput.value as Input).validate()) {
     doDelete().then(() => {
       authStore.logout();
       localStorage.removeItem('_token');
@@ -183,7 +183,7 @@ async function deleteAccount() {
           </var-tab-item>
           <var-tab-item>
             <RestaurantList
-                v-if="isMyself"
+                v-if="isMyself" no-extra
                 class="restaurant-list" style="margin: 10px 10px 0"
                 :width="restaurantListWidth" ref="restaurantList"
                 @changed="(total) => restaurantListTotal = total"

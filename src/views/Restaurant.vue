@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import type {RestaurantInfo} from "@/store";
-import {doGetRestaurantDetail} from "@/services/restaurant";
-import {Snackbar} from "@varlet/ui";
+import {doDeleteRestaurant, doGetRestaurantDetail} from "@/services/restaurant";
+import {type Input, Snackbar} from "@varlet/ui";
 import {useAuthStore} from "@/store/user";
 import {doFavoriteRestaurant, doUnfavoriteRestaurant} from "@/services/user";
 import RestaurantEdition from "@/components/RestaurantEdition.vue";
@@ -15,7 +15,6 @@ const restId = /^\d+$/.test(props.id) ? parseInt(props.id) : undefined;
 const restaurant = ref<RestaurantInfo>({});
 const loading = ref(true);
 const error = ref(restId === undefined);
-const isFavorite = ref(false);
 const authStore = useAuthStore();
 const width = ref(window.innerWidth);
 window.onresize = () => width.value = window.innerWidth;
@@ -42,10 +41,10 @@ const handleFavorite = async () => {
     return;
   }
   try {
-    let handler = isFavorite.value ? doUnfavoriteRestaurant : doFavoriteRestaurant;
+    let handler = restaurant.value.is_collected ? doUnfavoriteRestaurant : doFavoriteRestaurant;
     const {data} = await handler(restId!);
     Snackbar.success(data.message);
-    isFavorite.value = !isFavorite.value;
+    restaurant.value.is_collected = !restaurant.value.is_collected;
   } catch (e) {
   }
 };
@@ -83,6 +82,18 @@ const handleEdition = (what: string) => {
   if (what === 'img') updatingImg.value = true;
 };
 
+const deletingRestaurant = ref(false);
+const deletingInputString = ref("");
+const deletingInput = ref<Input>();
+const deleteRestaurant = async () => {
+  if (!await (deletingInput.value as Input).validate()) return;
+  try {
+    const {data} = await doDeleteRestaurant(restaurant.value.id!);
+    Snackbar.success(data.message);
+    setTimeout(() => location.href = '/restaurants', 1000);
+  } catch (e) {}
+};
+
 const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}`;
 </script>
 
@@ -91,15 +102,21 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
   <main v-else>
     <var-app-bar id="restaurant-header" elevation="false">
       <template #left>
-        <h1>{{ restaurant.name }}</h1>
-        <font-awesome-icon :icon="['fas', 'circle-check']" color="green" style="margin: 10px 5px; align-self: end"/>
+        <var-space direction="row" :size="3" align="end">
+          <h1>{{ restaurant.name }}</h1>
+          <var-space direction="row" :size="2" align="center">
+            <font-awesome-icon :icon="['far', 'heart']"/>
+            <p>{{ restaurant.collectors_num }}</p>
+          </var-space>
+        </var-space>
       </template>
       <template #right>
         <var-space size="small" style="margin-right: 10px">
           <font-awesome-icon :icon="['fas', 'pencil']"/>
           <var-link underline="hover" @click="handleReview">写评论</var-link>
           <span>|</span>
-          <font-awesome-icon :icon="[isFavorite ? 'fas' : 'far', 'heart']"/>
+          <font-awesome-icon :icon="[restaurant.is_collected ? 'fas' : 'far', 'heart']"
+                             :color="restaurant.is_collected ? 'red' : ''"/>
           <var-link underline="hover" @click="handleFavorite">收藏</var-link>
           <span>|</span>
           <font-awesome-icon :icon="['fas', 'up-right-from-square']"/>
@@ -198,6 +215,12 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
     </var-space>
   </main>
 
+  <footer v-if="authStore.isAuthenticated && authStore.userInfo.id === restaurant.creator" id="app-footer">
+    <div style="display: inline-grid; place-items: center; width: 100%">
+      <var-link type="danger" @click="deletingRestaurant = true" style="place-self: center">永久删除餐馆</var-link>
+    </div>
+  </footer>
+
   <var-popup overlay-class="normal-popup-overlay"
              class="normal-popup-class"
              v-model:show="inEdition">
@@ -208,6 +231,31 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
              class="normal-popup-class"
              v-model:show="updatingImg">
     <RestaurantNewImg :restaurant="restaurant" @close="updatingImg = false; getRestaurantInfo()"/>
+  </var-popup>
+
+  <var-popup overlay-class="normal-popup-overlay"
+             class="normal-popup-class"
+             v-model:show="deletingRestaurant">
+    <var-result type="warning" title="永久删除餐馆" description="您确定要永久删除餐馆吗？">
+      <template #image>
+        <font-awesome-icon
+            :icon="['fas', 'circle-exclamation']"
+            style="color: var(--color-danger); width: 72px; height: 72px"/>
+      </template>
+      <template #footer>
+        <var-form>
+          <var-input
+              ref="deletingInput"
+              v-model="deletingInputString"
+              :placeholder="`请输入：“我确定删除${restaurant.name!}”`"
+              :validate-trigger="[]"
+              :rules="[v => v === `我确定删除${restaurant.name!}` || '输入内容错误']"
+              style="margin-top: -20px"
+          />
+          <var-button block type="danger" @click="deleteRestaurant" style="margin-top: 5px">确定删除</var-button>
+        </var-form>
+      </template>
+    </var-result>
   </var-popup>
 </template>
 

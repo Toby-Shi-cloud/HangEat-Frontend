@@ -8,7 +8,7 @@ export const doCreateRestaurant = (name: string, address: string, phone?: string
         address: address,
         phone: phone,
     });
-    // -> data: { message: string }
+    // -> data: { message: string, id: number }
 }
 
 export const doUpdateRestaurant = (id: number, name?: string, description?: string, address?: string, phone?: string) => {
@@ -48,11 +48,6 @@ export const doGetRestaurantList = (from: number, to: number) => {
 export const doDeleteRestaurant = (id: number) => {
     return axios.delete(`restaurant/delete-restaurant/${id}`);
     // -> data: { message: string }
-}
-
-export const doGetCollectorsNum = (id: number) => {
-    return axios.get(`restaurant/get-collectors-num/${id}?timestamp=${Date.now()}`);
-    // -> data: { collectors_num: number }
 }
 
 export const doReferTag = (target_id: number, tags: string[]) => {

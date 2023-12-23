@@ -21,6 +21,8 @@ export interface RestaurantInfo {
     img?: string;
     creator?: number;
     tags?: string[];
+    collectors_num?: number;
+    is_collected?: boolean;
     // detail info
     description?: string;
     address?: string;

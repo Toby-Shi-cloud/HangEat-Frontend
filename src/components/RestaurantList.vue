@@ -7,10 +7,12 @@ import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
 const props = withDefaults(defineProps<{
   width?: number
   layout?: 'row' | 'column'
+  noExtra?: boolean
   getRestaurantNum: typeof doGetRestaurantNum
   getRestaurantList: typeof doGetRestaurantList
 }>(), {
-  layout: 'column'
+  layout: 'column',
+  noExtra: false
 });
 
 const emits = defineEmits<{
@@ -60,6 +62,13 @@ watch(() => props.getRestaurantNum, () => {
               <font-awesome-icon :icon="['fas', 'tags']" style="margin-right: 5px"/>
             </template>
           </var-cell>
+        </template>
+        <template #extra v-if="!noExtra">
+          <var-space direction="row" align="center" :size="3">
+          <font-awesome-icon :icon="[item.is_collected ? 'fas' : 'far', 'heart']"
+                             :color="item.is_collected ? 'red' : ''"/>
+          <p>{{ item.collectors_num || 0 }}</p>
+          </var-space>
         </template>
       </var-card>
     </template>

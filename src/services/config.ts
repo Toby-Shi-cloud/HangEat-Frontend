@@ -107,7 +107,8 @@ axios.interceptors.response.use(function (response) {
             Snackbar.error('未登录，请先登录！');
         }
     } else {
-        Snackbar.error('请求超时，请稍后再试！');
+        console.log(error.message);
+        Snackbar.error('网络错误，请稍后再试！');
     }
     return Promise.reject(error);
 });
