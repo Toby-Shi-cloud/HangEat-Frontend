@@ -5,10 +5,11 @@ import {doDeleteRestaurant, doGetRestaurantDetail} from "@/services/restaurant";
 import {type Input, Snackbar} from "@varlet/ui";
 import {useAuthStore, useUsersStore} from "@/store/user";
 import {doFavoriteRestaurant, doUnfavoriteRestaurant} from "@/services/user";
+import {doGetPostNum} from "@/services/post";
 import RestaurantEdition from "@/components/RestaurantEdition.vue";
 import RestaurantNewImg from "@/components/RestaurantNewImg.vue";
 import PostList from "@/components/PostList.vue";
-import {doGetPostNum} from "@/services/post";
+import WriteReview from "@/components/WriteReview.vue";
 
 const props = defineProps<{
   id: string
@@ -23,6 +24,8 @@ const usersStore = useUsersStore();
 const creatorInfo = ref<UserInfo | null>(null);
 const width = ref(window.innerWidth);
 window.onresize = () => width.value = window.innerWidth;
+const writeReviewRef = ref<InstanceType<typeof WriteReview>>();
+const postsRef = ref<InstanceType<typeof PostList>>();
 
 const getRestaurantInfo = () => {
   if (!restId) return;
@@ -44,8 +47,6 @@ const getRestaurantInfo = () => {
 getRestaurantInfo();
 
 const unimplement = () => Snackbar.warning('功能尚未实现');
-
-const handleReview = unimplement;
 
 const handleFavorite = async () => {
   if (!authStore.isAuthenticated) {
@@ -106,7 +107,8 @@ const deleteRestaurant = async () => {
     const {data} = await doDeleteRestaurant(restaurant.value.id!);
     Snackbar.success(data.message);
     setTimeout(() => location.href = '/restaurants', 1000);
-  } catch (e) {}
+  } catch (e) {
+  }
 };
 
 const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}`;
@@ -128,7 +130,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
       <template #right>
         <var-space size="small" style="margin-right: 10px">
           <font-awesome-icon :icon="['fas', 'pencil']"/>
-          <var-link underline="hover" @click="handleReview">写评论</var-link>
+          <var-link underline="hover" @click="writeReviewRef?.focusEditor()">发布帖子</var-link>
           <span>|</span>
           <font-awesome-icon :icon="[restaurant.is_collected ? 'fas' : 'far', 'heart']"
                              :color="restaurant.is_collected ? 'red' : ''"/>
@@ -172,15 +174,16 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                   <var-space direction="column">
                     <var-space direction="row" :size="2" align="center">
                       <p>评分：</p>
-                      <font-awesome-icon
-                          v-if="restaurant.avg_grade"
-                          v-for="i in Array(5).keys()"
-                          :icon="restaurant.avg_grade! >= i + 0.9 ? ['fas', 'star']
-                             : ['far', restaurant.avg_grade! >= i + 0.4 ? 'star-half-stroke' : 'star']"
-                      />
+                      <p v-if="restaurant.avg_grade">
+                        <font-awesome-icon
+                            v-for="i in Array(5).keys()"
+                            :icon="restaurant.avg_grade! >= i + 0.3 ?
+                                  ['fas', restaurant.avg_grade! >= i + 0.9 ? 'star' : 'star-half-stroke'] : ['far', 'star']"/>
+                        {{ restaurant.avg_grade.toFixed(1) }}
+                      </p>
                       <p v-else>（暂无评分）</p>
                     </var-space>
-                    <p>人均价格：¥{{ restaurant.avg_price || '未知' }}</p>
+                    <p>人均价格：¥{{ restaurant.avg_price?.toFixed(2) || '未知' }}</p>
                   </var-space>
                 </div>
               </template>
@@ -253,9 +256,13 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
           </var-card>
         </var-col>
       </var-row>
-      <var-paper :elevation="3" :radius="8" style="padding: 15px">
+      <var-paper :elevation="true" :radius="8" style="padding: 15px">
+        <h2 style="margin-bottom: 10px">写帖子</h2>
+        <WriteReview ref="writeReviewRef" :restaurant-id="restId!" @submit="postsRef?.refresh(); getRestaurantInfo()"/>
+      </var-paper>
+      <var-paper :elevation="true" :radius="8" style="padding: 15px">
         <h2 style="margin-bottom: 10px">帖子（{{ postsNum === null ? '加载失败' : postsNum }}）</h2>
-        <PostList :restaurant-id="restId!"/>
+        <PostList :restaurant-id="restId!" ref="postsRef"/>
       </var-paper>
     </var-space>
   </main>

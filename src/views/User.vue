@@ -164,7 +164,9 @@ async function deleteAccount() {
           <template #description>
             <var-skeleton :rows="4" :loading="needRefreshInfo">
               <var-divider/>
-              <var-cell v-if="userInfo.email" icon="email" :title="userInfo.email"/>
+              <var-cell v-if="userInfo.email" icon="email">
+                <var-link underline="hover" :href="`mailto: ${userInfo.email}`">{{ userInfo.email }}</var-link>
+              </var-cell>
               <div class="var-cell pre-wrap">{{ userInfo.motto }}</div>
             </var-skeleton>
           </template>

@@ -22,12 +22,12 @@ const column = computed(() => screenWidth.value < 866 ? 1 : screenWidth.value < 
 
 const load = async () => {
   if (finished.value) return;
-  const response = await doGetPostList(props.restaurantId, postData.length, postData.length + 10);
+  const response = await doGetPostList(props.restaurantId, postData.length, postData.length + 5);
   const data = response.data as List<PostInfo>;
   postData.push(...data.list);
   total.value = data.all_num;
   data.list.forEach(item => {
-    usersStore.fetchUserInfo(item.id!).catch();
+    usersStore.fetchUserInfo(item.creator!).catch();
   });
 };
 
@@ -38,12 +38,20 @@ const vote = async (post: PostInfo) => {
     Snackbar.success(data.message);
     post.is_agreed = !post.is_agreed;
     post.agrees = post.is_agreed ? post.agrees! + 1 : post.agrees! - 1;
-  } catch (e) {}
+  } catch (e) {
+  }
 };
 
 const toUser = (id: number) => {
   router.push(`/user/${id}`);
 };
+
+const refresh = () => {
+  postData.splice(0, postData.length);
+  total.value = -1;
+};
+
+defineExpose({refresh});
 </script>
 
 <template>
@@ -51,7 +59,7 @@ const toUser = (id: number) => {
     <template #default="{item}">
       <var-paper :elevation="true" :radius="8" class="post-paper">
         <var-skeleton avatar title card :loading="usersStore.getUserInfo(item.creator) == null" class="post-block">
-          <var-space direction="row" style="display: grid; grid-template-columns: 1fr auto">
+          <var-space direction="row" style="display: grid; grid-template-columns: 1fr calc(100% - 60px)">
             <var-space direction="column" align="center" :size="5" style="height: 100%">
               <var-avatar :src="usersStore.getUserInfo(item.creator)?.avatar" hoverable
                           @click="toUser(usersStore.getUserInfo(item.creator)?.id!)"/>
@@ -67,7 +75,8 @@ const toUser = (id: number) => {
               </template>
 
               <template #image>
-                <var-image :src="item.image" lazy fit="scale-down"/>
+                <var-image :radius="6" width="95%" :src="item.image" lazy
+                           fit="scale-down" style="place-self: center; margin-bottom: 10px"/>
               </template>
 
               <template #subtitle>
@@ -83,9 +92,9 @@ const toUser = (id: number) => {
               </template>
 
               <template #description>
-                <var-space direction="column" style="margin: 0 10px;">
-                  <var-ellipsis v-if="item.content" :line-clamp="3" class="pre-wrap">
-                    {{ item.content }}
+                <var-space direction="column" style="margin: 0 10px">
+                  <var-ellipsis v-if="item.content" :line-clamp="2" class="pre-wrap">
+                    <pre class="pre-wrap" v-html="item.content"/>
                   </var-ellipsis>
                   <var-space direction="row" :size="2" align="center">
                     <font-awesome-icon size="lg" :icon="[item.is_agreed ? 'fas' : 'far', 'thumbs-up']"

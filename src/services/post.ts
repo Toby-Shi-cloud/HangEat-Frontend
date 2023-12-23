@@ -5,10 +5,10 @@ export const doUploadImage = (image: File) => {
     let formData = new FormData();
     formData.append('image', image);
     return axios.post('restaurant/upload-image', formData);
-    // -> data: { message: string }
+    // -> data: { message: string, url: string }
 }
 
-export const doCreatePost = (restaurant_id: number, title: string, content: string, grade: number, price: number, image: string) => {
+export const doCreatePost = (restaurant_id: number, title: string, content: string, grade: number, price: number) => {
     startLoading();
     return axios.post('restaurant/create-post', {
         restaurant_id: restaurant_id,
@@ -16,9 +16,15 @@ export const doCreatePost = (restaurant_id: number, title: string, content: stri
         content: content,
         grade: grade,
         price: price,
-        image: image,
     });
     // -> data: { message: string, id: number }
+}
+
+export const doUpdatePostImage = (id: number, image: File) => {
+    let formData = new FormData();
+    formData.append('image', image);
+    return axios.post(`restaurant/update-post-image/${id}`, formData);
+    // -> data: { message: string }
 }
 
 export const doGetPostNum = (restaurant_id: number) => {
