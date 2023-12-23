@@ -6,6 +6,8 @@ import {doDeletePost, doGetPostDetail} from "@/services/post";
 import PostCard from "@/components/PostCard.vue";
 import {Snackbar} from "@varlet/ui";
 import router from "@/router";
+import CommentList from "@/components/CommentList.vue";
+import WriteComment from "@/components/WriteComment.vue";
 
 const props = defineProps<{
   id: string
@@ -15,6 +17,7 @@ const postId = /^\d+$/.test(props.id) ? parseInt(props.id) : undefined;
 const post = ref<PostInfo>({});
 const error = ref(postId === undefined);
 const usersStore = useUsersStore();
+const comments = ref<InstanceType<typeof CommentList>>();
 
 const refreshInfo = () => {
   if (postId === undefined) return;
@@ -41,9 +44,16 @@ const deletePost = async () => {
   <var-result v-if="error" type="error" title="帖子不存在" description="请检查链接是否正确"/>
   <main v-else>
     <var-paper :elevation="true" :radius="8" class="post-paper">
-      <PostCard :post-info="post" @changed="refreshInfo" @deleted="deletePost">
-      </PostCard>
+      <PostCard :post="post" @changed="refreshInfo" @deleted="deletePost"/>
     </var-paper>
+    <var-divider/>
+    <h2>写评论</h2>
+    <var-paper :elevation="true" :radius="8" style="padding: 20px">
+      <WriteComment :post-id="postId" @submit="comments?.refreshNum()"/>
+    </var-paper>
+    <var-divider/>
+    <h2>评论</h2>
+    <CommentList ref="comments" :post-id="postId!" style="margin: 10px 0"/>
   </main>
 </template>
 
@@ -51,6 +61,6 @@ const deletePost = async () => {
 .post-paper {
   width: 90vw;
   max-width: inherit;
-  padding: 2rem;
+  padding: 1rem;
 }
 </style>

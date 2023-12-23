@@ -42,7 +42,7 @@ defineExpose({refresh});
   <LazyList :data="postData" :finished="finished" :column="column" :gutter="[10, 10]" :load="load">
     <template #default="{item}">
       <var-paper :elevation="true" :radius="8" class="post-paper">
-        <PostCard :post-info="item"/>
+        <PostCard :post="item"/>
       </var-paper>
     </template>
   </LazyList>

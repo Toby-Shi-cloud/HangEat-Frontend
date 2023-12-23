@@ -9,7 +9,7 @@ import RichTextEditor from "@/components/RichTextEditor.vue";
 import WriteReview from "@/components/WriteReview.vue";
 
 const props = defineProps<{
-  postInfo: PostInfo;
+  post: PostInfo;
 }>();
 
 defineEmits<{
@@ -21,8 +21,8 @@ const authStore = useAuthStore();
 const usersStore = useUsersStore();
 const inEdition = ref(false);
 const inDelete = ref(false);
-const isDetail = computed(() => props.postInfo.restaurant !== undefined);
-const isCreator = computed(() => authStore.getUserInfo.id === props.postInfo.creator);
+const isDetail = computed(() => props.post.restaurant !== undefined);
+const isCreator = computed(() => authStore.getUserInfo.id === props.post.creator);
 
 const vote = async (post: PostInfo) => {
   try {
@@ -36,57 +36,53 @@ const vote = async (post: PostInfo) => {
 </script>
 
 <template>
-  <var-skeleton avatar title card :loading="usersStore.getUserInfo(postInfo.creator) == null">
-    <AvatarCard :creator-info="usersStore.getUserInfo(postInfo.creator)!">
+  <var-skeleton avatar title card :loading="usersStore.getUserInfo(post.creator) == null">
+    <AvatarCard :creator-info="usersStore.getUserInfo(post.creator)!">
       <template #title>
-        <h1 v-if="isDetail" style="margin: 10px; font-size: 40px;">{{ postInfo.title! }}</h1>
-        <var-link v-else underline="hover" style="margin: 0 10px" :to="`/post/${postInfo.id!}`">
-          <h2>{{ postInfo.title! }}</h2>
+        <h1 v-if="isDetail" style="margin: 10px; font-size: 40px;">{{ post.title! }}</h1>
+        <var-link v-else underline="hover" style="margin: 0 10px" :to="`/post/${post.id!}`">
+          <h2>{{ post.title! }}</h2>
         </var-link>
       </template>
 
       <template #image>
-        <var-image :radius="6" :height="isDetail ? '30vh' : undefined" width="95%" :src="postInfo.image" lazy
-                   fit="scale-down" @click="$router.push(`/post/${postInfo.id!}`)"
+        <var-image :radius="6" :height="isDetail ? '30vh' : undefined" width="95%" :src="post.image" lazy
+                   fit="scale-down" @click="$router.push(`/post/${post.id!}`)"
                    style="padding: auto; margin-bottom: 10px"/>
       </template>
 
       <template #subtitle>
         <var-space direction="row" align="center" style="margin: 0 10px">
-          <p v-if="postInfo.avg_price">人均：¥{{ postInfo.avg_price }}</p>
-          <var-space v-if="postInfo.grade" direction="row" :size="2" align="center">
+          <p v-if="post.avg_price">人均：¥{{ post.avg_price }}</p>
+          <var-space v-if="post.grade" direction="row" :size="2" align="center">
             <p>评分：</p>
             <font-awesome-icon
                 v-for="i in Array(5).keys()"
-                :icon="[postInfo.grade! > i ? 'fas' : 'far', 'star']"/>
+                :icon="[post.grade! > i ? 'fas' : 'far', 'star']"/>
           </var-space>
-          <p v-if="postInfo.date">创建时间：{{ new Date(postInfo.date!).toLocaleString() }}</p>
+          <p v-if="post.date">创建时间：{{ new Date(post.date!).toLocaleString() }}</p>
         </var-space>
       </template>
 
       <template #description>
         <var-space direction="column" style="margin: 0 10px">
-          <RichTextEditor v-if="isDetail" v-model:content="postInfo.content" read-only toolbar="#toolbar"/>
+          <RichTextEditor v-if="isDetail" v-model:content="post.content" read-only toolbar="#toolbar"/>
           <var-ellipsis v-else :line-clamp="2" class="pre-wrap">
-            <pre v-if="postInfo.content" class="pre-wrap" v-html="postInfo.content"/>
+            <pre v-if="post.content" class="pre-wrap" v-html="post.content"/>
           </var-ellipsis>
           <div style="display: grid; grid-template-columns: auto auto; align-items: center">
             <var-space direction="row" :size="2" align="center">
-              <font-awesome-icon size="lg" :icon="[postInfo.is_agreed ? 'fas' : 'far', 'thumbs-up']"
-                                 @click="vote(postInfo)"/>
-              <p>{{ postInfo.agrees || 0 }}</p>
+              <font-awesome-icon size="lg" :icon="[post.is_agreed ? 'fas' : 'far', 'thumbs-up']"
+                                 @click="vote(post)"/>
+              <p>{{ post.agrees || 0 }}</p>
             </var-space>
             <var-button-group v-if="isDetail" mode="outline" type="primary" style="justify-self: end">
               <var-button v-if="isCreator" type="danger" @click="inDelete = true">删除</var-button>
               <var-button v-if="isCreator" @click="inEdition = true">编辑</var-button>
-              <var-button @click="$router.push(`/restaurant/${postInfo.restaurant}`)">前往对应餐馆信息页</var-button>
+              <var-button @click="$router.push(`/restaurant/${post.restaurant}`)">前往对应餐馆信息页</var-button>
             </var-button-group>
           </div>
         </var-space>
-      </template>
-
-      <template #extra>
-        <slot/>
       </template>
     </AvatarCard>
   </var-skeleton>
@@ -95,7 +91,7 @@ const vote = async (post: PostInfo) => {
   <var-popup v-if="isCreator" overlay-class="normal-popup-overlay" class="normal-popup-class" v-model:show="inEdition">
     <var-paper style="padding: 20px">
       <h1>编辑帖子</h1>
-      <WriteReview :restaurant-id="postInfo.restaurant!" :post-info="postInfo"
+      <WriteReview :restaurant-id="post.restaurant!" :post-info="post"
                    @submit="inEdition = false; $emit('changed')"/>
     </var-paper>
   </var-popup>

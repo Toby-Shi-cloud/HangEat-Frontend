@@ -58,4 +58,5 @@ export interface CommentInfo {
     agrees?: number;
     post_id?: number;
     is_agreed?: boolean;
+    replies?: CommentInfo[];
 }

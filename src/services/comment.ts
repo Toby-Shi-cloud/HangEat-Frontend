@@ -1,7 +1,7 @@
 import axios from "./config";
 import {startLoading} from "./config";
 
-export const doCreateComment = (post_id: number, reply_id: number | null, content: string) => {
+export const doCreateComment = (post_id: number, content: string, reply_id?: number) => {
     startLoading();
     return axios.post('restaurant/create-comment', {
         post_id: post_id,

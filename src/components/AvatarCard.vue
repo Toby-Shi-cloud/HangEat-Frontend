@@ -12,16 +12,21 @@ defineProps<{
 
 <template>
   <var-space direction="row" style="display: grid; grid-template-columns: 1fr calc(100% - 60px)">
-    <var-space direction="column" align="center" :size="5" style="height: 100%">
+    <var-space direction="column" align="center" :size="5" class="avatar">
       <var-avatar :src="creatorInfo.avatar" hoverable
                   @click="$router.push(`/user/${creatorInfo.id!}`);"/>
       <var-link underline="hover" :to="`/user/${creatorInfo.id!}`">
-        <p>{{ creatorInfo.username }}</p>
+        {{ creatorInfo.username }}
       </var-link>
     </var-space>
     <var-card :title="title" :subtitle="subtitle" :src="src" :description="description" :elevation="false">
       <template #title>
-        <slot name="title"/>
+        <slot name="title">
+          <var-link v-if="title === undefined" underline="hover" :to="`/user/${creatorInfo.id!}`"
+                    :text-size="26" style="margin: 1rem 0 0 10px">
+            {{ creatorInfo.username }}
+          </var-link>
+        </slot>
       </template>
       <template #subtitle>
         <slot name="subtitle"/>
@@ -40,5 +45,8 @@ defineProps<{
 </template>
 
 <style scoped>
-
+.avatar {
+  height: 100%;
+  margin: 1rem 0 0 .5rem;
+}
 </style>
