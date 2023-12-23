@@ -121,7 +121,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
           <h1>{{ restaurant.name }}</h1>
           <var-space direction="row" :size="2" align="center">
             <font-awesome-icon :icon="['far', 'heart']"/>
-            <p>{{ (restaurant as RestaurantInfo).collectors_num }}</p>
+            <p>{{ restaurant.collectors_num }}</p>
           </var-space>
         </var-space>
       </template>
@@ -141,11 +141,11 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
       <template #content>
         <var-space size="small">
           <font-awesome-icon :icon="['fas', 'location-dot']"/>
-          <var-link @click="handlePosition">{{ (restaurant as RestaurantInfo).detail_addr }}</var-link>
+          <var-link @click="handlePosition">{{ restaurant.detail_addr }}</var-link>
           <span>|</span>
           <font-awesome-icon :icon="['fas', 'phone']"/>
           <var-link v-if="restaurant.phone" :href="`tel: ${restaurant.phone}`">
-            {{ (restaurant as RestaurantInfo).phone }}
+            {{ restaurant.phone }}
           </var-link>
           <p v-else>&emsp;-&emsp;</p>
           <span>|</span>
@@ -180,7 +180,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                       />
                       <p v-else>（暂无评分）</p>
                     </var-space>
-                    <p>人均价格：¥{{ (restaurant as RestaurantInfo).avg_price || '未知' }}</p>
+                    <p>人均价格：¥{{ restaurant.avg_price || '未知' }}</p>
                   </var-space>
                 </div>
               </template>
@@ -193,8 +193,8 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                     <p>页面所有者：</p>
                     <var-link :to="`/user/${creatorInfo.id}`">{{ creatorInfo.username }}</var-link>
                   </var-space>
-                  <p>页面创建时间：{{ new Date((restaurant as RestaurantInfo).created_at!).toLocaleDateString() }}</p>
-                  <p>最后修改时间：{{ new Date((restaurant as RestaurantInfo).updated_at!).toLocaleDateString() }}</p>
+                  <p>页面创建时间：{{ new Date(restaurant.created_at!).toLocaleDateString() }}</p>
+                  <p>最后修改时间：{{ new Date(restaurant.updated_at!).toLocaleDateString() }}</p>
                 </var-space>
                 <var-cell v-else title="信息缺失"/>
               </template>
@@ -233,7 +233,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                     <font-awesome-icon :icon="['fas', 'location-dot']"/>
                   </template>
                   <var-link @click="handlePosition" style="margin: 0 10px">
-                    {{ (restaurant as RestaurantInfo).detail_addr }}
+                    {{ restaurant.detail_addr }}
                   </var-link>
                 </var-cell>
                 <var-cell>
@@ -241,7 +241,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                     <font-awesome-icon :icon="['fas', 'phone']"/>
                   </template>
                   <var-link v-if="restaurant.phone" :href="`tel: ${restaurant.phone}`" style="margin: 0 10px">
-                    {{ (restaurant as RestaurantInfo).phone }}
+                    {{ restaurant.phone }}
                   </var-link>
                   <p v-else style="margin: 0 10px">&emsp;-&emsp;</p>
                 </var-cell>

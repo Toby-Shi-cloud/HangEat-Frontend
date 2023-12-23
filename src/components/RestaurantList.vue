@@ -63,7 +63,7 @@ watch(() => props.getRestaurantNum, () => {
           <var-space direction="row" align="center" :size="3">
           <font-awesome-icon :icon="[item.is_collected ? 'fas' : 'far', 'heart']"
                              :color="item.is_collected ? 'red' : ''"/>
-          <p>{{ (item as RestaurantInfo).collectors_num || 0 }}</p>
+          <p>{{ item.collectors_num || 0 }}</p>
           </var-space>
         </template>
       </var-card>

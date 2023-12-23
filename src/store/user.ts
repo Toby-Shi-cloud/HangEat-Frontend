@@ -79,7 +79,7 @@ export const useUsersStore = defineStore('users', {
             if (this.inFetching[id]) while (this.inFetching[id]) {
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
-            if (forceRefresh) this.userInfoMap[id] = undefined;
+            if (forceRefresh) delete this.userInfoMap[id];
             if (this.userInfoMap[id]) return this.userInfoMap[id];
             this.inFetching[id] = true;
             const {data} = await doGetUserById(id);

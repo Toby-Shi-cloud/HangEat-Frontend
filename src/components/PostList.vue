@@ -50,19 +50,19 @@ const toUser = (id: number) => {
   <LazyList :data="postData" :finished="finished" :column="column" :gutter="[10, 10]" :load="load">
     <template #default="{item}">
       <var-paper :elevation="true" :radius="8" class="post-paper">
-        <var-skeleton avatar title card :loading="usersStore.getUserInfo(item.id) == null" class="post-block">
+        <var-skeleton avatar title card :loading="usersStore.getUserInfo(item.creator) == null" class="post-block">
           <var-space direction="row" style="display: grid; grid-template-columns: 1fr auto">
             <var-space direction="column" align="center" :size="5" style="height: 100%">
-              <var-avatar :src="usersStore.getUserInfo(item.id)?.avatar" hoverable
-                          @click="toUser(usersStore.getUserInfo(item.id)?.id!)"/>
-              <var-link underline="hover" :to="`/user/${usersStore.getUserInfo(item.id)?.id!}`">
-                <p>{{ usersStore.getUserInfo(item.id)?.username }}</p>
+              <var-avatar :src="usersStore.getUserInfo(item.creator)?.avatar" hoverable
+                          @click="toUser(usersStore.getUserInfo(item.creator)?.id!)"/>
+              <var-link underline="hover" :to="`/user/${usersStore.getUserInfo(item.creator)?.id!}`">
+                <p>{{ usersStore.getUserInfo(item.creator)?.username }}</p>
               </var-link>
             </var-space>
             <var-card :elevation="false">
               <template #title>
                 <var-link style="margin: 0 10px" :to="`/post/${item.id!}`">
-                  <h2>{{ (item as PostInfo).title! }}</h2>
+                  <h2>{{ item.title! }}</h2>
                 </var-link>
               </template>
 
@@ -72,7 +72,7 @@ const toUser = (id: number) => {
 
               <template #subtitle>
                 <var-space direction="row" align="center" style="margin: 0 10px">
-                  <p v-if="item.avg_price">人均：¥{{ (item as PostInfo).avg_price }}</p>
+                  <p v-if="item.avg_price">人均：¥{{ item.avg_price }}</p>
                   <var-space v-if="item.grade" direction="row" :size="2" align="center">
                     <p>评分：</p>
                     <font-awesome-icon
@@ -85,12 +85,12 @@ const toUser = (id: number) => {
               <template #description>
                 <var-space direction="column" style="margin: 0 10px;">
                   <var-ellipsis v-if="item.content" :line-clamp="3" class="pre-wrap">
-                    {{ (item as PostInfo).content }}
+                    {{ item.content }}
                   </var-ellipsis>
                   <var-space direction="row" :size="2" align="center">
                     <font-awesome-icon size="lg" :icon="[item.is_agreed ? 'fas' : 'far', 'thumbs-up']"
                                        @click="vote(item)"/>
-                    <p>{{ (item as PostInfo).agrees || 0 }}</p>
+                    <p>{{ item.agrees || 0 }}</p>
                   </var-space>
                 </var-space>
               </template>
