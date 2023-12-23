@@ -30,7 +30,7 @@ const finished = computed(() => total.value === data.length);
 
 const load = async () => {
   if (finished.value) return;
-  const response = await props.getRestaurantList(data.length, data.length + 20);
+  const response = await props.getRestaurantList(data.length, data.length + 10);
   const resData = response.data as List<RestaurantInfo>;
   data.push(...resData.list);
   total.value = resData.all_num;
@@ -44,7 +44,6 @@ const toRestaurant = (id: number) => {
 watch(() => props.getRestaurantNum, () => {
   total.value = -1;
   data.splice(0, data.length);
-  load();
 }, {immediate: true});
 </script>
 

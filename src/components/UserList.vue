@@ -23,7 +23,7 @@ watch(() => props.total, () => {
 
 const load = async () => {
   if (finished.value) return;
-  const res = await props.load(data.length, data.length + 20);
+  const res = await props.load(data.length, data.length + 10);
   data.push(...res.data.list);
 };
 

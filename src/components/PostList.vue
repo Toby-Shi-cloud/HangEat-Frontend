@@ -22,7 +22,7 @@ const column = computed(() => screenWidth.value < 866 ? 1 : screenWidth.value < 
 
 const load = async () => {
   if (finished.value) return;
-  const response = await doGetPostList(props.restaurantId, postData.length, postData.length + 20);
+  const response = await doGetPostList(props.restaurantId, postData.length, postData.length + 10);
   const data = response.data as List<PostInfo>;
   postData.push(...data.list);
   total.value = data.all_num;
