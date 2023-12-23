@@ -1,21 +1,26 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import type {RestaurantInfo} from "@/store";
+import type {RestaurantInfo, UserInfo} from "@/store";
 import {doDeleteRestaurant, doGetRestaurantDetail} from "@/services/restaurant";
 import {type Input, Snackbar} from "@varlet/ui";
-import {useAuthStore} from "@/store/user";
+import {useAuthStore, useUsersStore} from "@/store/user";
 import {doFavoriteRestaurant, doUnfavoriteRestaurant} from "@/services/user";
 import RestaurantEdition from "@/components/RestaurantEdition.vue";
 import RestaurantNewImg from "@/components/RestaurantNewImg.vue";
+import PostList from "@/components/PostList.vue";
+import {doGetPostNum} from "@/services/post";
 
 const props = defineProps<{
   id: string
 }>();
 const restId = /^\d+$/.test(props.id) ? parseInt(props.id) : undefined;
 const restaurant = ref<RestaurantInfo>({});
+const postsNum = ref<number | null>(null);
 const loading = ref(true);
 const error = ref(restId === undefined);
 const authStore = useAuthStore();
+const usersStore = useUsersStore();
+const creatorInfo = ref<UserInfo | null>(null);
 const width = ref(window.innerWidth);
 window.onresize = () => width.value = window.innerWidth;
 
@@ -24,8 +29,16 @@ const getRestaurantInfo = () => {
   doGetRestaurantDetail(restId).then(res => {
     restaurant.value = res.data;
     loading.value = false;
+    usersStore.fetchUserInfo(restaurant.value.creator!).then(data => {
+      creatorInfo.value = data;
+    }).catch();
   }).catch(() => {
     error.value = true;
+  });
+  doGetPostNum(restId).then(res => {
+    postsNum.value = res.data.post_num;
+  }).catch(() => {
+    postsNum.value = null;
   });
 };
 getRestaurantInfo();
@@ -45,6 +58,8 @@ const handleFavorite = async () => {
     const {data} = await handler(restId!);
     Snackbar.success(data.message);
     restaurant.value.is_collected = !restaurant.value.is_collected;
+    if (restaurant.value.is_collected) restaurant.value.collectors_num = restaurant.value.collectors_num! + 1;
+    else restaurant.value.collectors_num = restaurant.value.collectors_num! - 1;
   } catch (e) {
   }
 };
@@ -106,7 +121,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
           <h1>{{ restaurant.name }}</h1>
           <var-space direction="row" :size="2" align="center">
             <font-awesome-icon :icon="['far', 'heart']"/>
-            <p>{{ restaurant.collectors_num }}</p>
+            <p>{{ (restaurant as RestaurantInfo).collectors_num }}</p>
           </var-space>
         </var-space>
       </template>
@@ -126,10 +141,12 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
       <template #content>
         <var-space size="small">
           <font-awesome-icon :icon="['fas', 'location-dot']"/>
-          <var-link @click="handlePosition">{{ restaurant.detail_addr }}</var-link>
+          <var-link @click="handlePosition">{{ (restaurant as RestaurantInfo).detail_addr }}</var-link>
           <span>|</span>
           <font-awesome-icon :icon="['fas', 'phone']"/>
-          <var-link v-if="restaurant.phone" :href="`tel: ${restaurant.phone}`">{{ restaurant.phone }}</var-link>
+          <var-link v-if="restaurant.phone" :href="`tel: ${restaurant.phone}`">
+            {{ (restaurant as RestaurantInfo).phone }}
+          </var-link>
           <p v-else>&emsp;-&emsp;</p>
           <span>|</span>
           <font-awesome-icon :icon="['far', 'pen-to-square']"/>
@@ -142,21 +159,47 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
 
     <var-space direction="column" size="20px">
       <div id="restaurant-main">
-        <var-watermark content="买家秀">
-          <div id="restaurant-images">
-            <var-image height="30vh" fit="scale-down" :src="restaurant.img"></var-image>
-          </div>
-        </var-watermark>
+        <div id="restaurant-images">
+          <var-image height="30vh" fit="scale-down" :src="restaurant.img"></var-image>
+        </div>
       </div>
       <var-row id="restaurant-overview" :gutter="[10, 10]" :align="'' as any">
         <var-col class="restaurant-overview-card" :span="width < 768 ? 24 : 8">
-          <var-card title="评分" style="height: 100%">
-            <template #description>
-              <div class="restaurant-overview-description">
-                此处用于展示餐厅评分，评价数等信息，暂未实现。
-              </div>
-            </template>
-          </var-card>
+          <var-paper :elevation="true" :radius="8" style="height: 100%; width: 100%">
+            <var-card :elevation="false" title="总体评价">
+              <template #description>
+                <div class="restaurant-overview-description">
+                  <var-space direction="column">
+                    <var-space direction="row" :size="2" align="center">
+                      <p>评分：</p>
+                      <font-awesome-icon
+                          v-if="restaurant.avg_grade"
+                          v-for="i in Array(5).keys()"
+                          :icon="restaurant.avg_grade! >= i + 0.9 ? ['fas', 'star']
+                             : ['far', restaurant.avg_grade! >= i + 0.4 ? 'star-half-stroke' : 'star']"
+                      />
+                      <p v-else>（暂无评分）</p>
+                    </var-space>
+                    <p>人均价格：¥{{ (restaurant as RestaurantInfo).avg_price || '未知' }}</p>
+                  </var-space>
+                </div>
+              </template>
+            </var-card>
+            <var-divider/>
+            <var-card :elevation="false" title="信息修改历史">
+              <template #description>
+                <var-space v-if="creatorInfo" direction="column" style="margin: 10px 10px 0">
+                  <var-space direction="row" :size="0">
+                    <p>页面所有者：</p>
+                    <var-link :to="`/user/${creatorInfo.id}`">{{ creatorInfo.username }}</var-link>
+                  </var-space>
+                  <p>页面创建时间：{{ new Date((restaurant as RestaurantInfo).created_at).toLocaleDateString() }}</p>
+                  <p>最后修改时间：{{ new Date((restaurant as RestaurantInfo).updated_at).toLocaleDateString() }}</p>
+                </var-space>
+                <var-cell v-else title="信息缺失"/>
+              </template>
+            </var-card>
+          </var-paper>
         </var-col>
         <var-col class="restaurant-overview-card" :span="width < 768 ? 24 : 8">
           <var-card title="详细信息" style="height: 100%">
@@ -189,14 +232,16 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                   <template #icon>
                     <font-awesome-icon :icon="['fas', 'location-dot']"/>
                   </template>
-                  <var-link @click="handlePosition" style="margin: 0 10px">{{ restaurant.detail_addr }}</var-link>
+                  <var-link @click="handlePosition" style="margin: 0 10px">
+                    {{ (restaurant as RestaurantInfo).detail_addr }}
+                  </var-link>
                 </var-cell>
                 <var-cell>
                   <template #icon>
                     <font-awesome-icon :icon="['fas', 'phone']"/>
                   </template>
                   <var-link v-if="restaurant.phone" :href="`tel: ${restaurant.phone}`" style="margin: 0 10px">
-                    {{ restaurant.phone }}
+                    {{ (restaurant as RestaurantInfo).phone }}
                   </var-link>
                   <p v-else style="margin: 0 10px">&emsp;-&emsp;</p>
                 </var-cell>
@@ -208,9 +253,9 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
           </var-card>
         </var-col>
       </var-row>
-      <var-paper>
-        <h1>评论模块（暂未实现）</h1>
-        <div style="min-height: 30vh"></div>
+      <var-paper :elevation="3" :radius="8" style="padding: 15px">
+        <h2 style="margin-bottom: 10px">帖子（{{ postsNum === null ? '加载失败' : postsNum }}）</h2>
+        <PostList :restaurant-id="restId!"/>
       </var-paper>
     </var-space>
   </main>
@@ -250,7 +295,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
               :placeholder="`请输入：“我确定删除${restaurant.name!}”`"
               :validate-trigger="[]"
               :rules="[v => v === `我确定删除${restaurant.name!}` || '输入内容错误']"
-              style="margin-top: -20px"
+              :style="{'margin-top': '-20px', 'width': `min(100vw, max(${10 + restaurant.name!.length}rem, 20rem))`}"
           />
           <var-button block type="danger" @click="deleteRestaurant" style="margin-top: 5px">确定删除</var-button>
         </var-form>

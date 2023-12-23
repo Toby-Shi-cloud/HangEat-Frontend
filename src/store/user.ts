@@ -1,6 +1,12 @@
 import {defineStore} from "pinia";
 import type {UserInfo} from "@/store";
-import {doGetSubscribersNum, doGetSubscriptionsNum, doGetUserInfo, doRefreshToken} from "@/services/user";
+import {
+    doGetSubscribersNum,
+    doGetSubscriptionsNum,
+    doGetUserById,
+    doGetUserInfo,
+    doRefreshToken
+} from "@/services/user";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -59,6 +65,31 @@ export const useAuthStore = defineStore('auth', {
             if (!this.authenticated) return;
             const {data} = await doGetSubscriptionsNum();
             this.userInfo.subscriptions_num = data.subscriptions_num;
+        },
+    }
+});
+
+export const useUsersStore = defineStore('users', {
+    state: () => ({
+        userInfoMap: {} as Record<number, UserInfo>,
+        inFetching: {} as Record<number, boolean>,
+    }),
+    actions: {
+        async fetchUserInfo(id: number) {
+            if (this.inFetching[id]) while (this.inFetching[id]) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            if (this.userInfoMap[id]) return this.userInfoMap[id];
+            this.inFetching[id] = true;
+            const {data} = await doGetUserById(id);
+            this.userInfoMap[id] = data;
+            this.inFetching[id] = false;
+            return data as UserInfo;
+        },
+        getUserInfo(id?: number) {
+            if (!id) return null;
+            if (this.userInfoMap[id]) return this.userInfoMap[id];
+            return null;
         },
     }
 });

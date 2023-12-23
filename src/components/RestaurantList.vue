@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, reactive, computed, watch} from "vue";
 import LazyList from "@/components/LazyList.vue";
-import type {RestaurantInfo} from "@/store";
+import type {List, RestaurantInfo} from "@/store";
 import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
 
 const props = withDefaults(defineProps<{
@@ -27,17 +27,14 @@ const column = computed(() => props.layout == 'row' ? 1 : width.value < 668 ? 1 
 const total = ref(-1);
 const data = reactive<RestaurantInfo[]>([]);
 const finished = computed(() => total.value === data.length);
-const loading = ref(false);
 
-const load = () => {
+const load = async () => {
   if (finished.value) return;
-  if (loading.value) return;
-  loading.value = true;
-  props.getRestaurantList(data.length, data.length + 20).then(res => {
-    data.push(...res.data.list);
-    total.value = res.data.all_num;
-    emits('changed', total.value);
-  }).finally(() => loading.value = false);
+  const response = await props.getRestaurantList(data.length, data.length + 20);
+  const resData = response.data as List<RestaurantInfo>;
+  data.push(...resData.list);
+  total.value = resData.all_num;
+  emits('changed', total.value);
 };
 
 const toRestaurant = (id: number) => {
@@ -52,7 +49,7 @@ watch(() => props.getRestaurantNum, () => {
 </script>
 
 <template>
-  <LazyList :data="data" :column="column" :finished="finished" :gutter="[10, 10]" @load="load">
+  <LazyList :data="data" :column="column" :finished="finished" :gutter="[10, 10]" :load="load">
     <template #default="{item}">
       <var-card class="restaurant-card" :layout="layout"
                 :title="item.name" :src="item.img" @click="toRestaurant(item.id!)">
@@ -67,7 +64,7 @@ watch(() => props.getRestaurantNum, () => {
           <var-space direction="row" align="center" :size="3">
           <font-awesome-icon :icon="[item.is_collected ? 'fas' : 'far', 'heart']"
                              :color="item.is_collected ? 'red' : ''"/>
-          <p>{{ item.collectors_num || 0 }}</p>
+          <p>{{ (item as RestaurantInfo).collectors_num || 0 }}</p>
           </var-space>
         </template>
       </var-card>

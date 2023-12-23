@@ -10,30 +10,31 @@
 <script setup lang="ts" generic="T">
 import {ref} from 'vue';
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   data: T[]
   finished: boolean
+  load: () => Promise<void>
   column?: number
-  gutter?: string | number | [string | number, string |number]
+  gutter?: string | number | [string | number, string | number]
 }>(), {
   column: 1,
   gutter: 0
 });
 
-const emits = defineEmits<{
-  load: []
-}>();
-
 const error = ref(false);
 const loading = ref(false);
+const fetching = ref(false);
 
-const load = () => {
+const load = async () => {
   try {
-    emits('load');
+    if (fetching.value) return;
+    fetching.value = true;
+    await props.load();
   } catch (e) {
     error.value = true;
   } finally {
     loading.value = false;
+    fetching.value = false;
   }
 };
 </script>
@@ -45,7 +46,7 @@ const load = () => {
       v-model:error="error"
       v-model:loading="loading"
       @load="load">
-    <var-row :gutter="gutter">
+    <var-row :gutter="gutter" :align="'' as any">
       <var-col :key="item" v-for="item in data" :span="24 / column">
         <slot :item="item"></slot>
       </var-col>

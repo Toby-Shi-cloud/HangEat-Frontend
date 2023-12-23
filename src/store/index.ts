@@ -28,4 +28,25 @@ export interface RestaurantInfo {
     address?: string;
     detail_addr?: string;
     phone?: string;
+    avg_grade?: number;
+    avg_price?: number;
+    created_at?: string;
+    updated_at?: string;
 }
+
+export interface PostInfo {
+    id?: number;
+    title?: string;
+    content?: string;
+    grade?: number;
+    avg_price?: number;
+    creator?: number;
+    image?: string;
+    agrees?: number;
+    is_agreed?: boolean;
+    // detail info
+    restaurant?: number;
+    date?: string;
+    recommend_dish?: string[];
+}
+

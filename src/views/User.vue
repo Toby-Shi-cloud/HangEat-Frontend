@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import {ref, computed, watch, type ComponentPublicInstance} from "vue";
 import type {UserInfo} from "@/store";
-import {useAuthStore} from "@/store/user";
+import {useAuthStore, useUsersStore} from "@/store/user";
 import ChangeUserInfo from "@/components/ChangeUserInfo.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
 import {
   doDelete, doGetFavorableRestaurantsList,
   doGetFavorableRestaurantsNum,
   doGetRelationBetween,
-  doGetUserById,
   doSubscribe,
   doUnsubscribe
 } from "@/services/user";
@@ -23,6 +22,7 @@ const props = defineProps<{
 const userId = /^\d+$/.test(props.id) ? parseInt(props.id) : undefined;
 
 const authStore = useAuthStore();
+const usersStore = useUsersStore();
 const activeTab = ref(0);
 const editInfo = ref(false);
 const editPassword = ref(false);
@@ -48,8 +48,8 @@ const restaurantListTotal = ref(0);
 
 const refreshInfo = () => {
   if (userId !== undefined) {
-    doGetUserById(userId).then(res => {
-      userInfoWithId.value = res.data;
+    usersStore.fetchUserInfo(userId).then(data => {
+      userInfoWithId.value = data;
     }).catch(() => {
       failedToGetUserInfo.value = true;
     });

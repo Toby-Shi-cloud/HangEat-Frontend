@@ -21,11 +21,10 @@ watch(() => props.total, () => {
   }).catch();
 });
 
-const load = () => {
+const load = async () => {
   if (finished.value) return;
-  props.load(data.length, data.length + 20).then(res => {
-    data.push(...res.data.list);
-  }).catch();
+  const res = await props.load(data.length, data.length + 20);
+  data.push(...res.data.list);
 };
 
 const toUser = (id: number) => {
@@ -34,11 +33,11 @@ const toUser = (id: number) => {
 </script>
 
 <template>
-  <LazyList :data="data" :finished="finished" @load="load">
+  <LazyList :data="data" :finished="finished" :load="load">
     <template #default="{item}">
       <div style="display: block; width: 100%">
         <var-cell :description="item.motto" style="height: 80px">
-          <var-link underline="hover" @click="toUser(item.id!)">{{ item.username }}</var-link>
+          <var-link underline="hover" @click="toUser(item.id!)">{{ (item as UserInfo).username }}</var-link>
           <template #icon>
             <var-avatar :src="item.avatar" style="margin-right: 8px" :hoverable="true" @click="toUser(item.id!)"/>
           </template>
