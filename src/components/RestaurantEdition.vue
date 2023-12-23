@@ -45,7 +45,7 @@ const deleteTag = async (tg: string) => {
 async function onTagEnter(event: KeyboardEvent) {
   if (event.key === "Enter") {
     if (!await (tagInput.value as Input).validate()) return;
-    doReferTag(id, [tag.value]).then(response => {
+    doReferTag(id, tag.value.split(/[,，]/)).then(response => {
       Snackbar.success(response.data.message);
       props.restaurant.tags!.push(tag.value);
       tag.value = '';

@@ -35,13 +35,27 @@ export const doGetRestaurantDetail = (id: number) => {
     // -> data: RestaurantInfo
 }
 
-export const doGetRestaurantNum = () => {
-    return axios.get(`restaurant/get-restaurant-num?timestamp=${Date.now()}`);
+export const doGetRestaurantNum = (tags?: string[], creator_id?: number) => {
+    let query = '';
+    if (tags) query += `&tags=${tags.join(',')}`;
+    if (creator_id) query += `&creator_id=${creator_id}`;
+    return axios.get(`restaurant/get-restaurant-num?timestamp=${Date.now()}${query}`);
     // -> data: { restaurant_num: number }
 }
 
-export const doGetRestaurantList = (from: number, to: number) => {
-    return axios.get(`restaurant/get-restaurant-list?from=${from}&to=${to}&timestamp=${Date.now()}`);
+export enum OrderType {
+    CollectorsNum = 0,
+    AverageGrade = 1,
+    AveragePrice = 2,
+    CreateTime = 3,
+}
+
+export const doGetRestaurantList = (type: OrderType, from: number, to: number, reverse = false, tags?: string[], creator_id?: number) => {
+    let query = '';
+    if (tags) query += `&tags=${tags.join(',')}`;
+    if (creator_id) query += `&creator_id=${creator_id}`;
+    query += `&reverse=${reverse ? 1 : 0}`;
+    return axios.get(`restaurant/get-restaurant-list/${type}?from=${from}&to=${to}&timestamp=${Date.now()}${query}`);
     // -> data: List<RestaurantInfo>
 }
 
@@ -76,14 +90,4 @@ export const doGetTagNum = () => {
 export const doGetTagList = (from: number, to: number) => {
     return axios.get(`restaurant/get-tag-list?from=${from}&to=${to}&timestamp=${Date.now()}`);
     // -> data: List<{name:string}>
-}
-
-export const doGetRestaurantNumByTags = (tags: string[]) => {
-    return axios.get(`restaurant/get-tag-restaurant-num?tags=${tags.join(',')}&timestamp=${Date.now()}`);
-    // -> data: { restaurant_num: number }
-}
-
-export const doGetRestaurantListByTags = (tags: string[], from: number, to: number) => {
-    return axios.get(`restaurant/get-tag-restaurant-list?tags=${tags.join(',')}&from=${from}&to=${to}&timestamp=${Date.now()}`);
-    // -> data: List<RestaurantInfo>
 }

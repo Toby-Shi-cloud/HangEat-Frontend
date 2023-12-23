@@ -1,20 +1,15 @@
 <script setup lang="ts">
 import {ref, computed} from 'vue';
 import RestaurantList from "@/components/RestaurantList.vue";
-import {
-  doGetRestaurantList,
-  doGetRestaurantListByTags,
-  doGetRestaurantNum,
-  doGetRestaurantNumByTags
-} from "@/services/restaurant";
+import {doGetRestaurantList, doGetRestaurantNum, OrderType} from "@/services/restaurant";
 import RestaurantNew from "@/components/RestaurantNew.vue";
 
 const props = defineProps<{
   tag?: string,
 }>();
 
-const getRestaurantNum = computed(() => props.tag ? () => doGetRestaurantNumByTags([props.tag!]) : doGetRestaurantNum);
-const getRestaurantList = computed(() => props.tag ? (from: number, to: number) => doGetRestaurantListByTags([props.tag!], from, to) : doGetRestaurantList);
+const getRestaurantNum = computed(() => () => doGetRestaurantNum(props.tag ? [props.tag!] : undefined));
+const getRestaurantList = computed(() => (from: number, to: number) => doGetRestaurantList(OrderType.CreateTime, from, to, false, props.tag ? [props.tag!] : undefined));
 const newRestaurant = ref(false);
 </script>
 
@@ -27,7 +22,9 @@ const newRestaurant = ref(false);
   </main>
   <footer id="app-footer">
     <div style="display: inline-grid; place-items: center; width: 100%">
-      <var-link type="primary" @click="newRestaurant = true" style="place-self: center">没有找到想要的餐馆？创建一个</var-link>
+      <var-link type="primary" @click="newRestaurant = true" style="place-self: center">
+        没有找到想要的餐馆？创建一个
+      </var-link>
     </div>
   </footer>
   <var-popup overlay-class="normal-popup-overlay"

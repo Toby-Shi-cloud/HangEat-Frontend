@@ -34,7 +34,7 @@ const onTagEnter = async (event: KeyboardEvent) => {
   if (event.key === 'Enter') {
     if (!await (tagInput.value as Input).validate()) return;
     if (tag.value === '') return;
-    tags.value.push(tag.value);
+    tags.value.push(...tag.value.split(/[,，]/));
     tag.value = '';
   }
 }
@@ -54,8 +54,7 @@ const onTagEnter = async (event: KeyboardEvent) => {
       </var-chip>
     </var-space>
     <var-input class="edit-input" ref="tagInput" v-model="tag" placeholder="新标签"
-               variant="outlined" :onkeydown="onTagEnter"
-               :rules="tagRules(tags)"/>
+               variant="outlined" :onkeydown="onTagEnter" :rules="tagRules(tags)"/>
     <var-input class="edit-input" v-model="description" :textarea="true" placeholder="餐馆描述" variant="outlined"/>
     <var-button-group class="edit-button-group">
       <var-button type="default" @click="$emit('close')">取消</var-button>

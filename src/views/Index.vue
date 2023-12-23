@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import RestaurantList from "@/components/RestaurantList.vue";
-import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
+import {doGetRestaurantList, doGetRestaurantNum, OrderType} from "@/services/restaurant";
 </script>
 
 <template>
@@ -19,7 +19,7 @@ import {doGetRestaurantList, doGetRestaurantNum} from "@/services/restaurant";
     <RestaurantList
         class="restaurant-list"
         :get-restaurant-num="doGetRestaurantNum"
-        :get-restaurant-list="doGetRestaurantList"/>
+        :get-restaurant-list="(f, t) => doGetRestaurantList(OrderType.CreateTime, f, t)"/>
   </main>
 </template>
 
