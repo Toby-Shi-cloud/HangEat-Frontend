@@ -50,3 +50,12 @@ export interface PostInfo {
     recommend_dish?: string[];
 }
 
+export interface CommentInfo {
+    id?: number;
+    content?: string;
+    author?: number;
+    reply_to?: number;
+    agrees?: number;
+    post_id?: number;
+    is_agreed?: boolean;
+}

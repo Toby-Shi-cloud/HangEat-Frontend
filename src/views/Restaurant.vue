@@ -193,8 +193,8 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
                     <p>页面所有者：</p>
                     <var-link :to="`/user/${creatorInfo.id}`">{{ creatorInfo.username }}</var-link>
                   </var-space>
-                  <p>页面创建时间：{{ new Date((restaurant as RestaurantInfo).created_at).toLocaleDateString() }}</p>
-                  <p>最后修改时间：{{ new Date((restaurant as RestaurantInfo).updated_at).toLocaleDateString() }}</p>
+                  <p>页面创建时间：{{ new Date((restaurant as RestaurantInfo).created_at!).toLocaleDateString() }}</p>
+                  <p>最后修改时间：{{ new Date((restaurant as RestaurantInfo).updated_at!).toLocaleDateString() }}</p>
                 </var-space>
                 <var-cell v-else title="信息缺失"/>
               </template>

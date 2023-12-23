@@ -5,6 +5,7 @@ import LazyList from "@/components/LazyList.vue";
 import {doDownVote, doGetPostList, doUpVote} from "@/services/post";
 import {useUsersStore} from "@/store/user";
 import {Snackbar} from "@varlet/ui";
+import router from "@/router";
 
 const props = defineProps<{
   restaurantId: number
@@ -39,6 +40,10 @@ const vote = async (post: PostInfo) => {
     post.agrees = post.is_agreed ? post.agrees! + 1 : post.agrees! - 1;
   } catch (e) {}
 };
+
+const toUser = (id: number) => {
+  router.push(`/user/${id}`);
+};
 </script>
 
 <template>
@@ -47,9 +52,13 @@ const vote = async (post: PostInfo) => {
       <var-paper :elevation="true" :radius="8" class="post-paper">
         <var-skeleton avatar title card :loading="usersStore.getUserInfo(item.id) == null" class="post-block">
           <var-space direction="row" style="display: grid; grid-template-columns: 1fr auto">
-            <div style="height: 100%">
-              <var-avatar :src="usersStore.getUserInfo(item.id)!.avatar"/>
-            </div>
+            <var-space direction="column" align="center" :size="5" style="height: 100%">
+              <var-avatar :src="usersStore.getUserInfo(item.id)?.avatar" hoverable
+                          @click="toUser(usersStore.getUserInfo(item.id)?.id!)"/>
+              <var-link underline="hover" :to="`/user/${usersStore.getUserInfo(item.id)?.id!}`">
+                <p>{{ usersStore.getUserInfo(item.id)?.username }}</p>
+              </var-link>
+            </var-space>
             <var-card :elevation="false">
               <template #title>
                 <var-link style="margin: 0 10px" :to="`/post/${item.id!}`">
