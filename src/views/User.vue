@@ -48,7 +48,7 @@ const restaurantListTotal = ref(0);
 
 const refreshInfo = () => {
   if (userId !== undefined) {
-    usersStore.fetchUserInfo(userId).then(data => {
+    usersStore.fetchUserInfo(userId, true).then(data => {
       userInfoWithId.value = data;
     }).catch(() => {
       failedToGetUserInfo.value = true;

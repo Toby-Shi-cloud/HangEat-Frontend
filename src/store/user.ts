@@ -75,10 +75,11 @@ export const useUsersStore = defineStore('users', {
         inFetching: {} as Record<number, boolean>,
     }),
     actions: {
-        async fetchUserInfo(id: number) {
+        async fetchUserInfo(id: number, forceRefresh = false) {
             if (this.inFetching[id]) while (this.inFetching[id]) {
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
+            if (forceRefresh) this.userInfoMap[id] = undefined;
             if (this.userInfoMap[id]) return this.userInfoMap[id];
             this.inFetching[id] = true;
             const {data} = await doGetUserById(id);
