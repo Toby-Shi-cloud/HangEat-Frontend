@@ -29,7 +29,7 @@ const finished = computed(() => total.value === data.length);
 
 const load = async () => {
   if (finished.value) return;
-  const response = await props.getRestaurantList(data.length, data.length + 5);
+  const response = await props.getRestaurantList(data.length, data.length + column.value * 3);
   const resData = response.data as List<RestaurantInfo>;
   data.push(...resData.list);
   total.value = resData.all_num;

@@ -4,12 +4,15 @@ import RestaurantList from "@/components/RestaurantList.vue";
 import {doGetRestaurantList, doGetRestaurantNum, OrderType} from "@/services/restaurant";
 import RestaurantNew from "@/components/RestaurantNew.vue";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   tag?: string,
-}>();
+}>(), {
+  tag: '',
+});
 
-const getRestaurantNum = computed(() => () => doGetRestaurantNum(props.tag ? [props.tag!] : undefined));
-const getRestaurantList = computed(() => (from: number, to: number) => doGetRestaurantList(OrderType.CreateTime, from, to, false, props.tag ? [props.tag!] : undefined));
+const tags = computed(() => props.tag.split(','));
+const getRestaurantNum = computed(() => () => doGetRestaurantNum(tags.value));
+const getRestaurantList = computed(() => (from: number, to: number) => doGetRestaurantList(OrderType.CreateTime, from, to, false, tags.value));
 const newRestaurant = ref(false);
 </script>
 
