@@ -57,14 +57,13 @@ export const doDeletePost = (id: number) => {
     // -> data: { message: string }
 }
 
-export const doUpdatePost = (id: number, title?: string, content?: string, grade?: number, price?: number, image?: string) => {
+export const doUpdatePost = (id: number, title?: string, content?: string, grade?: number, price?: number) => {
     startLoading();
     return axios.put(`restaurant/update-post/${id}`, {
         title: title,
         content: content,
         grade: grade,
         price: price,
-        image: image,
     });
     // -> data: { message: string }
 }

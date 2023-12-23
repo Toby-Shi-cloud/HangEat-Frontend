@@ -10,7 +10,13 @@ const props = withDefaults(defineProps<{
   tag: '',
 });
 
-const tags = computed(() => props.tag.split(','));
+const tags = computed(() => {
+  let tags = props.tag.split(',');
+  while (tags.indexOf('') !== -1) {
+    tags.splice(tags.indexOf(''), 1);
+  }
+  return tags.length === 0 ? undefined : tags;
+});
 const getRestaurantNum = computed(() => () => doGetRestaurantNum(tags.value));
 const getRestaurantList = computed(() => (from: number, to: number) => doGetRestaurantList(OrderType.CreateTime, from, to, false, tags.value));
 const newRestaurant = ref(false);

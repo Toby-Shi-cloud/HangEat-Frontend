@@ -1,46 +1,31 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {type Form, Snackbar, type VarFile} from "@varlet/ui";
-import {QuillEditor} from "@vueup/vue-quill";
-import BlotFormatter from 'quill-blot-formatter';
-import ImageUploader from 'quill-image-uploader';
-import MarkdownShortcuts from 'quill-markdown-shortcuts';
-import {doCreatePost, doUploadImage, doUpdatePostImage} from "@/services/post";
+import {doCreatePost, doUpdatePostImage, doUpdatePost} from "@/services/post";
+import RichTextEditor from "@/components/RichTextEditor.vue";
+import type {PostInfo} from "@/store";
 
 const props = defineProps<{
   restaurantId: number
+  postInfo?: PostInfo
 }>();
 
 const emits = defineEmits<{
   submit: []
 }>();
 
-const quillEditorRef = ref<InstanceType<typeof QuillEditor>>();
-const quillModules = [{
-  name: "blotFormatter",
-  module: BlotFormatter,
-}, {
-  name: "markdownShortcuts",
-  module: MarkdownShortcuts,
-}, {
-  name: "imageUploader",
-  module: ImageUploader,
-  options: {
-    upload: async (file: File) => {
-      const {data} = await doUploadImage(file);
-      return data.url;
-    }
-  }
-}];
-
+const editor = ref<InstanceType<typeof RichTextEditor>>();
 const form = ref<Form>();
-const title = ref('');
-const content = ref('');
-const grade = ref(0);
-const price = ref('');
-const images = ref<VarFile[]>([]);
+const title = ref(props.postInfo?.title ?? '');
+const content = ref(props.postInfo?.content ?? '');
+const grade = ref(props.postInfo?.grade ?? 0);
+const price = ref(props.postInfo?.avg_price?.toString() ?? '');
+const images = ref<VarFile[]>(props.postInfo?.image ? [{
+  url: props.postInfo.image,
+  cover: props.postInfo.image,
+}] : []);
 
-const handleReview = async () => {
+const createReview = async () => {
   if (!await form.value?.validate()) return;
   const image = images.value[0];
   if (image.file === undefined) {
@@ -53,19 +38,38 @@ const handleReview = async () => {
   }
   try {
     const {data} = await doCreatePost(props.restaurantId, title.value, content.value, grade.value, parseFloat(price.value));
-    try { await doUpdatePostImage(data.id, image.file); } catch (e) {}
+    try {
+      await doUpdatePostImage(data.id, image.file);
+    } catch (e) {}
     Snackbar.success(data.message);
     emits('submit');
     title.value = '';
-    content.value = '';
     grade.value = 0;
     price.value = '';
     images.value = [];
+    editor.value?.editor?.setText('');
+  } catch (e) {}
+};
+
+const editReview = async () => {
+  if (!await form.value?.validate()) return;
+  let image = images.value[0];
+  if (image.state === "loading") {
+    Snackbar.error("文件在加载中！");
+    return;
+  }
+  try {
+    const {data} = await doUpdatePost(props.postInfo!.id!, title.value, content.value, grade.value, parseFloat(price.value));
+    if (image.file) try {
+      await doUpdatePostImage(data.id, image.file);
+    } catch (e) {}
+    Snackbar.success(data.message);
+    emits('submit');
   } catch (e) {}
 };
 
 const focusEditor = () => {
-  quillEditorRef.value?.focus();
+  editor.value?.editor?.focus();
 }
 
 defineExpose({focusEditor});
@@ -88,9 +92,8 @@ defineExpose({focusEditor});
                       :maxsize="2048 * 1024" @oversize="Snackbar.error('文件大小超出限制')"/>
       </var-space>
     </var-space>
-    <quill-editor v-model:content="content" contentType="html" :modules="quillModules"
-                  ref="quillEditorRef" style="min-height: 20vh"/>
-    <var-button block type="primary" style="margin: 10px 0" @click="handleReview">发布</var-button>
+    <RichTextEditor v-model:content="content" ref="editor"/>
+    <var-button block type="primary" style="margin: 10px 0" @click="() => postInfo ? editReview() : createReview()">发布</var-button>
   </var-form>
 </template>
 

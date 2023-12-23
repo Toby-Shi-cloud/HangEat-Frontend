@@ -4,6 +4,7 @@ import Login from "@/views/Login.vue";
 import User from "@/views/User.vue";
 import Restaurant from "@/views/Restaurant.vue";
 import Restaurants from "@/views/Restaurants.vue";
+import Post from "@/views/Post.vue";
 import NotFound from "@/views/404.vue";
 import {useAuthStore} from "@/store/user";
 import {Snackbar} from "@varlet/ui";
@@ -40,6 +41,11 @@ const routes = [{
     path: '/restaurant/:id',
     name: 'Restaurant',
     component: Restaurant,
+    props: true
+}, {
+    path: '/post/:id',
+    name: 'Post',
+    component: Post,
     props: true
 }, {
     path: "/:pathMatch(.*)*",
