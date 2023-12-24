@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {type Input, Snackbar} from "@varlet/ui";
 import {doCreateRestaurant, doReferTag, doUpdateRestaurant} from "@/services/restaurant";
 import {tagRules} from "@/components/ts/rules";
+import TagsList from "@/components/TagsList.vue";
 
-const emit = defineEmits<{
+const props = defineProps<{
+  preTags?: string[]
+}>();
+
+defineEmits<{
   close: []
 }>();
 
@@ -12,7 +17,7 @@ const name = ref('');
 const address = ref('');
 const phone = ref('');
 const description = ref('');
-const tags = ref<string[]>([]);
+const tags = ref<string[]>(props.preTags ?? []);
 const tag = ref('');
 const tagInput = ref<Input>();
 
@@ -34,7 +39,11 @@ const onTagEnter = async (event: KeyboardEvent) => {
   if (event.key === 'Enter') {
     if (!await (tagInput.value as Input).validate()) return;
     if (tag.value === '') return;
-    tags.value.push(...tag.value.split(/[,，]/));
+    tag.value.split(/[,，]/).forEach((value) => {
+      if (value === '') return;
+      if (tags.value.includes(value)) return;
+      tags.value.push(value);
+    });
     tag.value = '';
   }
 }
@@ -55,6 +64,8 @@ const onTagEnter = async (event: KeyboardEvent) => {
     </var-space>
     <var-input class="edit-input" ref="tagInput" v-model="tag" placeholder="新标签"
                variant="outlined" :onkeydown="onTagEnter" :rules="tagRules(tags)"/>
+    <TagsList title="所有可用 Tag: " :checked-tags="tags"
+              @clicked="(t, c) => c ? tags.push(t) : tags.splice(tags.indexOf(t), 1)"/>
     <var-input class="edit-input" v-model="description" :textarea="true" placeholder="餐馆描述" variant="outlined"/>
     <var-button-group class="edit-button-group">
       <var-button type="default" @click="$emit('close')">取消</var-button>

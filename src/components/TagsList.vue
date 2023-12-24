@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch} from 'vue';
+import {ref, watch, computed} from 'vue';
 import {doGetTagList, doGetTagNum} from "@/services/restaurant";
 import CheckChip from "@/components/CheckChip.vue";
 
@@ -24,19 +24,31 @@ interface TagInfo {
 const data = ref<TagInfo[]>([]);
 const total = ref(0);
 const error = ref(false);
+const checkedTags = computed({
+  get: () => props.checkedTags,
+  set: (value: string[]) => {
+    emits('update:checkedTags', value);
+  }
+});
 
 const refresh = async () => {
   total.value = (await doGetTagNum()).data.tag_num;
   const list = (await doGetTagList(0, total.value)).data.list;
-  list.forEach((t: any) => t.state = props.checkedTags.includes(t.name) ? 1 : 0);
+  list.forEach((t: any) => t.state = checkedTags.value.includes(t.name) ? 1 : 0);
   data.value = list;
 };
 refresh().catch(() => error.value = true);
 
 const onClicked = (tag: TagInfo) => {
   emits('clicked', tag.name, tag.state === 1);
-  emits('update:checkedTags', data.value.filter(t => t.state === 1).map(t => t.name));
+  checkedTags.value = data.value.filter(t => t.state === 1).map(t => t.name);
 };
+
+watch(checkedTags.value, (newVal, oldVal) => {
+  data.value.forEach((tag) => {
+    tag.state = newVal.includes(tag.name) ? 1 : 0;
+  });
+});
 </script>
 
 <template>

@@ -100,7 +100,7 @@ const handleCreate = () => {
   <var-popup overlay-class="normal-popup-overlay"
              class="normal-popup-class"
              v-model:show="newRestaurant">
-    <RestaurantNew @close="newRestaurant = false"/>
+    <RestaurantNew v-if="newRestaurant" :pre-tags="tags" @close="newRestaurant = false"/>
   </var-popup>
 </template>
 
