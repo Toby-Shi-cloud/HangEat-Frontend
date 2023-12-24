@@ -4,6 +4,7 @@ import {type Input, Snackbar} from "@varlet/ui";
 import {doCreateRestaurant, doReferTag, doUpdateRestaurant} from "@/services/restaurant";
 import {tagRules} from "@/components/ts/rules";
 import TagsList from "@/components/TagsList.vue";
+import router from "@/router";
 
 const props = defineProps<{
   preTags?: string[]
@@ -31,7 +32,7 @@ const doCreate = async () => {
     } catch (e) {
       console.log(e);
     }
-    location.href = `/restaurant/${data.id}`;
+    router.push(`/restaurant/${data.id}`);
   } catch (e) {}
 }
 

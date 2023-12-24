@@ -11,6 +11,7 @@ import RestaurantNewImg from "@/components/RestaurantNewImg.vue";
 import PostList from "@/components/PostList.vue";
 import WriteReview from "@/components/WriteReview.vue";
 import GradeView from "@/components/GradeView.vue";
+import router from "@/router";
 
 const props = defineProps<{
   id: string
@@ -52,7 +53,7 @@ const unimplement = () => Snackbar.warning('功能尚未实现');
 const handleFavorite = async () => {
   if (!authStore.isAuthenticated) {
     Snackbar.error('请先登录');
-    setTimeout(() => location.href = `/login?url=${location.href}`, 1000);
+    setTimeout(() => router.push(`/login?url=${location.pathname}`), 1000);
     return;
   }
   try {
@@ -87,7 +88,7 @@ const handleEdition = (what: string) => {
   if (!authStore.isAuthenticated) {
     if (what === 'img') return;
     Snackbar.error('请先登录');
-    setTimeout(() => location.href = `/login?url=${location.href}`, 1000);
+    setTimeout(() => router.push(`/login?url=${location.pathname}`), 1000);
     return;
   }
   if (restaurant.value.creator !== authStore.getUserInfo.id) {
@@ -107,12 +108,12 @@ const deleteRestaurant = async () => {
   try {
     const {data} = await doDeleteRestaurant(restaurant.value.id!);
     Snackbar.success(data.message);
-    setTimeout(() => location.href = '/restaurants', 1000);
+    setTimeout(() => router.push('/restaurants'), 1000);
   } catch (e) {
   }
 };
 
-const handleTagClick = (tag: string) => location.href = `/restaurants?tags=${tag}`;
+const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
 </script>
 
 <template>

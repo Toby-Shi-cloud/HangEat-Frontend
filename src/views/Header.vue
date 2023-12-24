@@ -5,6 +5,7 @@ import {useHeaderStore} from "@/store/header";
 import {useAuthStore} from "@/store/user";
 import {doLogout} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
+import router from "@/router";
 
 const headerStore = useHeaderStore();
 const authStore = useAuthStore();
@@ -15,16 +16,13 @@ const getIcon = () => {
   return new URL('/favicon.png', import.meta.url).href;
 };
 
-const toUser = () => location.href = `/user/${authStore.getUserInfo.id}`;
-const toLogin = () => location.href = `/login?url=${location.href}`;
-
 const logout = () => {
   doLogout().then(() => {
     localStorage.removeItem('_token');
     localStorage.removeItem('_refresh_token');
     authStore.logout();
     Snackbar.success('登出成功');
-    window.location.href = "/";
+    router.push('/');
   }).catch();
 };
 
@@ -40,7 +38,7 @@ const changeTheme = () => {
     <var-app-bar class="container" elevation="false" title-position="center" color="rgba(0,0,0,0)">
       <template #left>
         <div class="image-container">
-          <var-icon :name="getIcon()" size="100%"></var-icon>
+          <var-icon :name="getIcon()"/>
         </div>
         <var-link id="app-title" class="bar-link" underline="hover" to="/">{{ headerStore.getTitle }}</var-link>
       </template>
@@ -56,7 +54,8 @@ const changeTheme = () => {
       </div>
 
       <template #right v-if="headerStore.showUser">
-        <var-tooltip :content="(isLight ? '白昼模式' : '暗夜模式') + (getCurrentTheme === Theme.System ? '（跟随系统）' : '')">
+        <var-tooltip
+            :content="(isLight ? '白昼模式' : '暗夜模式') + (getCurrentTheme === Theme.System ? '（跟随系统）' : '')">
           <var-button round class="switch-btn" @click="changeTheme">
             <var-badge position="right-bottom" style="color: inherit" :hidden="getCurrentTheme !== Theme.System">
               <font-awesome-icon :icon="['fas', isLight ? 'sun' : 'moon']" size="xl"/>
@@ -73,13 +72,17 @@ const changeTheme = () => {
             <var-avatar :src="authStore.getUserInfo.avatar" :hoverable="true"/>
             <template #menu>
               <var-button-group vertical size="large">
-                <var-button ripple class="menu-btn" @click="toUser()">查看主页</var-button>
+                <var-button ripple class="menu-btn" @click="$router.push(`/user/${authStore.getUserInfo.id}`)">
+                  查看主页
+                </var-button>
                 <var-button ripple class="menu-btn" @click="logout()">退出登录</var-button>
               </var-button-group>
             </template>
           </var-menu>
         </var-skeleton>
-        <var-link v-else class="bar-link" underline="none" @click="toLogin">登录</var-link>
+        <var-link v-else class="bar-link" underline="none" @click="$router.push(`/login?url=${$route.path}`)">
+          登录
+        </var-link>
       </template>
     </var-app-bar>
     <var-divider class="app-bar-divider"/>
@@ -99,9 +102,9 @@ const changeTheme = () => {
 }
 
 .image-container {
-  height: 80%;
-  width: auto;
-  position: relative;
+  height: var(--icon-size);
+  width: var(--icon-size);
+  --icon-size: calc(var(--header-bar-height) * 0.8);
 }
 
 #app-title {

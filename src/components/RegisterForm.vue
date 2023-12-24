@@ -3,6 +3,7 @@ import {reactive, ref} from "vue";
 import {type Form, Snackbar} from "@varlet/ui";
 import {doForgetPassword, doLogin, doRegister, doSendCaptcha} from "@/services/user";
 import {emailRules, captchaRules, usernameRules, passwordRules} from "./ts/rules";
+import router from "@/router";
 
 const props = withDefaults(defineProps<{
   url: string
@@ -48,7 +49,7 @@ async function sendCaptcha() {
 function login() {
   doLogin(data.email, data.password).then(() => {
     setTimeout(() => {
-      window.location.href = props.url;
+      router.push(props.url);
     }, 500);
   }).catch(error => {
     console.log(error);

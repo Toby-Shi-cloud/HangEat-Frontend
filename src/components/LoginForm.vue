@@ -4,7 +4,7 @@ import {type Form, Snackbar} from "@varlet/ui";
 import {doLogin} from "@/services/user";
 import {usernameOrEmailRules, passwordRules} from "./ts/rules";
 import RegisterForm from "@/components/RegisterForm.vue";
-import GradientBackground from "@/components/GradientBackground.vue";
+import router from "@/router";
 
 const props = defineProps<{
   url: string
@@ -27,7 +27,7 @@ async function login() {
   doLogin(data.username, data.password).then(response => {
     Snackbar.success(response.data.message);
     setTimeout(() => {
-      window.location.href = props.url;
+      router.push(props.url);
     }, 1000);
   }).catch(() => {
     data.password = "";

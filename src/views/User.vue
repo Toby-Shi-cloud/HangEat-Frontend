@@ -17,6 +17,7 @@ import Subscribers from "@/components/Subscribers.vue";
 import Subscriptions from "@/components/Subscriptions.vue";
 import RestaurantList from "@/components/RestaurantList.vue";
 import PostList from "@/components/PostList.vue";
+import router from "@/router";
 
 const props = defineProps<{
   id: string
@@ -33,10 +34,6 @@ const deletingInputString = ref("");
 const deletingInput = ref<Input | null>(null);
 
 const isMyself = computed(() => !!userId && userId === authStore.getUserInfo.id);
-
-const returnToIndex = () => {
-  window.location.href = "/";
-};
 
 const userInfoWithId = ref<UserInfo>({});
 const userInfo = computed(() => isMyself.value ? authStore.getUserInfo : userInfoWithId.value);
@@ -97,7 +94,7 @@ async function deleteAccount() {
       localStorage.removeItem('_token');
       localStorage.removeItem('_refresh_token');
       Snackbar.success("账号已删除！");
-      setTimeout(returnToIndex, 2000);
+      setTimeout(() => router.push('/'), 2000);
     }).catch();
   }
 }
@@ -108,7 +105,7 @@ async function deleteAccount() {
     <var-result v-if="userId === undefined" type="error" title="非法用户ID"
                 description="您查找的用户ID非法！">
       <template #footer>
-        <var-button type="primary" @click="returnToIndex()">返回首页</var-button>
+        <var-button type="primary" @click="$router.push('/')">返回首页</var-button>
       </template>
     </var-result>
     <div v-else-if="!failedToGetUserInfo" id="main-container">
@@ -208,7 +205,7 @@ async function deleteAccount() {
     <var-result v-else type="error" title="不能访问该用户"
                 description="您查找的用户不存在或您无权访问！">
       <template #footer>
-        <var-button type="primary" @click="returnToIndex()">返回首页</var-button>
+        <var-button type="primary" @click="$router.push('/')">返回首页</var-button>
       </template>
     </var-result>
   </main>

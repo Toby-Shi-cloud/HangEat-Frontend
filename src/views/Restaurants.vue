@@ -71,7 +71,7 @@ const handleCreate = () => {
     newRestaurant.value = true;
   } else {
     Snackbar.error('请先登录！');
-    setTimeout(() => router.push(`/login?url=${location.href}`), 1000);
+    setTimeout(() => router.push(`/login?url=${location.pathname}`), 1000);
   }
 };
 </script>
