@@ -37,7 +37,7 @@ export const doGetRestaurantDetail = (id: number) => {
 
 export const doGetRestaurantNum = (tags?: string[], creator_id?: number) => {
     let query = '';
-    if (tags) query += `&tags=${tags.join(',')}`;
+    if (tags?.length) query += `&tags=${tags.join(',')}`;
     if (creator_id) query += `&creator_id=${creator_id}`;
     return axios.get(`restaurant/get-restaurant-num?timestamp=${Date.now()}${query}`);
     // -> data: { restaurant_num: number }
@@ -52,7 +52,7 @@ export enum OrderType {
 
 export const doGetRestaurantList = (type: OrderType, from: number, to: number, reverse = false, tags?: string[], creator_id?: number) => {
     let query = '';
-    if (tags) query += `&tags=${tags.join(',')}`;
+    if (tags?.length) query += `&tags=${tags.join(',')}`;
     if (creator_id) query += `&creator_id=${creator_id}`;
     query += `&reverse=${reverse ? 1 : 0}`;
     return axios.get(`restaurant/get-restaurant-list/${type}?from=${from}&to=${to}&timestamp=${Date.now()}${query}`);

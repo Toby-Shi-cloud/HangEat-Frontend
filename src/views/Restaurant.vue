@@ -111,7 +111,7 @@ const deleteRestaurant = async () => {
   }
 };
 
-const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}`;
+const handleTagClick = (tag: string) => location.href = `/restaurants?tags=${tag}`;
 </script>
 
 <template>

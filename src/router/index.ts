@@ -36,7 +36,7 @@ const routes = [{
     path: '/restaurants',
     name: 'Restaurants',
     component: Restaurants,
-    props: (route: any) => ({ tag: route.query.tag })
+    props: (route: any) => route.query
 }, {
     path: '/restaurant/:id',
     name: 'Restaurant',

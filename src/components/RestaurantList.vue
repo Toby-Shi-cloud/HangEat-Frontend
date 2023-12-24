@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, computed, watch} from "vue";
+import {ref, reactive, computed} from "vue";
 import LazyList from "@/components/LazyList.vue";
 import type {List, RestaurantInfo} from "@/store";
 
@@ -38,21 +38,21 @@ const load = async () => {
   emits('changed', total.value);
 };
 
-const toRestaurant = (id: number) => {
-  window.location.href = '/restaurant/' + id;
-}
-
-watch(() => props.getRestaurantNum, () => {
+const refresh = () => {
   total.value = -1;
   data.splice(0, data.length);
-}, {immediate: true});
+};
+
+defineExpose({refresh});
 </script>
 
 <template>
-  <LazyList :data="staticData ?? data" :column="column" :finished="staticData ? true : finished" :gutter="[10, 10]" :load="load">
+  <LazyList :key="total" :data="staticData ?? data" :column="column"
+            :finished="staticData ? true : finished" :gutter="[10, 10]" :load="load">
     <template #default="{item}">
       <var-card class="restaurant-card" :layout="layout"
-                :title="item.name" :src="item.img" @click="toRestaurant(item.id!)">
+                :title="item.name" :src="item.img"
+                @click="$router.push(`/restaurant/${item.id!}`)">
         <template #description>
           <var-cell :title="item.tags?.join('，') || ''">
             <template #icon>

@@ -5,6 +5,7 @@ import {
     faA, faSun, faMoon, faCircleExclamation, faCircleCheck,
     faPencil, faHeart, faUpRightFromSquare, faLocationDot,
     faPhone, faTags, faStar, faThumbsUp, faStarHalfStroke,
+    faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faHeart as farHeart,
@@ -17,6 +18,8 @@ library.add(
     faA, faSun, faMoon, faCircleExclamation, faCircleCheck,
     faPencil, faHeart, faUpRightFromSquare, faLocationDot,
     faPhone, faTags, faStar, faThumbsUp, faStarHalfStroke,
+    faMagnifyingGlass,
+
 );
 library.add(
     farHeart, farPenToSquare, farStar, farThumbsUp,
