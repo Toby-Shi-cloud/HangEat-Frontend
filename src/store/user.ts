@@ -23,6 +23,7 @@ export const useAuthStore = defineStore('auth', {
 
     actions: {
         async setup() {
+            if (this.isAuthenticated && !this.needRefreshInfo) return;
             if (localStorage._token) {
                 this.login();
                 await this.refreshUserInfo();

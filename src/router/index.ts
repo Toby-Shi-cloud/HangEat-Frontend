@@ -16,40 +16,48 @@ const routes = [{
 }, {
     path: '/login',
     name: 'Login',
+    title: '登录',
     component: Login,
     props: (route: any) => ({ url: route.query.url })
 }, {
     path: '/login/special',
     name: 'LoginSp',
+    title: '登录',
     component: Login,
     props: (route: any) => ({ special: true, url: route.query.url })
 }, {
     path: '/user',
     name: 'Myself',
+    title: '用户中心',
     component: User
 }, {
     path: '/user/:id',
     name: 'User',
+    title: '用户中心',
     component: User,
     props: true
 }, {
     path: '/restaurants',
     name: 'Restaurants',
+    title: '餐馆筛选',
     component: Restaurants,
     props: (route: any) => route.query
 }, {
     path: '/restaurant/:id',
     name: 'Restaurant',
+    title: '餐馆详情',
     component: Restaurant,
     props: true
 }, {
     path: '/post/:id',
     name: 'Post',
+    title: '帖子详情',
     component: Post,
     props: true
 }, {
     path: "/:pathMatch(.*)*",
     name: 'NotFound',
+    title: '404',
     component: NotFound
 }];
 
@@ -76,6 +84,12 @@ router.beforeEach(async (to, from, next) => {
     } else {
         next();
     }
+});
+
+router.afterEach((to, from) => {
+    document.title = '航小炫今天吃什么'
+    let title = routes.find(r => r.name === to.name)?.title;
+    if (title) document.title += '│' + title;
 });
 
 export default router;

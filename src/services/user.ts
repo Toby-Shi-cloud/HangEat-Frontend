@@ -69,7 +69,7 @@ export const doGetUserById = (id: number) => {
 }
 
 export const doRefreshToken = () => {
-    return axios.get('user/refresh-token?timestamp=' + Date.now());
+    return axios.get(`user/refresh-token?timestamp=${Date.now()}`);
 }
 
 export const doSendCaptcha = (email: string) => {
@@ -114,15 +114,11 @@ export const doGetRelationBetween = (user1: number, user2: number) => {
 }
 
 export const doFavoriteRestaurant = (target_id: number) => {
-    return axios.post('user/collect', {
-        target_id: target_id,
-    });
+    return axios.post('user/collect', {target_id: target_id});
 }
 
 export const doUnfavoriteRestaurant = (target_id: number) => {
-    return axios.post('user/uncollect', {
-        target_id: target_id,
-    });
+    return axios.post('user/uncollect', {target_id: target_id});
 }
 
 export const doGetFavorableRestaurantsNum = () => {
