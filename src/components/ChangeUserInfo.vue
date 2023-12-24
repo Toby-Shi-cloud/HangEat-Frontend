@@ -48,12 +48,12 @@ const avatars = ref<VarFile[]>([]);
 
 async function updateAvatar() {
   const avatar = avatars.value[0];
-  if (avatar.state === "loading") {
-    Snackbar.error("文件在加载中！");
+  if (avatar?.file === undefined) {
+    Snackbar.error("没有上传文件！");
     return;
   }
-  if (avatar.file === undefined) {
-    Snackbar.error("没有上传文件！");
+  if (avatar.state === "loading") {
+    Snackbar.error("文件在加载中！");
     return;
   }
   doUpdateAvatar(avatar.file).then(response => {

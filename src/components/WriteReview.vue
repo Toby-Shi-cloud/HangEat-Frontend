@@ -28,7 +28,7 @@ const images = ref<VarFile[]>(props.postInfo?.image ? [{
 const createReview = async () => {
   if (!await form.value?.validate()) return;
   const image = images.value[0];
-  if (image.file === undefined) {
+  if (image?.file === undefined) {
     Snackbar.error("没有上传文件！");
     return;
   }
@@ -53,6 +53,10 @@ const createReview = async () => {
 
 const editReview = async () => {
   if (!await form.value?.validate()) return;
+  if (images.value.length === 0) {
+    Snackbar.error("没有上传文件！");
+    return;
+  }
   let image = images.value[0];
   if (image.state === "loading") {
     Snackbar.error("文件在加载中！");
@@ -60,7 +64,7 @@ const editReview = async () => {
   }
   try {
     const {data} = await doUpdatePost(props.postInfo!.id!, title.value, content.value, grade.value, parseFloat(price.value));
-    if (image.file) try {
+    if (image?.file) try {
       await doUpdatePostImage(data.id, image.file);
     } catch (e) {}
     Snackbar.success(data.message);
