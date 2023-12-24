@@ -28,7 +28,7 @@ const finished = computed(() => postData.length === total.value);
 const screenWidth = ref(window.innerWidth);
 window.onresize = () => screenWidth.value = window.innerWidth;
 const width = computed(() => props.width || screenWidth.value);
-const column = computed(() => width.value < 866 ? 1 : width.value < 1280 ? 2 : 3);
+const column = computed(() => width.value < 866 ? 1 : width.value < 1280 ? 2 : width.value < 1720 ? 3 : 4);
 
 const load = async () => {
   if (finished.value) return;

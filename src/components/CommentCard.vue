@@ -55,7 +55,7 @@ const handleReply = () => {
 
 <template>
   <var-skeleton avatar title card :loading="usersStore.getUserInfo(comment.author) == null">
-    <AvatarCard :creator-info="usersStore.getUserInfo(comment.author)!">
+    <AvatarCard :creator-info="usersStore.getUserInfo(comment.author)!" row>
       <template #description>
         <var-space direction="column" style="margin: 10px 10px -30px">
           <p class="pre-wrap">

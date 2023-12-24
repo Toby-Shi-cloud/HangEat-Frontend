@@ -106,14 +106,14 @@ const handleCreate = () => {
 
 <style scoped>
 .search-paper {
-  width: 90%;
+  width: 100%;
   min-height: 10vh;
   margin: -10px auto 15px;
   padding: 10px;
 }
 
 .restaurant-list {
-  width: 100vw;
-  max-width: min(1280px, 100vw - 4rem);
+  width: 100%;
+  max-width: var(--app-max-width)
 }
 </style>

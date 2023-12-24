@@ -23,7 +23,7 @@ const emits = defineEmits<{
 const screenWidth = ref(window.innerWidth);
 window.onresize = () => screenWidth.value = window.innerWidth;
 const width = computed(() => props.width || screenWidth.value);
-const column = computed(() => props.layout == 'row' ? 1 : width.value < 668 ? 1 : width.value < 992 ? 2 : 3);
+const column = computed(() => props.layout == 'row' ? 1 : width.value < 720 ? 1 : width.value < 1080 ? 2 : width.value < 1440 ? 3 : 4);
 
 const total = ref(-1);
 const data = reactive<RestaurantInfo[]>([]);

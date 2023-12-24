@@ -91,7 +91,7 @@ const changeTheme = () => {
 
 <style scoped>
 .container {
-  max-width: 1280px;
+  max-width: var(--app-max-width);
   margin: 0 auto;
   height: 100%;
 

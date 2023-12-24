@@ -64,7 +64,7 @@ const deletePost = async () => {
 
 <style scoped>
 .post-paper {
-  width: 90vw;
+  width: min(90vh, 100%);
   max-width: inherit;
   padding: 1rem;
 }

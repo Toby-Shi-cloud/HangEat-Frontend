@@ -42,3 +42,21 @@
         min-width: 614px;
     }
 }
+
+@media (max-width: 720px) {
+    .login-form {
+        padding: 10px;
+    }
+
+    .left-button {
+        position: relative;
+        margin-top: 5px;
+        left: -0.2rem;
+    }
+
+    .right-button {
+        position: relative;
+        margin-top: 5px;
+        right: -0.2rem;
+    }
+}

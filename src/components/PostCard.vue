@@ -46,9 +46,8 @@ const vote = async (post: PostInfo) => {
       </template>
 
       <template #image>
-        <var-image :radius="6" :height="isDetail ? '30vh' : undefined" width="95%" :src="post.image" lazy
-                   fit="scale-down" @click="$router.push(`/post/${post.id!}`)"
-                   style="padding: auto; margin-bottom: 10px"/>
+        <var-image :radius="6" :src="post.image" fit="scale-down" class="card-image"
+                   @click="$router.push(`/post/${post.id!}`)"/>
       </template>
 
       <template #subtitle>
@@ -106,3 +105,10 @@ const vote = async (post: PostInfo) => {
 </template>
 
 <style scoped src="./css/edit.css"/>
+
+<style scoped>
+.card-image {
+  max-height: 40vh;
+  margin: auto auto 10px;
+}
+</style>

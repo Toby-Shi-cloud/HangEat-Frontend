@@ -12,6 +12,7 @@ import PostList from "@/components/PostList.vue";
 import WriteReview from "@/components/WriteReview.vue";
 import GradeView from "@/components/GradeView.vue";
 import router from "@/router";
+import os from "@/components/ts/os";
 
 const props = defineProps<{
   id: string
@@ -130,7 +131,7 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
         </var-space>
       </template>
       <template #right>
-        <var-space size="small" style="margin-right: 10px">
+        <var-space v-if="!os.isPhone" size="small" style="margin-right: 10px">
           <font-awesome-icon :icon="['fas', 'pencil']"/>
           <var-link underline="hover" @click="writeReviewRef?.focusEditor()">发布帖子</var-link>
           <span>|</span>
@@ -143,6 +144,17 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
         </var-space>
       </template>
       <template #content>
+        <var-space v-if="os.isPhone" size="small" style="margin-right: 10px">
+          <font-awesome-icon :icon="['fas', 'pencil']"/>
+          <var-link underline="hover" @click="writeReviewRef?.focusEditor()">发布帖子</var-link>
+          <span>|</span>
+          <font-awesome-icon :icon="[restaurant.is_collected ? 'fas' : 'far', 'heart']"
+                             :color="restaurant.is_collected ? 'red' : ''"/>
+          <var-link underline="hover" @click="handleFavorite">收藏</var-link>
+          <span>|</span>
+          <font-awesome-icon :icon="['fas', 'up-right-from-square']"/>
+          <var-link underline="hover" @click="handleShare">分享</var-link>
+        </var-space>
         <var-space size="small">
           <font-awesome-icon :icon="['fas', 'location-dot']"/>
           <var-link @click="handlePosition">{{ restaurant.detail_addr }}</var-link>
@@ -311,8 +323,8 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
 #restaurant-header {
   z-index: 9;
   margin-top: -2rem;
-  width: calc(100vw - 4rem);
-  max-width: 1280px;
+  width: 100%;
+  max-width: var(--app-max-width);
   --app-bar-color: rgba(0, 0, 0, 0);
   --app-bar-text-color: var(--color-heading);
   --link-font-size: var(--font-size-lg);
@@ -331,7 +343,7 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
 
 #restaurant-main {
   margin-top: 1rem;
-  max-width: calc(100vw - 4rem);
+  max-width: 100%;
 }
 
 #restaurant-images {
@@ -351,5 +363,11 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
 
 .restaurant-overview-tag {
   display: inline;
+}
+
+@media (max-width: 720px) {
+  #restaurant-header {
+    margin-top: 0;
+  }
 }
 </style>
