@@ -2,13 +2,23 @@
 import {ref, reactive, computed} from 'vue';
 import type {List, PostInfo} from "@/store";
 import LazyList from "@/components/LazyList.vue";
-import {doGetPostList} from "@/services/post";
+import {doGetPostList, doGetPostListByUser} from "@/services/post";
 import {useUsersStore} from "@/store/user";
 import PostCard from "@/components/PostCard.vue";
 
 const props = defineProps<{
-  restaurantId: number
+  restaurantId?: number
+  userId?: number
+  width?: number
 }>();
+
+const emits = defineEmits<{
+  changed: [total: number]
+}>();
+
+if (!props.restaurantId && !props.userId) {
+  throw new Error('restaurantId 和 userId 不能同时为空');
+}
 
 const usersStore = useUsersStore();
 const total = ref(-1);
@@ -17,14 +27,18 @@ const finished = computed(() => postData.length === total.value);
 
 const screenWidth = ref(window.innerWidth);
 window.onresize = () => screenWidth.value = window.innerWidth;
-const column = computed(() => screenWidth.value < 866 ? 1 : screenWidth.value < 1280 ? 2 : 3);
+const width = computed(() => props.width || screenWidth.value);
+const column = computed(() => width.value < 866 ? 1 : width.value < 1280 ? 2 : 3);
 
 const load = async () => {
   if (finished.value) return;
-  const response = await doGetPostList(props.restaurantId, postData.length, postData.length + column.value * 3);
+  const response = props.restaurantId
+      ? await doGetPostList(props.restaurantId, postData.length, postData.length + column.value * 3)
+      : await doGetPostListByUser(props.userId!, postData.length, postData.length + column.value * 3);
   const data = response.data as List<PostInfo>;
   postData.push(...data.list);
   total.value = data.all_num;
+  emits('changed', total.value);
   data.list.forEach(item => {
     usersStore.fetchUserInfo(item.creator!).catch();
   });

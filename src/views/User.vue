@@ -11,10 +11,12 @@ import {
   doSubscribe,
   doUnsubscribe
 } from "@/services/user";
+import {doGetPostNumByUser} from "@/services/post";
 import {type Input, Snackbar} from "@varlet/ui";
 import Subscribers from "@/components/Subscribers.vue";
 import Subscriptions from "@/components/Subscriptions.vue";
 import RestaurantList from "@/components/RestaurantList.vue";
+import PostList from "@/components/PostList.vue";
 
 const props = defineProps<{
   id: string
@@ -42,9 +44,12 @@ const needRefreshInfo = computed(() => userInfo.value.id === undefined);
 const failedToGetUserInfo = ref(false);
 const isSubscription = ref(false);
 const isSubscriber = ref(false);
-const restaurantList = ref<ComponentPublicInstance | null>(null);
-const restaurantListWidth = computed(() => restaurantList.value?.$el.width || 0);
+const restaurantListRef = ref<ComponentPublicInstance | null>(null);
+const restaurantListWidth = computed(() => restaurantListRef.value?.$el.width || 0);
 const restaurantListTotal = ref(0);
+const postListRef = ref<ComponentPublicInstance | null>(null);
+const postListWidth = computed(() => restaurantListRef.value?.$el.width || 0);
+const postListTotal = ref(0);
 
 const refreshInfo = () => {
   if (userId !== undefined) {
@@ -59,6 +64,9 @@ const refreshInfo = () => {
         isSubscriber.value = res.data['2subscribe1'];
       }).catch();
     }
+    doGetPostNumByUser(userId).then(res => {
+      postListTotal.value = res.data.post_num;
+    }).catch();
     watch(isMyself, () => {
       if (isMyself.value) doGetFavorableRestaurantsNum().then(res => {
         restaurantListTotal.value = res.data.collections_num;
@@ -113,7 +121,8 @@ async function deleteAccount() {
                 <var-cell id="user-profile-username" :title="userInfo.username"/>
                 <var-row :gutter="[10, 10]">
                   <var-col :span="isMyself ? 6 : 8">
-                    <var-cell class="user-info-cell" title="贡献" description="0"/>
+                    <var-cell class="user-info-cell" title="贡献"
+                              :description="`${postListTotal}`"/>
                   </var-col>
                   <var-col :span="isMyself ? 6 : 8">
                     <var-cell class="user-info-cell" title="粉丝"
@@ -176,21 +185,22 @@ async function deleteAccount() {
       <var-paper :radius="8" :elevation="2" style="align-self: start; grid-column-start: span 2">
         <var-tabs-items v-model:active="activeTab">
           <var-tab-item>
+            <PostList class="post-list" style="margin: 10px 10px 0"
+                      :user-id="userId!" :width="postListWidth" ref="postListRef"
+                      @changed="total => postListTotal = total"/>
           </var-tab-item>
-          <var-tab-item>
+          <var-tab-item v-if="isMyself">
             <Subscribers :userId="userId"/>
           </var-tab-item>
-          <var-tab-item>
+          <var-tab-item v-if="isMyself">
             <Subscriptions :userId="userId"/>
           </var-tab-item>
-          <var-tab-item>
-            <RestaurantList
-                v-if="isMyself" no-extra
-                class="restaurant-list" style="margin: 10px 10px 0"
-                :width="restaurantListWidth" ref="restaurantList"
-                @changed="(total) => restaurantListTotal = total"
-                :get-restaurant-num="doGetFavorableRestaurantsNum"
-                :get-restaurant-list="doGetFavorableRestaurantsList"/>
+          <var-tab-item v-if="isMyself">
+            <RestaurantList class="restaurant-list" style="margin: 10px 10px 0"
+                            no-extra :width="restaurantListWidth" ref="restaurantListRef"
+                            @changed="total => restaurantListTotal = total"
+                            :get-restaurant-num="doGetFavorableRestaurantsNum"
+                            :get-restaurant-list="doGetFavorableRestaurantsList"/>
           </var-tab-item>
         </var-tabs-items>
       </var-paper>

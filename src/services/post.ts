@@ -37,6 +37,16 @@ export const doGetPostList = (restaurant_id: number, from: number, to: number) =
     // -> data: List<PostInfo>
 }
 
+export const doGetPostNumByUser = (user_id: number) => {
+    return axios.get(`restaurant/get-post-num-by-user/${user_id}?timestamp=${Date.now()}`);
+    // -> data: { post_num: number }
+}
+
+export const doGetPostListByUser = (user_id: number, from: number, to: number) => {
+    return axios.get(`restaurant/get-post-list-by-user/${user_id}?from=${from}&to=${to}&timestamp=${Date.now()}`);
+    // -> data: List<PostInfo>
+}
+
 export const doGetPostDetail = (id: number) => {
     return axios.get(`restaurant/get-post-detail/${id}?timestamp=${Date.now()}`);
     // -> data: PostInfo
