@@ -23,13 +23,13 @@ export interface RestaurantInfo {
     tags?: string[];
     collectors_num?: number;
     is_collected?: boolean;
+    avg_grade?: number;
+    avg_price?: number;
     // detail info
     description?: string;
     address?: string;
     detail_addr?: string;
     phone?: string;
-    avg_grade?: number;
-    avg_price?: number;
     created_at?: string;
     updated_at?: string;
 }

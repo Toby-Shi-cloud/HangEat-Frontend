@@ -10,6 +10,7 @@ import RestaurantEdition from "@/components/RestaurantEdition.vue";
 import RestaurantNewImg from "@/components/RestaurantNewImg.vue";
 import PostList from "@/components/PostList.vue";
 import WriteReview from "@/components/WriteReview.vue";
+import GradeView from "@/components/GradeView.vue";
 
 const props = defineProps<{
   id: string
@@ -172,17 +173,7 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tags=${tag
               <template #description>
                 <div class="restaurant-overview-description">
                   <var-space direction="column">
-                    <var-space direction="row" :size="2" align="center">
-                      <p>评分：</p>
-                      <p v-if="restaurant.avg_grade">
-                        <font-awesome-icon
-                            v-for="i in Array(5).keys()"
-                            :icon="restaurant.avg_grade! >= i + 0.3 ?
-                                  ['fas', restaurant.avg_grade! >= i + 0.9 ? 'star' : 'star-half-stroke'] : ['far', 'star']"/>
-                        {{ restaurant.avg_grade.toFixed(1) }}
-                      </p>
-                      <p v-else>（暂无评分）</p>
-                    </var-space>
+                    <GradeView :grade="restaurant.avg_grade" title detail/>
                     <p>人均价格：¥{{ restaurant.avg_price?.toFixed(2) || '未知' }}</p>
                   </var-space>
                 </div>

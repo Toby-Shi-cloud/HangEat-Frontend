@@ -2,6 +2,7 @@
 import {ref, reactive, computed} from "vue";
 import LazyList from "@/components/LazyList.vue";
 import type {List, RestaurantInfo} from "@/store";
+import GradeView from "@/components/GradeView.vue";
 
 const props = withDefaults(defineProps<{
   width?: number
@@ -59,6 +60,8 @@ defineExpose({refresh});
               <font-awesome-icon :icon="['fas', 'tags']" style="margin-right: 5px"/>
             </template>
           </var-cell>
+          <GradeView :grade="item.avg_grade" title detail style="margin-left: 10px"/>
+          <p style="margin-left: 10px">人均价格：¥{{ item.avg_price?.toFixed(2) || '未知' }}</p>
         </template>
         <template #extra v-if="!noExtra">
           <var-space direction="row" align="center" :size="3">
