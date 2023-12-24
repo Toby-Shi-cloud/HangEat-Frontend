@@ -4,6 +4,7 @@ import {type Form, Snackbar, type VarFile} from "@varlet/ui";
 import {doCreatePost, doUpdatePostImage, doUpdatePost} from "@/services/post";
 import RichTextEditor from "@/components/RichTextEditor.vue";
 import type {PostInfo} from "@/store";
+import { useAuthStore } from "@/store/user";
 
 const props = defineProps<{
   restaurantId: number
@@ -14,6 +15,7 @@ const emits = defineEmits<{
   submit: []
 }>();
 
+const authStore = useAuthStore();
 const editor = ref<InstanceType<typeof RichTextEditor>>();
 const form = ref<Form>();
 const title = ref(props.postInfo?.title ?? '');
@@ -80,7 +82,7 @@ defineExpose({focusEditor});
 </script>
 
 <template>
-  <var-form ref="form">
+  <var-form :disabled="!authStore.isAuthenticated" ref="form">
     <var-input v-model="title" placeholder="标题" variant="outlined"
                class="edit-input" :rules="[v => v.trim() != '' || '标题不能为空']"/>
     <var-space direction="row" align="center" class="edit-input" style="margin-bottom: 5px">
@@ -89,15 +91,19 @@ defineExpose({focusEditor});
         <var-rate v-model="grade" :rules="[v => !!v || '请评分']"/>
       </var-space>
       <var-input v-model="price" placeholder="人均价格￥" variant="outlined"
-                 :rules="[v => /^\d{0,5}$/.test(v) || '请输入正确的价格']"/>
+                 :rules="[v => /^\d{1,5}$/.test(v) || '请输入正确的价格']"/>
       <var-space direction="row" align="center" :size="0">
         <span>封面：</span>
         <var-uploader v-model="images" maxlength="1"
                       :maxsize="2048 * 1024" @oversize="Snackbar.error('文件大小超出限制')"/>
       </var-space>
     </var-space>
-    <RichTextEditor v-model:content="content" ref="editor"/>
-    <var-button block type="primary" style="margin: 10px 0" @click="() => postInfo ? editReview() : createReview()">发布</var-button>
+    <RichTextEditor :enable="authStore.isAuthenticated" v-model:content="content" ref="editor"/>
+    <var-button block type="primary" style="margin: 10px 0"
+                :disabled="!authStore.isAuthenticated"
+                @click="() => postInfo ? editReview() : createReview()">
+      发布
+    </var-button>
   </var-form>
 </template>
 

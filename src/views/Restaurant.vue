@@ -257,7 +257,11 @@ const handleTagClick = (tag: string) => location.href = `/restaurants?tag=${tag}
         </var-col>
       </var-row>
       <var-paper :elevation="true" :radius="8" style="padding: 15px">
-        <h2 style="margin-bottom: 10px">写帖子</h2>
+        <h2 style="margin-bottom: 10px">写帖子
+          <var-link v-if="!authStore.isAuthenticated" text-size="20px" :to="`/login?url=${$route.path}`">
+            请先登录
+          </var-link>
+        </h2>
         <WriteReview ref="writeReviewRef" :restaurant-id="restId!" @submit="postsRef?.refresh(); getRestaurantInfo()"/>
       </var-paper>
       <var-paper :elevation="true" :radius="8" style="padding: 15px">

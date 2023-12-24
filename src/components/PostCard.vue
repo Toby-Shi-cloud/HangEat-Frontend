@@ -67,9 +67,6 @@ const vote = async (post: PostInfo) => {
       <template #description>
         <var-space direction="column" style="margin: 0 10px">
           <RichTextEditor v-if="isDetail" v-model:content="post.content" read-only toolbar="#toolbar"/>
-          <var-ellipsis v-else :line-clamp="2" class="pre-wrap">
-            <pre v-if="post.content" class="pre-wrap" v-html="post.content"/>
-          </var-ellipsis>
           <div style="display: grid; grid-template-columns: auto auto; align-items: center">
             <var-space direction="row" :size="2" align="center">
               <font-awesome-icon size="lg" :icon="[post.is_agreed ? 'fas' : 'far', 'thumbs-up']"

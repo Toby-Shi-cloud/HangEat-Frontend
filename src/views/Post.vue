@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import type {PostInfo} from "@/store";
-import {useUsersStore} from "@/store/user";
+import {useAuthStore, useUsersStore} from "@/store/user";
 import {doDeletePost, doGetPostDetail} from "@/services/post";
 import PostCard from "@/components/PostCard.vue";
 import {Snackbar} from "@varlet/ui";
@@ -16,6 +16,7 @@ const props = defineProps<{
 const postId = /^\d+$/.test(props.id) ? parseInt(props.id) : undefined;
 const post = ref<PostInfo>({});
 const error = ref(postId === undefined);
+const authStore = useAuthStore();
 const usersStore = useUsersStore();
 const comments = ref<InstanceType<typeof CommentList>>();
 
@@ -47,7 +48,11 @@ const deletePost = async () => {
       <PostCard :post="post" @changed="refreshInfo" @deleted="deletePost"/>
     </var-paper>
     <var-divider/>
-    <h2>写评论</h2>
+    <h2>写评论
+      <var-link v-if="!authStore.isAuthenticated" text-size="20px" :to="`/login?url=${$route.path}`">
+        请先登录
+      </var-link>
+    </h2>
     <var-paper :elevation="true" :radius="8" style="padding: 20px">
       <WriteComment :post-id="postId" @submit="comments?.refreshNum()"/>
     </var-paper>

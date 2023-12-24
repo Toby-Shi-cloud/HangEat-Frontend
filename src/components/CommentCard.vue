@@ -6,6 +6,7 @@ import {doDeleteComment, doDownVote, doUpVote} from "@/services/comment";
 import {Snackbar} from "@varlet/ui";
 import AvatarCard from "@/components/AvatarCard.vue";
 import WriteComment from "@/components/WriteComment.vue";
+import router from "@/router";
 
 const props = defineProps<{
   comment: CommentInfo
@@ -41,6 +42,15 @@ const onDelete = () => {
     Snackbar.success('删除成功');
   }).catch();
 };
+
+const handleReply = () => {
+  if (authStore.isAuthenticated) {
+    inReply.value = true;
+  } else {
+    Snackbar.error('请先登录');
+    setTimeout(() => router.push(`/login?url=${location.href}`), 1000);
+  }
+};
 </script>
 
 <template>
@@ -48,7 +58,7 @@ const onDelete = () => {
     <AvatarCard :creator-info="usersStore.getUserInfo(comment.author)!">
       <template #description>
         <var-space direction="column" style="margin: 10px 10px -30px">
-          <p>
+          <p class="pre-wrap">
             <var-link v-if="comment.reply_to" underline="hover"
                       :href="`#comment-${comment.reply_to!}`">
               @{{ getCommentName(comment.reply_to!) }}
@@ -63,7 +73,7 @@ const onDelete = () => {
                   <p>{{ comment.agrees ?? 0 }}</p>
                 </var-space>
               </var-button>
-              <var-button type="primary" @click="inReply = true">回复</var-button>
+              <var-button type="primary" @click="handleReply">回复</var-button>
               <var-button v-if="isCreator" type="primary" @click="inEdition = true">编辑</var-button>
               <var-button v-if="isCreator" type="danger" @click="inDelete = true">删除</var-button>
             </var-button-group>

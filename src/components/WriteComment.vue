@@ -2,6 +2,7 @@
 import {ref} from "vue";
 import {doCreateComment, doUpdateComment} from "@/services/comment";
 import {type Form, Snackbar} from "@varlet/ui";
+import {useAuthStore} from "@/store/user";
 
 const props = defineProps<{
   postId?: number
@@ -14,6 +15,7 @@ const emits = defineEmits<{
   submit: [content: string]
 }>();
 
+const authStore = useAuthStore();
 const form = ref<Form>();
 const content = ref(props.content ?? '');
 
@@ -31,10 +33,13 @@ const updateComment = async () => {
 </script>
 
 <template>
-  <var-form ref="form">
+  <var-form :disabled="!authStore.isAuthenticated" ref="form">
     <var-input v-model="content" placeholder="评论内容" variant="outlined" textarea
                :rules="[v => v.trim() != '' || '评论不能为空']"/>
-    <var-button block type="primary" @click="updateComment" style="margin-top: 10px">回复</var-button>
+    <var-button block type="primary" :disabled="!authStore.isAuthenticated"
+                @click="updateComment" style="margin-top: 10px">
+      回复
+    </var-button>
   </var-form>
 </template>
 

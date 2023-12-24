@@ -59,6 +59,10 @@
   font-weight: normal;
 }
 
+strong {
+  font-weight: bold !important;
+}
+
 body {
   margin-top: var(--header-bar-height);
   min-height: calc(100vh - var(--header-bar-height));
