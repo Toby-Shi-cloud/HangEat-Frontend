@@ -7,8 +7,9 @@ const props = withDefaults(defineProps<{
   width?: number
   layout?: 'row' | 'column'
   noExtra?: boolean
-  getRestaurantNum: () => Promise<any>
-  getRestaurantList: (from: number, to: number) => Promise<any>
+  getRestaurantNum?: () => Promise<any>
+  getRestaurantList?: (from: number, to: number) => Promise<any>
+  staticData?: RestaurantInfo[]
 }>(), {
   layout: 'column',
   noExtra: false
@@ -25,10 +26,11 @@ const column = computed(() => props.layout == 'row' ? 1 : width.value < 668 ? 1 
 
 const total = ref(-1);
 const data = reactive<RestaurantInfo[]>([]);
-const finished = computed(() => total.value === data.length);
+const finished = computed(() => props.staticData ? true : total.value === data.length);
 
 const load = async () => {
   if (finished.value) return;
+  if (props.getRestaurantList === undefined) return;
   const response = await props.getRestaurantList(data.length, data.length + column.value * 3);
   const resData = response.data as List<RestaurantInfo>;
   data.push(...resData.list);
@@ -47,7 +49,7 @@ watch(() => props.getRestaurantNum, () => {
 </script>
 
 <template>
-  <LazyList :data="data" :column="column" :finished="finished" :gutter="[10, 10]" :load="load">
+  <LazyList :data="staticData ?? data" :column="column" :finished="staticData ? true : finished" :gutter="[10, 10]" :load="load">
     <template #default="{item}">
       <var-card class="restaurant-card" :layout="layout"
                 :title="item.name" :src="item.img" @click="toRestaurant(item.id!)">

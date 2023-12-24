@@ -91,3 +91,8 @@ export const doGetTagList = (from: number, to: number) => {
     return axios.get(`restaurant/get-tag-list?from=${from}&to=${to}&timestamp=${Date.now()}`);
     // -> data: List<{name:string}>
 }
+
+export const doGetReCommendList = () => {
+    return axios.get(`restaurant/get-recommend-list?timestamp=${Date.now()}`);
+    // -> data: List<RestaurantInfo>
+}

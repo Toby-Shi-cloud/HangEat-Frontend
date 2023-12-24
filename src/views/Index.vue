@@ -1,6 +1,14 @@
 <script setup lang="ts">
+import {ref} from "vue";
 import RestaurantList from "@/components/RestaurantList.vue";
-import {doGetRestaurantList, doGetRestaurantNum, OrderType} from "@/services/restaurant";
+import {doGetReCommendList, doGetRestaurantList, doGetRestaurantNum, OrderType} from "@/services/restaurant";
+import type {RestaurantInfo} from "@/store";
+
+const data = ref<RestaurantInfo[]>([]);
+
+doGetReCommendList().then((res) => {
+  data.value = res.data.list;
+});
 </script>
 
 <template>
@@ -16,10 +24,7 @@ import {doGetRestaurantList, doGetRestaurantNum, OrderType} from "@/services/res
         <img class="swipe-example-image" src="https://varlet.gitee.io/varlet-ui/cat3.jpg">
       </var-swipe-item>
     </var-swipe>
-    <RestaurantList
-        class="restaurant-list"
-        :get-restaurant-num="doGetRestaurantNum"
-        :get-restaurant-list="(f, t) => doGetRestaurantList(OrderType.CreateTime, f, t)"/>
+    <RestaurantList class="restaurant-list" :static-data="data"/>
   </main>
 </template>
 
