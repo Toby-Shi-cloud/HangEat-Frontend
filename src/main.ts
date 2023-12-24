@@ -1,10 +1,9 @@
-import './assets/main.css'
-import {createApp} from 'vue'
-import App from './App.vue'
+import './assets/main.css';
+import {createApp} from 'vue';
+import App from './App.vue';
 import router from "@/router";
 import Varlet from "@varlet/ui";
-import '@varlet/ui/es/style'
-import '@varlet/touch-emulator'
+import '@varlet/ui/es/style';
 import {createPinia} from "pinia";
 import FontAwesomeIcon from './assets/fortawesome';
 import {QuillEditor} from '@vueup/vue-quill'

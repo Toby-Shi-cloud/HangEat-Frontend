@@ -15,7 +15,6 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.5",
-    "@varlet/touch-emulator": "^2.20.0",
     "@varlet/ui": "^2.19.3",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.6.2",
