@@ -6,6 +6,7 @@ import {useAuthStore} from "@/store/user";
 import {doLogout} from "@/services/user";
 import {Snackbar} from "@varlet/ui";
 import router from "@/router";
+import os from "@/components/ts/os";
 
 const headerStore = useHeaderStore();
 const authStore = useAuthStore();
@@ -99,6 +100,7 @@ const changeTheme = () => {
   --app-bar-text-color: var(--color-heading);
   --app-bar-height: 100%;
   --app-bar-title-font-size: 22px;
+  --avatar-normal-size: calc(var(--header-bar-height) * 0.7);
 }
 
 .image-container {
@@ -113,8 +115,16 @@ const changeTheme = () => {
 
 .bar-link {
   padding: 0 10px;
-
   --link-font-size: var(--app-bar-title-font-size);
+}
+
+@media (max-width: 720px) {
+  .bar-link {
+    padding: 0 2px;
+  }
+  #app-title {
+    padding: 0 5px;
+  }
 }
 
 .app-bar-divider {
@@ -130,8 +140,8 @@ const changeTheme = () => {
 }
 
 .switch-btn {
-  width: var(--avatar-small-size);
-  height: var(--avatar-small-size);
+  width: var(--avatar-normal-size);
+  height: var(--avatar-normal-size);
   background: rgba(0, 0, 0, 0);
 }
 
@@ -139,7 +149,6 @@ const changeTheme = () => {
   margin: 0 10px;
   width: var(--avatar-normal-size);
   height: var(--avatar-normal-size);
-  --avatar-normal-size: calc(var(--header-bar-height) * 0.7);
   --skeleton-avatar-size: var(--avatar-normal-size);
   --skeleton-content-padding: 0;
 }

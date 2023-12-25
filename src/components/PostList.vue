@@ -5,6 +5,7 @@ import LazyList from "@/components/LazyList.vue";
 import {doGetPostList, doGetPostListByUser} from "@/services/post";
 import {useUsersStore} from "@/store/user";
 import PostCard from "@/components/PostCard.vue";
+import screen from "@/components/ts/screen";
 
 const props = defineProps<{
   restaurantId?: number
@@ -25,9 +26,7 @@ const total = ref(-1);
 const postData = reactive<PostInfo[]>([]);
 const finished = computed(() => postData.length === total.value);
 
-const screenWidth = ref(window.innerWidth);
-window.onresize = () => screenWidth.value = window.innerWidth;
-const width = computed(() => props.width || screenWidth.value);
+const width = computed(() => props.width || screen.width.value);
 const column = computed(() => width.value < 866 ? 1 : width.value < 1280 ? 2 : width.value < 1720 ? 3 : 4);
 
 const load = async () => {

@@ -3,6 +3,7 @@ import {ref, reactive, computed} from "vue";
 import LazyList from "@/components/LazyList.vue";
 import type {List, RestaurantInfo} from "@/store";
 import GradeView from "@/components/GradeView.vue";
+import screen from "@/components/ts/screen";
 
 const props = withDefaults(defineProps<{
   width?: number
@@ -20,9 +21,7 @@ const emits = defineEmits<{
   changed: [total: number]
 }>();
 
-const screenWidth = ref(window.innerWidth);
-window.onresize = () => screenWidth.value = window.innerWidth;
-const width = computed(() => props.width || screenWidth.value);
+const width = computed(() => props.width || screen.width.value);
 const column = computed(() => props.layout == 'row' ? 1 : width.value < 720 ? 1 : width.value < 1080 ? 2 : width.value < 1440 ? 3 : 4);
 
 const total = ref(-1);

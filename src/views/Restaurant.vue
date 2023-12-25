@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import type {RestaurantInfo, UserInfo} from "@/store";
 import {doDeleteRestaurant, doGetRestaurantDetail} from "@/services/restaurant";
 import {type Input, Snackbar} from "@varlet/ui";
@@ -13,6 +13,7 @@ import WriteReview from "@/components/WriteReview.vue";
 import GradeView from "@/components/GradeView.vue";
 import router from "@/router";
 import os from "@/components/ts/os";
+import screen from "@/components/ts/screen";
 
 const props = defineProps<{
   id: string
@@ -25,8 +26,7 @@ const error = ref(restId === undefined);
 const authStore = useAuthStore();
 const usersStore = useUsersStore();
 const creatorInfo = ref<UserInfo | null>(null);
-const width = ref(window.innerWidth);
-window.onresize = () => width.value = window.innerWidth;
+const overviewSpan = computed(() => screen.width.value < 768 ? 24 : 8);
 const writeReviewRef = ref<InstanceType<typeof WriteReview>>();
 const postsRef = ref<InstanceType<typeof PostList>>();
 
@@ -180,7 +180,7 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
         </div>
       </div>
       <var-row id="restaurant-overview" :gutter="[10, 10]" :align="'' as any">
-        <var-col class="restaurant-overview-card" :span="width < 768 ? 24 : 8">
+        <var-col class="restaurant-overview-card" :span="overviewSpan">
           <var-paper :elevation="true" :radius="8" style="height: 100%; width: 100%">
             <var-card :elevation="false" title="总体评价">
               <template #description>
@@ -208,7 +208,7 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
             </var-card>
           </var-paper>
         </var-col>
-        <var-col class="restaurant-overview-card" :span="width < 768 ? 24 : 8">
+        <var-col class="restaurant-overview-card" :span="overviewSpan">
           <var-card title="详细信息" style="height: 100%">
             <template #description>
               <div class="restaurant-overview-description">
@@ -228,7 +228,7 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
             </template>
           </var-card>
         </var-col>
-        <var-col class="restaurant-overview-card" :span="width < 768 ? 24 : 8">
+        <var-col class="restaurant-overview-card" :span="overviewSpan">
           <var-card title="地址和联系方式" style="height: 100%">
             <template #description>
               <div class="restaurant-overview-description">
@@ -322,7 +322,6 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
 <style scoped>
 #restaurant-header {
   z-index: 9;
-  margin-top: -2rem;
   width: 100%;
   max-width: var(--app-max-width);
   --app-bar-color: rgba(0, 0, 0, 0);
@@ -363,11 +362,5 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
 
 .restaurant-overview-tag {
   display: inline;
-}
-
-@media (max-width: 720px) {
-  #restaurant-header {
-    margin-top: 0;
-  }
 }
 </style>

@@ -105,6 +105,10 @@ const handleCreate = () => {
 </template>
 
 <style scoped>
+main {
+  width: 100vw;
+}
+
 .search-paper {
   width: 100%;
   min-height: 10vh;
@@ -114,6 +118,5 @@ const handleCreate = () => {
 
 .restaurant-list {
   width: 100%;
-  max-width: var(--app-max-width)
 }
 </style>

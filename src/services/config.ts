@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === "production") {
     axios.defaults.baseURL = "/api/";
 } else {
     const domain = window.location.host.split(':').slice(0, -1).join(':');
-    axios.defaults.baseURL = "http://" + domain + ":8000";
+    axios.defaults.baseURL = "http://" + domain + ":8001";
 }
 
 // timeout: 5s
