@@ -232,8 +232,7 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
           <var-card title="地址和联系方式" style="height: 100%">
             <template #description>
               <div class="restaurant-overview-description">
-                <var-image src="https://developers.google.cn/static/maps/images/landing/hero_js_api_480.png"
-                           @click="unimplement"/>
+                <var-image src="https://sm.ms/image/zhaYnUV7LGDtflH" @click="unimplement"/>
                 <var-divider/>
                 <var-cell>
                   <template #icon>
