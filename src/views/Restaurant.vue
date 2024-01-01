@@ -232,7 +232,8 @@ const handleTagClick = (tag: string) => router.push(`/restaurants?tags=${tag}`);
           <var-card title="地址和联系方式" style="height: 100%">
             <template #description>
               <div class="restaurant-overview-description">
-                <var-image src="https://sm.ms/image/zhaYnUV7LGDtflH" @click="unimplement"/>
+                <var-image src="https://s2.loli.net/2024/01/01/zhaYnUV7LGDtflH.png"
+                           href="https://sm.ms/image/zhaYnUV7LGDtflH" target="_blank"/>
                 <var-divider/>
                 <var-cell>
                   <template #icon>
